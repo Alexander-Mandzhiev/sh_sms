@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package library.classes;
+option go_package = "library.classes.v1;classes";
+
+service ClassesService {
+  rpc CreateClass(CreateClassRequest) returns (Class);
+  rpc GetClass(GetClassRequest) returns (Class);
+  rpc UpdateClass(UpdateClassRequest) returns (Class);
+  rpc DeleteClass(DeleteClassRequest) returns (DeleteClassResponse);
+  rpc ListClasses(ListClassesRequest) returns (ListClassesResponse);
+}
+
+message Class {
+  int32 id = 1;
+  int32 grade = 2;
+  string letter = 3;
+  bool is_active = 4;
+}
+
+message CreateClassRequest {
+  int32 grade = 1;
+  string letter = 2;
+}
+
+message GetClassRequest {
+  int32 id = 1;
+}
+
+message UpdateClassRequest {
+  int32 id = 1;
+  int32 grade = 2;
+  string letter = 3;
+  bool is_active = 4;
+}
+
+message DeleteClassRequest {
+  int32 id = 1;
+}
+
+message DeleteClassResponse {
+  bool success = 1;
+}
+
+message ListClassesRequest {
+  int32 limit = 1;
+  int32 offset = 2;
+  bool is_active = 3;
+}
+
+message ListClassesResponse {
+  repeated Class items = 1;
+}

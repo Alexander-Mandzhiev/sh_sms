@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package library.attachment_types;
+option go_package = "library.attachment_types.v1;attachment_types";
+
+service AttachmentTypesService {
+  rpc CreateAttachmentType(CreateAttachmentTypeRequest) returns (AttachmentType);
+  rpc GetAttachmentType(GetAttachmentTypeRequest) returns (AttachmentType);
+  rpc UpdateAttachmentType(UpdateAttachmentTypeRequest) returns (AttachmentType);
+  rpc DeleteAttachmentType(DeleteAttachmentTypeRequest) returns (DeleteAttachmentTypeResponse);
+  rpc ListAttachmentTypes(ListAttachmentTypesRequest) returns (ListAttachmentTypesResponse);
+}
+
+message AttachmentType {
+  int32 id = 1;
+  string name = 2;
+  string description = 3;
+  bool is_active = 4;
+}
+
+message CreateAttachmentTypeRequest {
+  string name = 1;
+  string description = 2;
+}
+
+message GetAttachmentTypeRequest {
+  int32 id = 1;
+}
+
+message UpdateAttachmentTypeRequest {
+  int32 id = 1;
+  string name = 2;
+  string description = 3;
+  bool is_active = 4;
+}
+
+message DeleteAttachmentTypeRequest {
+  int32 id = 1;
+}
+message DeleteAttachmentTypeResponse {
+  bool success = 1;
+}
+
+message ListAttachmentTypesRequest {
+  int32 limit = 1;
+  int32 offset = 2;
+  bool is_active = 3;
+}
+
+message ListAttachmentTypesResponse {
+  repeated AttachmentType items = 1;
+}

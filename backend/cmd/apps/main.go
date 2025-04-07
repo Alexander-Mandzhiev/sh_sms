@@ -18,13 +18,12 @@ func main() {
 	// 3. Инициализация подключения к базе данных
 	dbPool, err := dbManager.OpenPostgresqlConnection(cfg.DBConfig.Postgres, logger)
 	if err != nil {
-		logger.Error("failed to connect to database", sl.Err(err))
+		logger.Error("failed to connect to database", sl.Err(err, false))
 		os.Exit(1)
 	}
 	defer func() {
 		if err = dbManager.ClosePostgresqlConnection(dbPool, logger); err != nil {
-			logger.Error("failed to close database connection", sl.Err(err))
+			logger.Error("failed to close database connection", sl.Err(err, false))
 		}
 	}()
-
 }
