@@ -1,0 +1,62 @@
+syntax = "proto3";
+package sso.permission;
+option go_package = "sso.permission.v1;permission";
+
+import "google/protobuf/timestamp.proto";
+
+service PermissionService {
+  rpc CreatePermission (CreatePermissionRequest) returns (Permission);
+  rpc GetPermission (GetPermissionRequest) returns (Permission);
+  rpc UpdatePermission (UpdatePermissionRequest) returns (Permission);
+  rpc DeletePermission (DeletePermissionRequest) returns (PermissionDeleteResponse);
+  rpc ListPermissions (ListPermissionsRequest) returns (ListPermissionsResponse);
+}
+
+message Permission {
+  string id = 1;
+  string code = 2; // Например: "schedule:edit"
+  string description = 3;
+  string category = 4; // Группировка: "schedule", "grades"
+  string app_id = 5; // Привязка к приложению
+  google.protobuf.Timestamp created_at = 6;
+  optional google.protobuf.Timestamp deleted_at = 7;
+}
+
+message CreatePermissionRequest {
+  string code = 1;
+  string description = 2;
+  optional string category = 3;
+  optional string app_id = 4;
+}
+
+message GetPermissionRequest {
+  string id = 1;
+}
+
+message UpdatePermissionRequest {
+  string id = 1;
+  optional string code = 2;
+  optional string description = 3;
+  optional string category = 4;
+}
+
+message DeletePermissionRequest {
+  string id = 1;
+}
+
+message ListPermissionsRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+  optional string app_id = 3; // Фильтр по приложению
+}
+
+message ListPermissionsResponse {
+  repeated Permission permissions = 1;
+  int32 total_count = 2;
+}
+
+
+message PermissionDeleteResponse {
+  bool success = 1;
+  google.protobuf.Timestamp deleted_at = 2;  // Время фактического удаления
+}

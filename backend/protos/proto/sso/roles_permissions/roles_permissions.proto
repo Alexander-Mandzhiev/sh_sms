@@ -1,0 +1,29 @@
+syntax = "proto3";
+package sso.roles_permissions;
+option go_package = "sso.roles_permissions.v1;roles_permissions";
+import "google/protobuf/timestamp.proto";
+
+service RolePermissionService {
+  rpc AddPermissionToRole (RolePermissionRequest) returns (Empty);
+  rpc RemovePermissionFromRole (RolePermissionRequest) returns (Empty);
+  rpc ListRolePermissions (ListRolePermissionsRequest) returns (ListRolePermissionsResponse);
+}
+
+message RolePermissionRequest {
+  string role_id = 1;
+  string permission_id = 2;
+}
+
+message ListRolePermissionsRequest {
+  string role_id = 1;
+  int32 page = 2;
+  int32 page_size = 3;
+}
+
+message ListRolePermissionsResponse {
+  repeated string permission_ids = 1; // Список ID прав
+}
+
+
+message Empty {
+}

@@ -1,0 +1,88 @@
+services:
+  apps_db:
+    container_name: apps_database
+    image: postgres
+    environment:
+      POSTGRES_DB: ${APPS_DB_NAME}
+      POSTGRES_USER: ${APPS_DB_USER}
+      POSTGRES_PASSWORD: ${APPS_DB_PASSWORD}
+    volumes:
+      - apps_init:/docker-entrypoint-initdb.d
+      - apps_data:/var/lib/postgresql/data
+    ports:
+      - "5435:5432"
+    networks:
+      - sh-sms-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U apps_user -d apps"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  sso_db:
+    container_name: sso_database
+    image: postgres
+    environment:
+      POSTGRES_DB: ${SSO_DB_NAME}
+      POSTGRES_USER: ${SSO_DB_USER}
+      POSTGRES_PASSWORD: ${SSO_DB_PASSWORD}
+    volumes:
+      - auth_init:/docker-entrypoint-initdb.d
+      - auth_data:/var/lib/postgresql/data
+    ports:
+      - "5434:5432"
+    networks:
+      - sh-sms-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U auth_user -d auth"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    restart: unless-stopped
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - "9090:9090"
+    networks:
+      - sh-sms-network
+    depends_on:
+      - apps_db
+      - sso_db
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    restart: unless-stopped
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
+    ports:
+      - "3000:3000"
+    networks:
+      - sh-sms-network
+    depends_on:
+      - prometheus
+
+volumes:
+  apps_init:
+  apps_data:
+  auth_init:
+  auth_data:
+  users_init:
+  users_data:
+  media-data:
+  grafana-storage:
+
+networks:
+  sh-sms-network:
+    driver: bridge
