@@ -3,15 +3,17 @@
 -- Роли с поддержкой иерархии и кастомных прав
 CREATE TABLE roles (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    tenant_id UUID NOT NULL, -- Ссылка на внешнюю БД
     name VARCHAR(50) NOT NULL,
     description TEXT,
     level INT DEFAULT 0,
     is_custom BOOLEAN DEFAULT FALSE,
-    school_id UUID,
-    created_by UUID REFERENCES users(id),
+    created_by UUID, -- Без FK, т.к. users в той же БД
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP
 );
+-- Индекс для поиска по tenant
+CREATE INDEX idx_roles_tenant ON roles(tenant_id);
 -- +goose StatementEnd
 
 -- +goose Down

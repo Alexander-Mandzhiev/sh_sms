@@ -13,40 +13,43 @@ service RoleService {
 }
 
 message Role {
-  string id = 1;
-  string name = 2;
-  string description = 3;
-  int32 level = 4;
-  bool is_custom = 5;
-  optional string school_id = 6;        // UUID школы в строковом формате
-  string created_by = 7;               // UUID создателя
+  string id = 1;                    // UUID роли
+  string tenant_id = 2;             // UUID арендатора (обязательно)
+  string name = 3;
+  string description = 4;
+  int32 level = 5;                  // Default: 0
+  bool is_custom = 6;               // Default: false
+  string created_by = 7;            // UUID создателя
   google.protobuf.Timestamp created_at = 8;
-  optional google.protobuf.Timestamp deleted_at = 9; // Для мягкого удаления
+  optional google.protobuf.Timestamp deleted_at = 9;
 }
 
 message CreateRequest {
-  string name = 1;
-  optional string description = 2;
-  optional int32 level = 3;            // Default: 0
-  optional bool is_custom = 4;         // Default: false
-  optional string school_id = 5;       // Опциональная привязка к школе
-  string created_by = 6;               // Обязательный UUID создателя
+  string tenant_id = 1;             // Обязательный tenant
+  string name = 2;
+  optional string description = 3;
+  optional int32 level = 4;         // Default: 0
+  optional bool is_custom = 5;      // Default: false
+  string created_by = 6;            // UUID пользователя
 }
 
 message GetRequest {
-  string id = 1;
+  string tenant_id = 1;             // Контекст арендатора
+  string id = 2;                    // UUID роли
 }
 
 message UpdateRequest {
   string id = 1;
-  optional string name = 2;
-  optional string description = 3;
-  optional int32 level = 4;
-  optional bool is_custom = 5;
+  string tenant_id = 2;             // Для верификации принадлежности
+  optional string name = 3;
+  optional string description = 4;
+  optional int32 level = 5;
+  optional bool is_custom = 6;
 }
 
 message DeleteRequest {
   string id = 1;
+  string tenant_id = 2;             // Подтверждение контекста
 }
 
 message DeleteResponse {
@@ -55,15 +58,15 @@ message DeleteResponse {
 }
 
 message ListRequest {
-  int32 page = 1;                      // Номер страницы
-  int32 count = 2;                     // Количество элементов
-  optional string school_id = 3;       // Фильтр по школе
-  bool include_deleted = 4;            // Включать удаленные
+  string tenant_id = 1;             // Обязательный фильтр
+  int32 page = 2;                   // Номер страницы (начиная с 1)
+  int32 page_size = 3;              // Количество элементов (1-100)
+  bool include_deleted = 4;         // Включать удаленные
 }
 
 message ListResponse {
   repeated Role roles = 1;
-  int32 total_count = 2;               // Общее количество
+  int32 total_count = 2;            // Общее количество
   int32 page = 3;
-  int32 count = 4;                     // Количество на странице
+  int32 page_size = 4;
 }

@@ -1,5 +1,81 @@
 syntax = "proto3";
 package tenants.tenant_types;
-option go_package = "sso.tenant_types.v1;tenant_types";
+option go_package = "tenants.tenant_types.v1;tenant_types";
 
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+service TenantTypeService {
+  rpc Create(CreateRequest) returns (TenantType);
+  rpc Get(GetRequest) returns (TenantType);
+  rpc Update(UpdateRequest) returns (TenantType);
+  rpc Delete(DeleteRequest) returns (DeleteResponse);
+  rpc List(ListRequest) returns (ListResponse);
+}
+
+message TenantType {
+  int32 id = 1;
+  string code = 2;              // Уникальный код типа (school, university)
+  string name = 3;              // Человекочитаемое название
+  string description = 4;       // Описание типа
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
+  google.protobuf.Timestamp deleted_at = 7; // Мягкое удаление
+}
+
+// Create
+message CreateRequest {
+  string code = 1;              // Обязательное уникальное поле
+  string name = 2;              // Обязательное поле
+  optional string description = 3;
+}
+
+// Read
+message GetRequest {
+  oneof identifier {
+    int32 id = 1;               // Поиск по ID
+    string code = 2;            // Или по коду
+  }
+}
+
+// Update
+message UpdateRequest {
+  int32 id = 1;
+  optional string code = 2;     // При изменении требуется проверка уникальности
+  optional string name = 3;
+  optional string description = 4;
+  google.protobuf.FieldMask update_mask = 5; // Указание изменяемых полей
+}
+
+// Delete
+message DeleteRequest {
+  oneof identifier {
+    int32 id = 1;
+    string code = 2;
+  }
+  bool force = 3; // Принудительное удаление из БД (вместо мягкого)
+}
+
+message DeleteResponse {
+  bool success = 1;
+}
+
+// List
+message ListRequest {
+  message Filter {
+    optional string code = 1;
+    optional string name_part = 2; // Поиск по части названия
+    optional bool include_deleted = 3;
+  }
+
+  int32 page = 1;
+  int32 page_size = 2;
+  Filter filter = 3;
+}
+
+message ListResponse {
+  repeated TenantType tenant_types = 1;
+  int32 total_count = 2;
+  int32 page = 3;
+  int32 page_size = 4;
+}

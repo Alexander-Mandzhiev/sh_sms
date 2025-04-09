@@ -13,13 +13,14 @@ service UserService {
 }
 
 message User {
-  string id = 1;
-  string email = 2;
-  optional string full_name = 3;
-  optional string phone = 4;
-  google.protobuf.Timestamp created_at = 5;
-  google.protobuf.Timestamp updated_at = 6;
-  optional google.protobuf.Timestamp deleted_at = 7;
+  string id = 1;                  // UUID пользователя
+  string tenant_id = 2;           // UUID арендатора (обязательно)
+  string email = 3;               // Уникальный в рамках tenant
+  optional string full_name = 4;
+  optional string phone = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+  optional google.protobuf.Timestamp deleted_at = 8;
 }
 
 message UserResponse {
@@ -27,29 +28,33 @@ message UserResponse {
 }
 
 message CreateRequest {
-  string email = 1;
-  string password = 2;
-  optional string full_name = 3;
-  optional string phone = 4;
+  string tenant_id = 1;          // Обязательный tenant
+  string email = 2;              // Логин пользователя
+  string password = 3;           // Пароль (хэшируется на сервере)
+  optional string full_name = 4;
+  optional string phone = 5;
 }
 
 message GetRequest {
+  string tenant_id = 1;          // Контекст арендатора
   oneof identifier {
-    string id = 1;
-    string email = 2;
+    string id = 2;               // Поиск по UUID
+    string email = 3;            // Поиск по email + tenant_id
   }
 }
 
 message UpdateRequest {
   string id = 1;
-  optional string email = 2;
-  optional string full_name = 3;
-  optional string phone = 4;
-  optional string password = 5;
+  string tenant_id = 2;          // Для верификации принадлежности
+  optional string email = 3;
+  optional string full_name = 4;
+  optional string phone = 5;
+  optional string password = 6;  // Обновление пароля
 }
 
 message DeleteRequest {
   string id = 1;
+  string tenant_id = 2;          // Подтверждение контекста
 }
 
 message DeleteResponse {
@@ -58,14 +63,15 @@ message DeleteResponse {
 }
 
 message ListRequest {
-  int32 page = 1;           // Номер страницы (начиная с 1)
-  int32 count = 2;          // Количество элементов на странице
-  bool include_deleted = 3; // Включать удаленных пользователей
+  string tenant_id = 1;          // Обязательный фильтр
+  int32 page = 2;                // Номер страницы (начиная с 1)
+  int32 page_size = 3;           // Количество элементов (1-100)
+  bool include_deleted = 4;      // Включать удаленных
 }
 
 message ListResponse {
   repeated User users = 1;
-  int32 total_count = 2;    // Общее количество пользователей
+  int32 total_count = 2;         // Общее количество
   int32 page = 3;
-  int32 count = 4;          // Количество элементов на текущей странице
+  int32 page_size = 4;
 }

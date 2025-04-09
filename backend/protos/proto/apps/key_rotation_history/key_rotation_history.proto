@@ -16,7 +16,7 @@ message RotationHistory {
   string secret_type = 3;
   string old_secret = 4;
   string new_secret = 5;
-  string rotated_by = 6; // UUID инициатора
+  string rotated_by = 6;
   google.protobuf.Timestamp rotated_at = 7;
 }
 
@@ -24,7 +24,7 @@ message GetRotationRequest {
   string tenant_id = 1;
   int32 app_id = 2;
   string secret_type = 3;
-  google.protobuf.Timestamp rotated_at = 4; // Точное время ротации
+  google.protobuf.Timestamp rotated_at = 4;
 }
 
 message ListRotationsRequest {

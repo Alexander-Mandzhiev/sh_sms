@@ -10,9 +10,13 @@ CREATE TABLE tenant_types (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP
 );
+
+-- Индексы для tenant_types
+CREATE INDEX idx_tenant_types_name ON tenant_types(name);
+CREATE INDEX idx_tenant_types_deleted ON tenant_types(deleted_at);
 -- +goose StatementEnd
 
 -- +goose Down
 -- +goose StatementBegin
-SELECT 'down SQL query';
+DROP TABLE IF EXISTS tenant_types;
 -- +goose StatementEnd

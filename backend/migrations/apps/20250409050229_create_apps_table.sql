@@ -1,3 +1,5 @@
+-- +goose Up
+-- +goose StatementBegin
 CREATE TABLE apps (
     id SERIAL PRIMARY KEY,
     code VARCHAR(50) UNIQUE NOT NULL,  -- school, hr, uni и т.д.

@@ -11,24 +11,38 @@ service RolePermissionService {
 }
 
 message RolePermissionRequest {
-  string role_id = 1;
-  string permission_id = 2;
+  string tenant_id = 1;           // Обязательный tenant
+  string role_id = 2;
+  string permission_id = 3;
 }
 
 message RolePermissionResponse {
   bool success = 1;
-  google.protobuf.Timestamp created_at = 2; // Время создания связи
+  google.protobuf.Timestamp created_at = 2;
   string message = 3;
+}
+
+message OperationResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message ListRolePermissionsRequest {
+  string tenant_id = 1;           // Обязательный фильтр
+  string role_id = 2;
+  int32 page = 3;                 // Пагинация
+  int32 page_size = 4;            // 1-100 элементов
 }
 
 message ListRolePermissionsResponse {
   message RolePermission {
     string permission_id = 1;
-    google.protobuf.Timestamp created_at = 2; // Когда право было добавлено к роли
+    string permission_code = 2;   // Добавлен код права
+    google.protobuf.Timestamp created_at = 3;
   }
 
   repeated RolePermission permissions = 1;
   int32 total_count = 2;
   int32 page = 3;
-  int32 count = 4;
+  int32 page_size = 4;
 }

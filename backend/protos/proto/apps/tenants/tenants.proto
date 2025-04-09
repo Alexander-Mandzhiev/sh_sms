@@ -15,7 +15,7 @@ service TenantService {
 }
 
 message Tenant {
-  string id = 1; // UUID в строковом формате
+  string id = 1;
   string name = 2;
   bool is_active = 3;
   google.protobuf.Timestamp created_at = 4;
@@ -24,14 +24,14 @@ message Tenant {
 
 // Create
 message CreateRequest {
-  string id = 1; // UUID из внешней системы
+  string id = 1;
   string name = 2;
   optional bool is_active = 3; // default: true
 }
 
 // Read
 message GetRequest {
-  string id = 1; // UUID арендатора
+  string id = 1;
 }
 
 // Update
@@ -56,7 +56,7 @@ message ListRequest {
   int32 page = 1;
   int32 page_size = 2;
   optional bool filter_is_active = 3;
-  optional string name_query = 4; // Поиск по части имени
+  optional string name_query = 4;
 }
 
 message ListResponse {

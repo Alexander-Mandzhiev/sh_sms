@@ -15,8 +15,8 @@ service TenantAppService {
 }
 
 message TenantApp {
-  string tenant_id = 1;  // UUID арендатора
-  int32 app_id = 2;      // ID приложения
+  string tenant_id = 1;
+  int32 app_id = 2;
   bool is_active = 3;
   google.protobuf.Timestamp created_at = 4;
   google.protobuf.Timestamp updated_at = 5;

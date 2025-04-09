@@ -6,27 +6,48 @@ import "google/protobuf/timestamp.proto";
 
 service UserRoleService {
   rpc AssignRoleToUser (UserRoleRequest) returns (UserRoleResponse);
-  rpc RevokeRoleFromUser (UserRoleRequest) returns (UserRoleResponse);
+  rpc RevokeRoleFromUser (UserRoleRequest) returns (OperationResponse);
   rpc ListUserRoles (ListUserRolesRequest) returns (ListUserRolesResponse);
+}
+
+message UserRoleRequest {
+  string tenant_id = 1;            // Обязательный tenant
+  string user_id = 2;
+  string role_id = 3;
+  optional google.protobuf.Timestamp expires_at = 4; // Опциональное время истечения
 }
 
 message UserRoleResponse {
   bool success = 1;
-  google.protobuf.Timestamp created_at = 2;  // Добавлено
-  google.protobuf.Timestamp expires_at = 3;
+  google.protobuf.Timestamp created_at = 2;
+  optional google.protobuf.Timestamp expires_at = 3;
   string message = 4;
+}
+
+message OperationResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message ListUserRolesRequest {
+  string tenant_id = 1;            // Обязательный фильтр
+  string user_id = 2;
+  int32 page = 3;                  // Номер страницы (начиная с 1)
+  int32 page_size = 4;             // Количество элементов (1-100)
+  bool include_expired = 5;        // Включать истекшие
 }
 
 message ListUserRolesResponse {
   message UserRole {
     string role_id = 1;
-    google.protobuf.Timestamp created_at = 2;  // Когда роль была назначена
-    google.protobuf.Timestamp expires_at = 3;
-    string assigned_by = 4;
+    string role_name = 2;          // Денормализованное имя роли
+    google.protobuf.Timestamp created_at = 3;
+    optional google.protobuf.Timestamp expires_at = 4;
+    string assigned_by = 5;        // UUID назначившего
   }
 
   repeated UserRole roles = 1;
   int32 total_count = 2;
   int32 page = 3;
-  int32 count = 4;
+  int32 page_size = 4;
 }
