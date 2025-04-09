@@ -5,11 +5,11 @@ option go_package = "sso.roles.v1;roles";
 import "google/protobuf/timestamp.proto";
 
 service RoleService {
-  rpc CreateRole (CreateRoleRequest) returns (Role);
-  rpc GetRole (GetRoleRequest) returns (Role);
-  rpc UpdateRole (UpdateRoleRequest) returns (Role);
-  rpc DeleteRole (DeleteRoleRequest) returns (RoleDeleteResponse);
-  rpc ListRoles (ListRolesRequest) returns (ListRolesResponse);
+  rpc CreateRole (CreateRequest) returns (Role);
+  rpc GetRole (GetRequest) returns (Role);
+  rpc UpdateRole (UpdateRequest) returns (Role);
+  rpc DeleteRole (DeleteRequest) returns (DeleteResponse);
+  rpc ListRoles (ListRequest) returns (ListResponse);
 }
 
 message Role {
@@ -18,47 +18,52 @@ message Role {
   string description = 3;
   int32 level = 4;
   bool is_custom = 5;
-  string school_id = 6; // Привязка к школе
-  string created_by = 7; // ID пользователя, создавшего роль
-  string created_at = 8;
-  string deleted_at = 9;
+  optional string school_id = 6;        // UUID школы в строковом формате
+  string created_by = 7;               // UUID создателя
+  google.protobuf.Timestamp created_at = 8;
+  optional google.protobuf.Timestamp deleted_at = 9; // Для мягкого удаления
 }
 
-message CreateRoleRequest {
+message CreateRequest {
   string name = 1;
-  string description = 2;
-  optional int32 level = 3;
-  optional string school_id = 4;
-  string created_by = 5;
+  optional string description = 2;
+  optional int32 level = 3;            // Default: 0
+  optional bool is_custom = 4;         // Default: false
+  optional string school_id = 5;       // Опциональная привязка к школе
+  string created_by = 6;               // Обязательный UUID создателя
 }
 
-message GetRoleRequest {
+message GetRequest {
   string id = 1;
 }
 
-message UpdateRoleRequest {
+message UpdateRequest {
   string id = 1;
   optional string name = 2;
   optional string description = 3;
   optional int32 level = 4;
+  optional bool is_custom = 5;
 }
 
-message DeleteRoleRequest {
+message DeleteRequest {
   string id = 1;
 }
 
-message ListRolesRequest {
-  int32 page = 1;
-  int32 page_size = 2;
-  optional string school_id = 3; // Фильтр по школе
-}
-
-message ListRolesResponse {
-  repeated Role roles = 1;
-  int32 total_count = 2;
-}
-
-message RoleDeleteResponse {
+message DeleteResponse {
   bool success = 1;
-  google.protobuf.Timestamp deleted_at = 2;  // Время фактического удаления
+  google.protobuf.Timestamp deleted_at = 2;
+}
+
+message ListRequest {
+  int32 page = 1;                      // Номер страницы
+  int32 count = 2;                     // Количество элементов
+  optional string school_id = 3;       // Фильтр по школе
+  bool include_deleted = 4;            // Включать удаленные
+}
+
+message ListResponse {
+  repeated Role roles = 1;
+  int32 total_count = 2;               // Общее количество
+  int32 page = 3;
+  int32 count = 4;                     // Количество на странице
 }

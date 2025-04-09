@@ -1,0 +1,74 @@
+syntax = "proto3";
+
+package apps.tenant_apps;
+option go_package = "apps.tenant_apps.v1;tenant_apps";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+service TenantAppService {
+  rpc Create(CreateRequest) returns (TenantApp);
+  rpc Get(GetRequest) returns (TenantApp);
+  rpc Update(UpdateRequest) returns (TenantApp);
+  rpc Delete(DeleteRequest) returns (DeleteResponse);
+  rpc List(ListRequest) returns (ListResponse);
+}
+
+message TenantApp {
+  string tenant_id = 1;  // UUID арендатора
+  int32 app_id = 2;      // ID приложения
+  bool is_active = 3;
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp updated_at = 5;
+}
+
+// Create
+message CreateRequest {
+  string tenant_id = 1;
+  int32 app_id = 2;
+  optional bool is_active = 3; // default: true
+}
+
+// Read
+message GetRequest {
+  string tenant_id = 1;
+  int32 app_id = 2;
+}
+
+// Update
+message UpdateRequest {
+  string tenant_id = 1;
+  int32 app_id = 2;
+  optional bool is_active = 3;
+  google.protobuf.FieldMask update_mask = 4;
+}
+
+// Delete
+message DeleteRequest {
+  string tenant_id = 1;
+  int32 app_id = 2;
+}
+
+message DeleteResponse {
+  bool success = 1;
+}
+
+// List
+message ListRequest {
+  message Filter {
+    optional string tenant_id = 1;
+    optional int32 app_id = 2;
+    optional bool is_active = 3;
+  }
+
+  int32 page = 1;
+  int32 page_size = 2;
+  Filter filter = 3;
+}
+
+message ListResponse {
+  repeated TenantApp tenant_apps = 1;
+  int32 total_count = 2;
+  int32 page = 3;
+  int32 page_size = 4;
+}

@@ -5,11 +5,11 @@ option go_package = "sso.users.v1;users";
 import "google/protobuf/timestamp.proto";
 
 service UserService {
-  rpc CreateUser (CreateUserRequest) returns (UserResponse);
-  rpc GetUser (GetUserRequest) returns (UserResponse);
-  rpc UpdateUser (UpdateUserRequest) returns (UserResponse);
-  rpc DeleteUser (DeleteUserRequest) returns (DeleteUserResponse);
-  rpc ListUsers (ListUsersRequest) returns (ListUsersResponse);
+  rpc CreateUser (CreateRequest) returns (UserResponse);
+  rpc GetUser (GetRequest) returns (UserResponse);
+  rpc UpdateUser (UpdateRequest) returns (UserResponse);
+  rpc DeleteUser (DeleteRequest) returns (DeleteResponse);
+  rpc ListUsers (ListRequest) returns (ListResponse);
 }
 
 message User {
@@ -19,53 +19,53 @@ message User {
   optional string phone = 4;
   google.protobuf.Timestamp created_at = 5;
   google.protobuf.Timestamp updated_at = 6;
-  optional google.protobuf.Timestamp deleted_at = 7;  // NULL означает активного пользователя
+  optional google.protobuf.Timestamp deleted_at = 7;
 }
 
 message UserResponse {
   User user = 1;
 }
 
-message CreateUserRequest {
+message CreateRequest {
   string email = 1;
   string password = 2;
   optional string full_name = 3;
   optional string phone = 4;
 }
 
-message GetUserRequest {
+message GetRequest {
   oneof identifier {
-    string id = 1;     // Искать по UUID
-    string email = 2;  // Искать по email
+    string id = 1;
+    string email = 2;
   }
 }
 
-message UpdateUserRequest {
+message UpdateRequest {
   string id = 1;
   optional string email = 2;
   optional string full_name = 3;
   optional string phone = 4;
-  optional string password = 5;  // Для смены пароля
+  optional string password = 5;
 }
 
-message DeleteUserRequest {
+message DeleteRequest {
   string id = 1;
 }
 
-message DeleteUserResponse {
+message DeleteResponse {
   bool success = 1;
-  google.protobuf.Timestamp deleted_at = 2;  // Время фактического удаления
+  google.protobuf.Timestamp deleted_at = 2;
 }
 
-message ListUsersRequest {
+message ListRequest {
   int32 page = 1;           // Номер страницы (начиная с 1)
-  int32 count = 2;       // Размер страницы
-  bool include_deleted = 3;  // Включать удаленных пользователей
+  int32 count = 2;          // Количество элементов на странице
+  bool include_deleted = 3; // Включать удаленных пользователей
 }
 
-message ListUsersResponse {
+message ListResponse {
   repeated User users = 1;
-  int32 total_count = 2;     // Общее количество пользователей (для пагинации)
+  int32 total_count = 2;    // Общее количество пользователей
   int32 page = 3;
-  int32 count = 4;
+  int32 count = 4;          // Количество элементов на текущей странице
 }

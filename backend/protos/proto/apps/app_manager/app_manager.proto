@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package apps.app_manager;
+option go_package = "apps.app_manager.v1;app_manager";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+service AppService {
+  rpc Create(CreateRequest) returns (App);
+  rpc Get(GetRequest) returns (App);
+  rpc Update(UpdateRequest) returns (App);
+  rpc Delete(DeleteAppRequest) returns (DeleteAppResponse);
+  rpc List(ListRequest) returns (ListResponse);
+}
+
+message App {
+  int32 id = 1;
+  string code = 2;
+  string name = 3;
+  string description = 4;
+  bool is_active = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+}
+
+// Create
+message CreateRequest {
+  string code = 1;
+  string name = 2;
+  optional string description = 3;
+  optional bool is_active = 4; // default: true
+}
+
+// Read
+message GetRequest {
+  oneof identifier {
+    int32 id = 1;
+    string code = 2;
+  }
+}
+
+// Update
+message UpdateRequest {
+  int32 id = 1;
+  optional string name = 2;
+  optional string description = 3;
+  optional bool is_active = 4;
+  google.protobuf.FieldMask update_mask = 5;
+}
+
+// Delete
+message DeleteAppRequest {
+  oneof identifier {
+    int32 id = 1;
+    string code = 2;
+  }
+}
+
+message DeleteAppResponse {
+  bool success = 1;
+}
+
+// List
+message ListRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+  optional bool filter_is_active = 3;
+}
+
+message ListResponse {
+  repeated App apps = 1;
+  int32 total_count = 2;
+  int32 page = 3;
+  int32 page_size = 4;
+}

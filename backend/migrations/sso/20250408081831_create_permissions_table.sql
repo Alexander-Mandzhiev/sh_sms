@@ -5,9 +5,8 @@ CREATE TABLE permissions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     code VARCHAR(100) UNIQUE NOT NULL,
     description TEXT,
-    category VARCHAR(50), -- Пример: "schedule", "grades"
-    app_id UUID, -- Привязка к приложению (опционально)
-    is_active BOOLEAN DEFAULT TRUE,
+    category VARCHAR(50),
+    app_id UUID,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP
 );

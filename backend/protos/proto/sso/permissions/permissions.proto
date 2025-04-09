@@ -14,12 +14,12 @@ service PermissionService {
 
 message Permission {
   string id = 1;
-  string code = 2; // Например: "schedule:edit"
+  string code = 2;                   // Уникальный код (например: "schedule:write")
   string description = 3;
-  string category = 4; // Группировка: "schedule", "grades"
-  string app_id = 5; // Привязка к приложению
+  optional string category = 4;      // Группировка (например: "schedule")
+  optional string app_id = 5;        // Привязка к приложению
   google.protobuf.Timestamp created_at = 6;
-  optional google.protobuf.Timestamp deleted_at = 7;
+  optional google.protobuf.Timestamp deleted_at = 7; // Мягкое удаление
 }
 
 message CreatePermissionRequest {
@@ -30,7 +30,10 @@ message CreatePermissionRequest {
 }
 
 message GetPermissionRequest {
-  string id = 1;
+  oneof identifier {
+    string id = 1;
+    string code = 2; // Поиск по уникальному коду
+  }
 }
 
 message UpdatePermissionRequest {
@@ -38,25 +41,29 @@ message UpdatePermissionRequest {
   optional string code = 2;
   optional string description = 3;
   optional string category = 4;
+  optional string app_id = 5;
 }
 
 message DeletePermissionRequest {
   string id = 1;
 }
 
+message PermissionDeleteResponse {
+  bool success = 1;
+  google.protobuf.Timestamp deleted_at = 2;
+}
+
 message ListPermissionsRequest {
-  int32 page = 1;
-  int32 page_size = 2;
+  int32 page = 1;           // Номер страницы
+  int32 count = 2;          // Количество элементов
   optional string app_id = 3; // Фильтр по приложению
+  optional string category = 4; // Фильтр по категории
+  bool include_deleted = 5; // Включать удаленные
 }
 
 message ListPermissionsResponse {
   repeated Permission permissions = 1;
-  int32 total_count = 2;
-}
-
-
-message PermissionDeleteResponse {
-  bool success = 1;
-  google.protobuf.Timestamp deleted_at = 2;  // Время фактического удаления
+  int32 total_count = 2;    // Общее количество
+  int32 page = 3;
+  int32 count = 4;          // Количество на странице
 }

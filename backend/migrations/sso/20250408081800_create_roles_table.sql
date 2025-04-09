@@ -5,10 +5,10 @@ CREATE TABLE roles (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(50) NOT NULL,
     description TEXT,
-    level INT DEFAULT 0, -- Уровень иерархии (0 - системная роль)
-    is_custom BOOLEAN DEFAULT FALSE, -- Пользовательская/системная роль
-    school_id UUID, -- Привязка к школе (опционально)
-    created_by UUID REFERENCES users(id), -- Кто создал роль
+    level INT DEFAULT 0,
+    is_custom BOOLEAN DEFAULT FALSE,
+    school_id UUID,
+    created_by UUID REFERENCES users(id),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP
 );

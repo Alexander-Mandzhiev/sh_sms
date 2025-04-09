@@ -1,0 +1,5 @@
+syntax = "proto3";
+package tenants.tenants;
+option go_package = "sso.tenants.v1;tenants";
+
+import "google/protobuf/timestamp.proto";
