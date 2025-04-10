@@ -1,25 +1,47 @@
 package apps_manager_service
 
 import (
-	pb "backend/protos/gen/go/apps/app_manager"
+	"backend/protos/gen/go/apps/app_manager"
 	"context"
+	"errors"
 	"log/slog"
 )
 
-type ClientAppsProvider interface {
-	Create(ctx context.Context, clientApp *pb.CreateRequest) error
-	Get(ctx context.Context, clientID string, appID int32) (*pb.App, error)
-	Update(ctx context.Context, clientApp *pb.UpdateRequest) error
-	Delete(ctx context.Context, clientID string, appID int32) error
-	List(ctx context.Context, filter *pb.ListRequest, limit, offset int32) (*pb.ListResponse, int32, error)
+var (
+	// Валидация
+	ErrInvalidID          = errors.New("invalid ID format")
+	ErrEmptyCode          = errors.New("empty code")
+	ErrInvalidPagination  = errors.New("invalid pagination")
+	ErrConflictParams     = errors.New("conflicting parameters")
+	ErrNoUpdateFields     = errors.New("no update fields")
+	ErrIdentifierRequired = errors.New("identifier required")
+	ErrInvalidName        = errors.New("invalid name")
+	ErrMaxCountExceeded   = errors.New("max count exceeded")
+
+	// Бизнес-логика
+	ErrAlreadyExists = errors.New("already exists")
+	ErrNotFound      = errors.New("not found")
+	ErrInactiveApp   = errors.New("inactive application")
+
+	// Системные
+	ErrDatabaseConnection = errors.New("database connection failed")
+	ErrTimeout            = errors.New("request timeout")
+)
+
+type AppsProvider interface {
+	Create(ctx context.Context, app *app_manager.App) error
+	Get(ctx context.Context, req *app_manager.GetRequest) (*app_manager.App, error)
+	Update(ctx context.Context, app *app_manager.App) error
+	Delete(ctx context.Context, id int32) error
+	List(ctx context.Context, req *app_manager.ListRequest) ([]*app_manager.App, int32, error)
 }
 
 type Service struct {
 	logger   *slog.Logger
-	provider ClientAppsProvider
+	provider AppsProvider
 }
 
-func New(provider ClientAppsProvider, logger *slog.Logger) *Service {
+func New(provider AppsProvider, logger *slog.Logger) *Service {
 	const op = "service.New"
 
 	if logger == nil {

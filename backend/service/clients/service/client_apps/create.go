@@ -28,12 +28,14 @@ func (s *Service) Create(ctx context.Context, req *pb.CreateRequest) (*pb.Client
 		return nil, fmt.Errorf("%s: %w", op, ErrAlreadyExists)
 	}
 
+	now := timestamppb.Now()
+
 	clientApp := &pb.ClientApp{
 		ClientId:  req.ClientId,
 		AppId:     req.AppId,
 		IsActive:  req.GetIsActive(),
-		CreatedAt: timestamppb.Now(),
-		UpdatedAt: timestamppb.Now(),
+		CreatedAt: now,
+		UpdatedAt: now,
 	}
 
 	if err = s.provider.Create(ctx, clientApp); err != nil {

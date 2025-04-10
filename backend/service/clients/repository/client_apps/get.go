@@ -15,13 +15,9 @@ import (
 func (r *Repository) Get(ctx context.Context, clientID string, appID int32) (*pb.ClientApp, error) {
 	const op = "repository.Get"
 	logger := r.logger.With(slog.String("op", op))
-
-	query := `SELECT client_id, app_id, is_active, created_at, updated_at
-		FROM client_apps
-		WHERE client_id = $1 AND app_id = $2`
-
 	var ca pb.ClientApp
 	var createdAt, updatedAt time.Time
+	query := `SELECT client_id, app_id, is_active, created_at, updated_at FROM client_apps WHERE client_id = $1 AND app_id = $2`
 
 	err := r.db.QueryRow(ctx, query, clientID, appID).Scan(&ca.ClientId, &ca.AppId, &ca.IsActive, &createdAt, &updatedAt)
 

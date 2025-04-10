@@ -14,32 +14,33 @@ func (r *Repository) List(ctx context.Context, filter *pb.ListRequest_Filter, li
 	const op = "repository.List"
 	logger := r.logger.With(slog.String("op", op))
 
-	query := `SELECT client_id, app_id, is_active, created_at, updated_at FROM client_apps WHERE 1=1`
-	countQuery := `SELECT COUNT(*)	FROM client_apps WHERE 1=1`
+	baseQuery := `SELECT client_id, app_id, is_active, created_at, updated_at FROM client_apps WHERE 1=1`
 
-	args := []interface{}{}
-	argCounter := 1
+	countQuery := `SELECT COUNT(*) FROM client_apps WHERE 1=1`
+
+	args := make([]interface{}, 0)
+	argCount := 1
 
 	if filter != nil {
-		if filter.ClientId != "" {
-			query += fmt.Sprintf(" AND client_id = $%d", argCounter)
-			countQuery += fmt.Sprintf(" AND client_id = $%d", argCounter)
-			args = append(args, filter.ClientId)
-			argCounter++
+		if filter.ClientId != nil && *filter.ClientId != "" {
+			baseQuery += fmt.Sprintf(" AND client_id = $%d", argCount)
+			countQuery += fmt.Sprintf(" AND client_id = $%d", argCount)
+			args = append(args, *filter.ClientId)
+			argCount++
 		}
 
-		if filter.AppId != 0 {
-			query += fmt.Sprintf(" AND app_id = $%d", argCounter)
-			countQuery += fmt.Sprintf(" AND app_id = $%d", argCounter)
-			args = append(args, filter.AppId)
-			argCounter++
+		if filter.AppId != nil && *filter.AppId > 0 {
+			baseQuery += fmt.Sprintf(" AND app_id = $%d", argCount)
+			countQuery += fmt.Sprintf(" AND app_id = $%d", argCount)
+			args = append(args, *filter.AppId)
+			argCount++
 		}
 
 		if filter.IsActive != nil {
-			query += fmt.Sprintf(" AND is_active = $%d", argCounter)
-			countQuery += fmt.Sprintf(" AND is_active = $%d", argCounter)
-			args = append(args, filter.GetIsActive())
-			argCounter++
+			baseQuery += fmt.Sprintf(" AND is_active = $%d", argCount)
+			countQuery += fmt.Sprintf(" AND is_active = $%d", argCount)
+			args = append(args, *filter.IsActive)
+			argCount++
 		}
 	}
 
@@ -50,21 +51,21 @@ func (r *Repository) List(ctx context.Context, filter *pb.ListRequest_Filter, li
 		return nil, 0, fmt.Errorf("%s: %w", op, ErrInternal)
 	}
 
-	query += " ORDER BY created_at DESC"
-	query += fmt.Sprintf(" LIMIT $%d OFFSET $%d", argCounter, argCounter+1)
+	baseQuery += fmt.Sprintf(" ORDER BY created_at DESC LIMIT $%d OFFSET $%d", argCount, argCount+1)
 	args = append(args, limit, offset)
 
-	rows, err := r.db.Query(ctx, query, args...)
+	rows, err := r.db.Query(ctx, baseQuery, args...)
 	if err != nil {
 		logger.Error("failed to list client apps", sl.Err(err, true))
 		return nil, 0, fmt.Errorf("%s: %w", op, ErrInternal)
 	}
 	defer rows.Close()
 
-	var clientApps []*pb.ClientApp
+	clientApps := make([]*pb.ClientApp, 0)
 	for rows.Next() {
 		var ca pb.ClientApp
 		var createdAt, updatedAt time.Time
+
 		err = rows.Scan(&ca.ClientId, &ca.AppId, &ca.IsActive, &createdAt, &updatedAt)
 
 		if err != nil {
