@@ -1,28 +1,27 @@
 -- +goose Up
 -- +goose StatementBegin
--- Основная таблица арендаторов
-CREATE TABLE tenants (
+CREATE TABLE clients (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(255) NOT NULL,
     description TEXT,
     address JSONB,
-    type_id INT NOT NULL REFERENCES tenant_types(id),
+    type_id INT NOT NULL REFERENCES client_types(id),
     email VARCHAR(320) UNIQUE,
     phone VARCHAR(20),
-    website VARCHAR(2048),
+    website VARCHAR(255),
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP
 );
--- Индексы для tenants
-CREATE INDEX idx_tenants_type ON tenants(type_id);
-CREATE INDEX idx_tenants_email_active ON tenants(email) WHERE deleted_at IS NULL;
-CREATE INDEX idx_tenants_active ON tenants(is_active);
-CREATE INDEX idx_tenants_deleted ON tenants(deleted_at);
+
+CREATE INDEX idx_clients_type ON clients(type_id);
+CREATE INDEX idx_clients_created_at ON clients(created_at);
+CREATE INDEX idx_clients_email_trgm ON clients USING gin(email gin_trgm_ops);
+CREATE INDEX idx_clients_phone_trgm ON clients USING gin(phone gin_trgm_ops);
 -- +goose StatementEnd
 
 -- +goose Down
 -- +goose StatementBegin
-DROP TABLE IF EXISTS tenants;
+DROP TABLE IF EXISTS clients;
 -- +goose StatementEnd

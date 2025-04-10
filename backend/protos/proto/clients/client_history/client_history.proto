@@ -1,0 +1,70 @@
+syntax = "proto3";
+package clients.client_history;
+option go_package = "clients.client_history.v1;client_history";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/field_mask.proto";
+
+service ClientHistoryService {
+  rpc Create(CreateRequest) returns (HistoryEntry);
+  rpc Get(GetRequest) returns (HistoryEntry);
+  rpc List(ListRequest) returns (ListResponse);
+  rpc Update(UpdateRequest) returns (HistoryEntry);
+  rpc Delete(DeleteRequest) returns (DeleteResponse);
+}
+
+message HistoryEntry {
+  int64 id = 1;
+  string client_id = 2;          // UUID клиента (обязательно)
+  string event_type = 3;         // "CREATED", "UPDATED", "DELETED", "CUSTOM"
+  google.protobuf.Struct old_values = 4;  // JSON-данные до изменения
+  google.protobuf.Struct new_values = 5;  // JSON-данные после изменения
+  string changed_by = 6;         // UUID инициатора
+  string comment = 7;            // Опциональный комментарий
+  google.protobuf.Timestamp changed_at = 8;
+}
+
+// Create
+message CreateRequest {
+  string client_id = 1;
+  string event_type = 2;
+  google.protobuf.Struct old_values = 3;
+  google.protobuf.Struct new_values = 4;
+  string changed_by = 5;
+  string comment = 6;
+}
+
+// Read
+message GetRequest {
+  int64 entry_id = 1;
+}
+
+message ListRequest {
+  string client_id = 1;
+  optional string event_type = 2;
+  optional google.protobuf.Timestamp start_date = 3;
+  optional google.protobuf.Timestamp end_date = 4;
+  int32 page = 5;
+  int32 page_size = 6;
+}
+
+message ListResponse {
+  repeated HistoryEntry entries = 1;
+  int32 total_count = 2;
+}
+
+// Update
+message UpdateRequest {
+  HistoryEntry entry = 1;
+  google.protobuf.FieldMask update_mask = 2;
+}
+
+// Delete
+message DeleteRequest {
+  int64 entry_id = 1;
+}
+
+message DeleteResponse {
+  bool success = 1;
+}

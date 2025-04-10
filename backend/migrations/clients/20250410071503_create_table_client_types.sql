@@ -1,16 +1,17 @@
 -- +goose Up
 -- +goose StatementBegin
-CREATE TABLE tenant_apps (
-    tenant_id UUID NOT NULL REFERENCES tenants(id),
-    app_id INT NOT NULL REFERENCES apps(id),
-    is_active BOOLEAN DEFAULT TRUE,
+CREATE TABLE client_types (
+    id SERIAL PRIMARY KEY,
+    code VARCHAR(50) UNIQUE NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (tenant_id, app_id)
+    deleted_at TIMESTAMP
 );
 -- +goose StatementEnd
 
 -- +goose Down
 -- +goose StatementBegin
-DROP TABLE IF EXISTS tenant_apps;
+DROP TABLE IF EXISTS client_types;
 -- +goose StatementEnd

@@ -1,53 +1,72 @@
 syntax = "proto3";
-package sso.user_role;
-option go_package = "sso.user_role.v1;user_role";
+package sso.user_roles;
+option go_package = "sso.user_roles.v1;user_roles";
 
 import "google/protobuf/timestamp.proto";
 
 service UserRoleService {
-  rpc AssignRoleToUser (UserRoleRequest) returns (UserRoleResponse);
-  rpc RevokeRoleFromUser (UserRoleRequest) returns (OperationResponse);
-  rpc ListUserRoles (ListUserRolesRequest) returns (ListUserRolesResponse);
+  rpc AssignRole(AssignRequest) returns (UserRoleResponse);
+  rpc RevokeRole(RevokeRequest) returns (OperationResponse);
+  rpc ListRoles(ListRequest) returns (ListResponse);
 }
 
-message UserRoleRequest {
-  string tenant_id = 1;            // Обязательный tenant
+// Запрос на назначение роли
+message AssignRequest {
+  string client_id = 1;            // Соответствует полю client_id в БД
+  string user_id = 2;              // UUID пользователя
+  string role_id = 3;              // UUID роли
+  string assigned_by = 4;          // UUID администратора, назначившего роль
+  optional google.protobuf.Timestamp expires_at = 5; // Опциональное время истечения
+}
+
+// Запрос на отзыв роли
+message RevokeRequest {
+  string client_id = 1;
   string user_id = 2;
   string role_id = 3;
-  optional google.protobuf.Timestamp expires_at = 4; // Опциональное время истечения
+  string revoked_by = 4;           // UUID администратора, отозвавшего роль
 }
 
-message UserRoleResponse {
-  bool success = 1;
-  google.protobuf.Timestamp created_at = 2;
-  optional google.protobuf.Timestamp expires_at = 3;
-  string message = 4;
-}
-
+// Общий ответ для операций
 message OperationResponse {
   bool success = 1;
-  string message = 2;
+  google.protobuf.Timestamp timestamp = 2;
+  string message = 3;              // Детализация ошибки при success=false
 }
 
-message ListUserRolesRequest {
-  string tenant_id = 1;            // Обязательный фильтр
-  string user_id = 2;
-  int32 page = 3;                  // Номер страницы (начиная с 1)
-  int32 page_size = 4;             // Количество элементов (1-100)
-  bool include_expired = 5;        // Включать истекшие
+// Ответ с данными о назначении
+message UserRoleResponse {
+  string assignment_id = 1;        // UUID назначения (опционально)
+  google.protobuf.Timestamp created_at = 2;
+  optional google.protobuf.Timestamp expires_at = 3;
+  string assigned_by = 4;          // UUID назначившего
 }
 
-message ListUserRolesResponse {
-  message UserRole {
+// Запрос списка ролей
+message ListRequest {
+  string client_id = 1;            // Обязательный контекст
+  string user_id = 2;              // Фильтр по конкретному пользователю
+  int32 page = 3;                  // Начинается с 1 (default: 1)
+  int32 count = 4;                 // 1-200 элементов (default: 50)
+  bool include_expired = 5;        // Включать истекшие назначения
+  bool include_deleted = 6;        // Включать удаленные роли
+}
+
+// Ответ со списком ролей
+message ListResponse {
+  message RoleAssignment {
     string role_id = 1;
-    string role_name = 2;          // Денормализованное имя роли
-    google.protobuf.Timestamp created_at = 3;
-    optional google.protobuf.Timestamp expires_at = 4;
-    string assigned_by = 5;        // UUID назначившего
+    string role_name = 2;          // Актуальное имя роли из таблицы roles
+    string role_description = 3;   // Описание роли
+    google.protobuf.Timestamp assigned_at = 4;
+    optional google.protobuf.Timestamp expires_at = 5;
+    string assigned_by = 6;        // UUID назначившего
+    bool is_active = 7;             // Рассчитанное поле (expires_at > now)
   }
 
-  repeated UserRole roles = 1;
-  int32 total_count = 2;
-  int32 page = 3;
-  int32 page_size = 4;
+  repeated RoleAssignment roles = 1;
+  int32 total_count = 2;           // Всего назначений (без учета пагинации)
+  int32 current_page = 3;
+  int32 items_per_page = 4;        // Синхронизировано с count из запроса
+  bool has_more = 5;               // Признак наличия следующих страниц
 }

@@ -3,7 +3,7 @@
 -- Роли с поддержкой иерархии и кастомных прав
 CREATE TABLE roles (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    tenant_id UUID NOT NULL, -- Ссылка на внешнюю БД
+    client_id UUID NOT NULL, -- Ссылка на внешнюю БД
     name VARCHAR(50) NOT NULL,
     description TEXT,
     level INT DEFAULT 0,
@@ -13,7 +13,7 @@ CREATE TABLE roles (
     deleted_at TIMESTAMP
 );
 -- Индекс для поиска по tenant
-CREATE INDEX idx_roles_tenant ON roles(tenant_id);
+CREATE INDEX idx_roles_client ON roles(client_id);
 -- +goose StatementEnd
 
 -- +goose Down

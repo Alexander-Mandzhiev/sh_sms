@@ -1,0 +1,72 @@
+syntax = "proto3";
+package clients.client_contacts;
+option go_package = "clients.client_contacts.v1;client_contacts";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+service ClientContactService {
+  rpc CreateContact(CreateRequest) returns (Contact);
+  rpc GetContact(GetRequest) returns (Contact);
+  rpc UpdateContact(UpdateRequest) returns (Contact);
+  rpc DeleteContact(DeleteRequest) returns (DeleteResponse);
+  rpc ListContacts(ListRequest) returns (ListResponse);
+}
+
+message Contact {
+  string id = 1; // UUID
+  string client_id = 2; // UUID клиента
+  string full_name = 3;
+  string position = 4;
+  string email = 5;
+  string phone = 6;
+  bool is_primary = 7;
+  google.protobuf.Timestamp created_at = 8;
+  google.protobuf.Timestamp updated_at = 9;
+  google.protobuf.Timestamp deleted_at = 10;
+}
+
+// Create
+message CreateRequest {
+  string client_id = 1; // Обязательное поле
+  string full_name = 2; // Обязательное поле
+  string position = 3;
+  string email = 4;
+  string phone = 5;
+  bool is_primary = 6; // default: false
+}
+
+// Get
+message GetRequest {
+  string id = 1; // UUID контакта
+}
+
+// Update
+message UpdateRequest {
+  Contact contact = 1;
+  google.protobuf.FieldMask update_mask = 2;
+}
+
+// Delete
+message DeleteRequest {
+  string id = 1; // UUID контакта
+}
+
+message DeleteResponse {
+  bool success = 1;
+}
+
+// List
+message ListRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+  string client_id = 3; // Фильтр по клиенту
+  optional bool is_primary = 4; // Фильтр по основному контакту
+  optional string search = 5; // Поиск по full_name/email/phone
+  optional bool with_deleted = 6; // Показывать удаленные
+}
+
+message ListResponse {
+  repeated Contact contacts = 1;
+  int32 total_count = 2;
+}

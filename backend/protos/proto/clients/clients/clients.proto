@@ -1,0 +1,86 @@
+syntax = "proto3";
+package clients;
+option go_package = "clients.v1;clients";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+service ClientService {
+  rpc CreateClient(CreateRequest) returns (Client);
+  rpc GetClient(GetRequest) returns (Client);
+  rpc UpdateClient(UpdateRequest) returns (Client);
+  rpc DeleteClient(DeleteRequest) returns (DeleteResponse);
+  rpc ListClients(ListRequest) returns (ListResponse);
+}
+
+message Client {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  Address address = 4;
+  int32 type_id = 5;
+  string email = 6;
+  string phone = 7;
+  string website = 8;
+  bool is_active = 9;
+  google.protobuf.Timestamp created_at = 10;
+  google.protobuf.Timestamp updated_at = 11;
+  google.protobuf.Timestamp deleted_at = 12;
+}
+
+message Address {
+  string country = 1;
+  string region = 2;
+  string city = 3;
+  string district = 4;
+  string micro_district = 5;
+  string street = 6;
+  string house_number = 7;
+  string apartment = 8;
+  string postal_code = 9;
+}
+
+message CreateRequest {
+  string name = 1;
+  string description = 2;
+  Address address = 3;
+  int32 type_id = 4;
+  string email = 5;
+  string phone = 6;
+  string website = 7;
+  bool is_active = 8;
+}
+
+message GetRequest {
+  string id = 1;
+}
+
+message UpdateRequest {
+  Client client = 1;
+  google.protobuf.FieldMask update_mask = 2;
+}
+
+message DeleteRequest {
+  string id = 1;
+}
+
+message DeleteResponse {
+  bool success = 1;
+}
+
+message ListRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+  string search = 3;
+  int32 type_id = 4;
+  bool is_active = 5;
+  google.protobuf.Timestamp created_after = 6;
+  google.protobuf.Timestamp updated_after = 7;
+  bool with_deleted = 8;
+  string order_by = 9;
+}
+
+message ListResponse {
+  repeated Client clients = 1;
+  int32 total_count = 2;
+}

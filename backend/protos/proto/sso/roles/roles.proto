@@ -5,51 +5,52 @@ option go_package = "sso.roles.v1;roles";
 import "google/protobuf/timestamp.proto";
 
 service RoleService {
-  rpc CreateRole (CreateRequest) returns (Role);
-  rpc GetRole (GetRequest) returns (Role);
-  rpc UpdateRole (UpdateRequest) returns (Role);
-  rpc DeleteRole (DeleteRequest) returns (DeleteResponse);
-  rpc ListRoles (ListRequest) returns (ListResponse);
+  rpc Create(CreateRequest) returns (Role);
+  rpc Get(GetRequest) returns (Role);
+  rpc Update(UpdateRequest) returns (Role);
+  rpc Delete(DeleteRequest) returns (DeleteResponse);
+  rpc List(ListRequest) returns (ListResponse);
 }
 
 message Role {
-  string id = 1;                    // UUID роли
-  string tenant_id = 2;             // UUID арендатора (обязательно)
+  string id = 1;
+  string client_id = 2;            // Соответствует полю client_id в БД
   string name = 3;
   string description = 4;
-  int32 level = 5;                  // Default: 0
-  bool is_custom = 6;               // Default: false
-  string created_by = 7;            // UUID создателя
+  int32 level = 5;                 // Default: 0 (совпадает с DEFAULT в БД)
+  bool is_custom = 6;              // Default: false
+  optional string created_by = 7;  // Может быть NULL в БД
   google.protobuf.Timestamp created_at = 8;
   optional google.protobuf.Timestamp deleted_at = 9;
 }
 
 message CreateRequest {
-  string tenant_id = 1;             // Обязательный tenant
+  string client_id = 1;            // Переименовано tenant_id → client_id
   string name = 2;
   optional string description = 3;
-  optional int32 level = 4;         // Default: 0
-  optional bool is_custom = 5;      // Default: false
-  string created_by = 6;            // UUID пользователя
+  optional int32 level = 4;        // Default: 0
+  optional bool is_custom = 5;     // Default: false
+  optional string created_by = 6;  // Сделано опциональным
 }
 
 message GetRequest {
-  string tenant_id = 1;             // Контекст арендатора
-  string id = 2;                    // UUID роли
+  string client_id = 1;            // Обязательный контекст
+  string id = 2;
+  bool include_deleted = 3;        // Добавлен флаг для удаленных
 }
 
 message UpdateRequest {
   string id = 1;
-  string tenant_id = 2;             // Для верификации принадлежности
+  string client_id = 2;            // Для проверки принадлежности
   optional string name = 3;
   optional string description = 4;
-  optional int32 level = 5;
-  optional bool is_custom = 6;
+  optional int32 level = 5;        // Ограничения уровня должны быть в бизнес-логике
+  optional bool is_custom = 6;     // Изменение типа роли
 }
 
 message DeleteRequest {
   string id = 1;
-  string tenant_id = 2;             // Подтверждение контекста
+  string client_id = 2;            // Контроль принадлежности
 }
 
 message DeleteResponse {
@@ -58,15 +59,16 @@ message DeleteResponse {
 }
 
 message ListRequest {
-  string tenant_id = 1;             // Обязательный фильтр
-  int32 page = 2;                   // Номер страницы (начиная с 1)
-  int32 page_size = 3;              // Количество элементов (1-100)
-  bool include_deleted = 4;         // Включать удаленные
+  string client_id = 1;            // Обязательный фильтр
+  int32 page = 2;
+  int32 count = 3;             // Рекомендуется добавить валидацию (1-100)
+  bool include_deleted = 4;
+  bool include_permissions = 5;    // Новая опция для включения прав
 }
 
 message ListResponse {
   repeated Role roles = 1;
-  int32 total_count = 2;            // Общее количество
+  int32 total_count = 2;
   int32 page = 3;
-  int32 page_size = 4;
+  int32 count = 4;
 }

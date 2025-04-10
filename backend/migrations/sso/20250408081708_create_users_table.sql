@@ -3,7 +3,7 @@
 -- Таблица пользователей
 CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    tenant_id UUID NOT NULL,
+    client_id UUID NOT NULL,
     email VARCHAR(255) NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     full_name VARCHAR(255),
@@ -18,7 +18,7 @@ CREATE INDEX idx_users_phone ON users(phone);
 CREATE INDEX idx_users_deleted ON users(deleted_at);
 
 -- Составной индекс для уникальности email в рамках tenant
-CREATE UNIQUE INDEX idx_users_email_tenant ON users(tenant_id, email) WHERE deleted_at IS NULL;
+CREATE UNIQUE INDEX idx_users_email_client ON users(client_id, email) WHERE deleted_at IS NULL;
 
 -- +goose StatementEnd
 
