@@ -1,25 +1,4 @@
 services:
-  apps_db:
-    container_name: apps_database
-    image: postgres
-    environment:
-      POSTGRES_DB: ${APPS_DB_NAME}
-      POSTGRES_USER: ${APPS_DB_USER}
-      POSTGRES_PASSWORD: ${APPS_DB_PASSWORD}
-    volumes:
-      - apps_init:/docker-entrypoint-initdb.d
-      - apps_data:/var/lib/postgresql/data
-    ports:
-      - "5435:5432"
-    networks:
-      - sh-sms-network
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U apps_user -d apps"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-
   sso_db:
     container_name: sso_database
     image: postgres
@@ -31,12 +10,54 @@ services:
       - auth_init:/docker-entrypoint-initdb.d
       - auth_data:/var/lib/postgresql/data
     ports:
-      - "5434:5432"
+      - "5433:5432"
     networks:
       - sh-sms-network
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U auth_user -d auth"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  apps_db:
+    container_name: apps_database
+    image: postgres
+    environment:
+      POSTGRES_DB: ${APPS_DB_NAME}
+      POSTGRES_USER: ${APPS_DB_USER}
+      POSTGRES_PASSWORD: ${APPS_DB_PASSWORD}
+    volumes:
+      - apps_init:/docker-entrypoint-initdb.d
+      - apps_data:/var/lib/postgresql/data
+    ports:
+      - "5434:5432"
+    networks:
+      - sh-sms-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U apps_user -d apps"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  client_db:
+    container_name: sso_database
+    image: postgres
+    environment:
+      POSTGRES_DB: ${SSO_DB_NAME}
+      POSTGRES_USER: ${SSO_DB_USER}
+      POSTGRES_PASSWORD: ${SSO_DB_PASSWORD}
+    volumes:
+      - auth_init:/docker-entrypoint-initdb.d
+      - auth_data:/var/lib/postgresql/data
+    ports:
+      - "5435:5432"
+    networks:
+      - sh-sms-network
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U auth_user -d auth" ]
       interval: 5s
       timeout: 5s
       retries: 5

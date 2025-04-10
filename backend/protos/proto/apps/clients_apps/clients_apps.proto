@@ -1,0 +1,74 @@
+syntax = "proto3";
+
+package apps.client_apps;
+option go_package = "apps.client_apps.v1;client_apps";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+service ClientsAppService {
+  rpc Create(CreateRequest) returns (ClientApp);
+  rpc Get(GetRequest) returns (ClientApp);
+  rpc Update(UpdateRequest) returns (ClientApp);
+  rpc Delete(DeleteRequest) returns (DeleteResponse);
+  rpc List(ListRequest) returns (ListResponse);
+}
+
+message ClientApp {
+  string client_id = 1;       // UUID формата (обязательно)
+  int32 app_id = 2;           // Положительное целое (существующий apps.id)
+  bool is_active = 3;
+  google.protobuf.Timestamp created_at = 4; // Автоматически генерируется
+  google.protobuf.Timestamp updated_at = 5; // Автоматически обновляется
+}
+
+// Create
+message CreateRequest {
+  string client_id = 1;      // UUID, обязательное
+  int32 app_id = 2;          // > 0, обязательное
+  optional bool is_active = 3; // Дефолт: true
+}
+
+// Read
+message GetRequest {
+  string client_id = 1;      // UUID, обязательное
+  int32 app_id = 2;          // > 0, обязательное
+}
+
+// Update
+message UpdateRequest {
+  string client_id = 1;      // UUID, обязательное
+  int32 app_id = 2;          // > 0, обязательное
+  optional bool is_active = 3;
+  google.protobuf.FieldMask update_mask = 4; // Допустимые поля: "is_active"
+}
+
+// Delete
+message DeleteRequest {
+  string client_id = 1;      // UUID, обязательное
+  int32 app_id = 2;          // > 0, обязательное
+}
+
+message DeleteResponse {
+  bool success = 1;
+}
+
+// List
+message ListRequest {
+  message Filter {
+    optional string client_id = 1; // UUID
+    optional int32 app_id = 2;     // > 0
+    optional bool is_active = 3;
+  }
+
+  int32 page = 1;     // >= 1
+  int32 count = 2;    // 1-100
+  Filter filter = 3;
+}
+
+message ListResponse {
+  repeated ClientApp client_apps = 1;
+  int32 total_count = 2;
+  int32 page = 3;
+  int32 count = 4;
+}

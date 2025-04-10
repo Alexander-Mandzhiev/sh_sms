@@ -10,7 +10,7 @@ service AppService {
   rpc Create(CreateRequest) returns (App);
   rpc Get(GetRequest) returns (App);
   rpc Update(UpdateRequest) returns (App);
-  rpc Delete(DeleteAppRequest) returns (DeleteAppResponse);
+  rpc Delete(DeleteRequest) returns (DeleteResponse);
   rpc List(ListRequest) returns (ListResponse);
 }
 
@@ -50,21 +50,21 @@ message UpdateRequest {
 }
 
 // Delete
-message DeleteAppRequest {
+message DeleteRequest {
   oneof identifier {
     int32 id = 1;
     string code = 2;
   }
 }
 
-message DeleteAppResponse {
+message DeleteResponse {
   bool success = 1;
 }
 
 // List
 message ListRequest {
   int32 page = 1;
-  int32 page_size = 2;
+  int32 count = 2;
   optional bool filter_is_active = 3;
 }
 
@@ -72,5 +72,5 @@ message ListResponse {
   repeated App apps = 1;
   int32 total_count = 2;
   int32 page = 3;
-  int32 page_size = 4;
+  int32 count = 4;
 }
