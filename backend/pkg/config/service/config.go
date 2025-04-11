@@ -137,13 +137,11 @@ func logConfig(cfg *Config) {
 	logCfg := *cfg
 	logCfg.DBConfig.Postgres.ConnectionString = maskPassword(logCfg.DBConfig.Postgres.ConnectionString)
 
-	configDump, err := yaml.Marshal(logCfg)
+	_, err := yaml.Marshal(logCfg)
 	if err != nil {
 		log.Printf("Failed to marshal config for logging: %v", err)
 		return
 	}
-
-	log.Printf("Loaded configuration:\n%s", string(configDump))
 }
 
 func maskPassword(dsn string) string {

@@ -1,5 +1,5 @@
 services:
-  sso_db:
+  sso_database:
     container_name: sso_database
     image: postgres
     environment:
@@ -7,8 +7,8 @@ services:
       POSTGRES_USER: ${SSO_DB_USER}
       POSTGRES_PASSWORD: ${SSO_DB_PASSWORD}
     volumes:
-      - auth_init:/docker-entrypoint-initdb.d
-      - auth_data:/var/lib/postgresql/data
+      - sso_init:/docker-entrypoint-initdb.d
+      - sso_data:/var/lib/postgresql/data
     ports:
       - "5433:5432"
     networks:
@@ -20,7 +20,7 @@ services:
       timeout: 5s
       retries: 5
 
-  apps_db:
+  apps_database:
     container_name: apps_database
     image: postgres
     environment:
@@ -41,16 +41,16 @@ services:
       timeout: 5s
       retries: 5
 
-  client_db:
-    container_name: sso_database
+  client_database:
+    container_name: client_database
     image: postgres
     environment:
-      POSTGRES_DB: ${SSO_DB_NAME}
-      POSTGRES_USER: ${SSO_DB_USER}
-      POSTGRES_PASSWORD: ${SSO_DB_PASSWORD}
+      POSTGRES_DB: ${CLIENTS_DB_NAME}
+      POSTGRES_USER: ${CLIENTS_DB_USER}
+      POSTGRES_PASSWORD: ${CLIENTS_DB_PASSWORD}
     volumes:
-      - auth_init:/docker-entrypoint-initdb.d
-      - auth_data:/var/lib/postgresql/data
+      - clients_init:/docker-entrypoint-initdb.d
+      - clients_data:/var/lib/postgresql/data
     ports:
       - "5435:5432"
     networks:
@@ -75,8 +75,9 @@ services:
     networks:
       - sh-sms-network
     depends_on:
-      - apps_db
-      - sso_db
+      - sso_database
+      - apps_database
+      - client_database
 
   grafana:
     image: grafana/grafana
@@ -97,10 +98,10 @@ services:
 volumes:
   apps_init:
   apps_data:
-  auth_init:
-  auth_data:
-  users_init:
-  users_data:
+  sso_init:
+  sso_data:
+  clients_init:
+  clients_data:
   media-data:
   grafana-storage:
 
