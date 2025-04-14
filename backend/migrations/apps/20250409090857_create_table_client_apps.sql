@@ -6,7 +6,8 @@ CREATE TABLE client_apps (
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (client_id, app_id)
+    PRIMARY KEY (client_id, app_id),
+    FOREIGN KEY (app_id) REFERENCES apps(id)
 );
 
 CREATE INDEX idx_client_apps_client ON client_apps(client_id);

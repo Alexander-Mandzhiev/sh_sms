@@ -16,11 +16,18 @@ var (
 )
 
 type ClientAppsProvider interface {
-	Create(ctx context.Context, clientApp *pb.ClientApp) error
-	Get(ctx context.Context, clientID string, appID int32) (*pb.ClientApp, error)
-	Update(ctx context.Context, clientApp *pb.ClientApp) error
-	Delete(ctx context.Context, clientID string, appID int32) error
-	List(ctx context.Context, filter *pb.ListRequest_Filter, limit, offset int32) ([]*pb.ClientApp, int32, error)
+	Create(ctx context.Context, clientID string, appID int, isActive bool) (*pb.ClientApp, error)
+	Get(ctx context.Context, clientID string, appID int) (*pb.ClientApp, error)
+	Update(ctx context.Context, clientID string, appID int, isActive bool) (*pb.ClientApp, error)
+	Delete(ctx context.Context, clientID string, appID int) error
+	List(ctx context.Context, filter Filter, page, count int) ([]*pb.ClientApp, int, error)
+}
+
+// Filter содержит параметры фильтрации для List
+type Filter struct {
+	ClientID string
+	AppID    int
+	IsActive *bool
 }
 
 type Service struct {

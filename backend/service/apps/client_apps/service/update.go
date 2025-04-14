@@ -6,41 +6,34 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/google/uuid"
-	"google.golang.org/protobuf/types/known/timestamppb"
 	"log/slog"
 )
 
 func (s *Service) Update(ctx context.Context, req *pb.UpdateRequest) (*pb.ClientApp, error) {
 	const op = "service.Update"
 	logger := s.logger.With(slog.String("op", op))
-	if _, err := uuid.Parse(req.ClientId); err != nil {
-		return nil, fmt.Errorf("%s: %w: invalid client_id", op, ErrInvalidArgument)
+
+	if err := validateClientID(req.ClientId); err != nil {
+		logger.Warn("invalid client_id", slog.String("client_id", req.ClientId), sl.Err(err, false))
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+	if err := validateAppID(req.AppId); err != nil {
+		logger.Warn("invalid app_id", slog.Int("app_id", int(req.AppId)), sl.Err(err, false))
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+	if req.IsActive == nil {
+		logger.Warn("missing is_active field")
+		return nil, fmt.Errorf("%s: %w", op, ErrInvalidArgument)
 	}
 
-	if req.AppId <= 0 {
-		return nil, fmt.Errorf("%s: %w: invalid app_id", op, ErrInvalidArgument)
-	}
-
-	existing, err := s.provider.Get(ctx, req.ClientId, req.AppId)
+	updatedApp, err := s.provider.Update(ctx, req.ClientId, int(req.AppId), *req.IsActive)
 	if err != nil {
+		logger.Error("update failed", slog.Any("error", err))
 		if errors.Is(err, ErrNotFound) {
 			return nil, fmt.Errorf("%s: %w", op, ErrNotFound)
 		}
-		logger.Error("failed to get existing record", sl.Err(err, true))
 		return nil, fmt.Errorf("%s: %w", op, ErrInternal)
 	}
 
-	if req.IsActive != nil {
-		existing.IsActive = req.GetIsActive()
-	}
-
-	existing.UpdatedAt = timestamppb.Now()
-	if err = s.provider.Update(ctx, existing); err != nil {
-		logger.Error("failed to update client app", sl.Err(err, true))
-		return nil, fmt.Errorf("%s: %w", op, ErrInternal)
-	}
-
-	logger.Info("client app updated successfully")
-	return existing, nil
+	return updatedApp, nil
 }

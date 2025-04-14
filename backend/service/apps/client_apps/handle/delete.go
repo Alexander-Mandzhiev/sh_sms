@@ -1,7 +1,6 @@
 package handle
 
 import (
-	sl "backend/pkg/logger"
 	pb "backend/protos/gen/go/apps/clients_apps"
 	"context"
 	"log/slog"
@@ -12,10 +11,16 @@ func (s *serverAPI) Delete(ctx context.Context, req *pb.DeleteRequest) (*pb.Dele
 	logger := s.logger.With(slog.String("op", op))
 	logger.Debug("starting operation", slog.Any("request", req))
 
+	if err := validateClientID(req.ClientId); err != nil {
+		return nil, err
+	}
+	if err := validateAppID(req.AppId); err != nil {
+		return nil, err
+	}
+
 	resp, err := s.service.Delete(ctx, req)
 	if err != nil {
-		logger.Error("operation failed", sl.Err(err, true))
-		return nil, convertError(err)
+		return nil, s.handleError(op, err)
 	}
 
 	logger.Info("operation completed successfully")

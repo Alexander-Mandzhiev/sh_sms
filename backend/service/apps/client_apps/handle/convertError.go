@@ -1,7 +1,7 @@
 package handle
 
 import (
-	service "backend/service/clients/service/client_apps"
+	"backend/service/apps/client_apps/service"
 	"errors"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

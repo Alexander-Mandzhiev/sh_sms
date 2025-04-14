@@ -4,7 +4,6 @@ package apps.client_apps;
 option go_package = "apps.client_apps.v1;client_apps";
 
 import "google/protobuf/timestamp.proto";
-import "google/protobuf/field_mask.proto";
 
 service ClientsAppService {
   rpc Create(CreateRequest) returns (ClientApp);
@@ -15,38 +14,37 @@ service ClientsAppService {
 }
 
 message ClientApp {
-  string client_id = 1;       // UUID формата (обязательно)
-  int32 app_id = 2;           // Положительное целое (существующий apps.id)
+  string client_id = 1;
+  int32 app_id = 2;
   bool is_active = 3;
-  google.protobuf.Timestamp created_at = 4; // Автоматически генерируется
-  google.protobuf.Timestamp updated_at = 5; // Автоматически обновляется
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp updated_at = 5;
 }
 
 // Create
 message CreateRequest {
-  string client_id = 1;      // UUID, обязательное
-  int32 app_id = 2;          // > 0, обязательное
-  optional bool is_active = 3; // Дефолт: true
+  string client_id = 1;
+  int32 app_id = 2;
+  optional bool is_active = 3;
 }
 
 // Read
 message GetRequest {
-  string client_id = 1;      // UUID, обязательное
-  int32 app_id = 2;          // > 0, обязательное
+  string client_id = 1;
+  int32 app_id = 2;
 }
 
 // Update
 message UpdateRequest {
-  string client_id = 1;      // UUID, обязательное
-  int32 app_id = 2;          // > 0, обязательное
+  string client_id = 1;
+  int32 app_id = 2;
   optional bool is_active = 3;
-  google.protobuf.FieldMask update_mask = 4; // Допустимые поля: "is_active"
 }
 
 // Delete
 message DeleteRequest {
-  string client_id = 1;      // UUID, обязательное
-  int32 app_id = 2;          // > 0, обязательное
+  string client_id = 1;
+  int32 app_id = 2;
 }
 
 message DeleteResponse {
@@ -55,15 +53,11 @@ message DeleteResponse {
 
 // List
 message ListRequest {
-  message Filter {
-    optional string client_id = 1; // UUID
-    optional int32 app_id = 2;     // > 0
-    optional bool is_active = 3;
-  }
-
-  int32 page = 1;     // >= 1
-  int32 count = 2;    // 1-100
-  Filter filter = 3;
+  int32 page = 1;
+  int32 count = 2;
+  optional string client_id = 3;
+  optional int32 app_id = 4;
+  optional bool is_active = 5;
 }
 
 message ListResponse {

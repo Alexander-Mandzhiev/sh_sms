@@ -24,3 +24,8 @@ type serverAPI struct {
 func Register(gRPCServer *grpc.Server, service ClientAppsService, logger *slog.Logger) {
 	pb.RegisterClientsAppServiceServer(gRPCServer, &serverAPI{service: service, logger: logger})
 }
+
+func (s *serverAPI) handleError(op string, err error) error {
+	s.logger.Error("operation failed", slog.String("op", op), slog.Any("error", err))
+	return convertError(err)
+}

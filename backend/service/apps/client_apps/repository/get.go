@@ -12,25 +12,28 @@ import (
 	"time"
 )
 
-func (r *Repository) Get(ctx context.Context, clientID string, appID int32) (*pb.ClientApp, error) {
+func (r *Repository) Get(ctx context.Context, clientID string, appID int) (*pb.ClientApp, error) {
 	const op = "repository.Get"
 	logger := r.logger.With(slog.String("op", op))
-	var ca pb.ClientApp
-	var createdAt, updatedAt time.Time
 	query := `SELECT client_id, app_id, is_active, created_at, updated_at FROM client_apps WHERE client_id = $1 AND app_id = $2`
 
-	err := r.db.QueryRow(ctx, query, clientID, appID).Scan(&ca.ClientId, &ca.AppId, &ca.IsActive, &createdAt, &updatedAt)
+	var app pb.ClientApp
+	var createdAt, updatedAt time.Time
+
+	err := r.db.QueryRow(ctx, query, clientID, appID).Scan(&app.ClientId, &app.AppId, &app.IsActive, &createdAt, &updatedAt)
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, ErrNotFound
+			logger.Warn("client app not found", slog.String("client_id", clientID), slog.Int("app_id", appID))
+			return nil, fmt.Errorf("%s: %w", op, ErrNotFound)
 		}
-		logger.Error("failed to get client app", sl.Err(err, true))
+		logger.Error("failed to get client app", sl.Err(err, false))
 		return nil, fmt.Errorf("%s: %w", op, ErrInternal)
 	}
 
-	ca.CreatedAt = timestamppb.New(createdAt)
-	ca.UpdatedAt = timestamppb.New(updatedAt)
+	app.CreatedAt = timestamppb.New(createdAt)
+	app.UpdatedAt = timestamppb.New(updatedAt)
 
-	return &ca, nil
+	logger.Debug("client app retrieved", slog.String("client_id", clientID), slog.Int("app_id", appID))
+	return &app, nil
 }

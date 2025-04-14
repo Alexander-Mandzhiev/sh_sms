@@ -9,6 +9,7 @@ CREATE TABLE secret_rotation_history (
     new_secret VARCHAR(512) NOT NULL,
     rotated_by UUID,
     rotated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (client_id, app_id, secret_type),
     FOREIGN KEY (app_id) REFERENCES apps(id)
 );
 

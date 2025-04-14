@@ -34,8 +34,14 @@ gRPC сервис для управления приложениями. Обес
   "name": "School Management",
   "description": "Система управления учебным процессом",
   "is_active": true,
-  "created_at": "2024-02-25T10:00:00Z",
-  "updated_at": "2024-02-25T10:00:00Z"
+  "created_at": {
+    "seconds": "1744618602",
+    "nanos": 798227000
+  },
+  "updated_at": {
+    "seconds": "1744618776",
+    "nanos": 439292000
+  }
 }
 ```
 2. Получение приложения (Get)
@@ -60,8 +66,14 @@ gRPC сервис для управления приложениями. Обес
   "code": "school_crm",
   "name": "School Management",
   "is_active": true,
-  "created_at": "2024-02-25T10:00:00Z",
-  "updated_at": "2024-02-25T10:00:00Z"
+  "created_at": {
+    "seconds": "1744618602",
+    "nanos": 798227000
+  },
+  "updated_at": {
+    "seconds": "1744618776",
+    "nanos": 439292000
+  }
 }
 ```
 3. Обновление приложения (Update)
@@ -82,8 +94,14 @@ gRPC сервис для управления приложениями. Обес
   "code": "school_crm_v2",
   "name": "School Management Pro",
   "is_active": true,
-  "created_at": "2024-02-25T10:00:00Z",
-  "updated_at": "2024-02-25T11:30:00Z"
+  "created_at": {
+    "seconds": "1744618602",
+    "nanos": 798227000
+  },
+  "updated_at": {
+    "seconds": "1744618776",
+    "nanos": 439292000
+  }
 }
 ```
 4. Удаление приложения (Delete)
@@ -121,16 +139,28 @@ gRPC сервис для управления приложениями. Обес
       "code": "school_crm",
       "name": "School Management",
       "is_active": true,
-      "created_at": "2024-02-25T10:00:00Z",
-      "updated_at": "2024-02-25T10:00:00Z"
+      "created_at": {
+        "seconds": "1744618602",
+        "nanos": 798227000
+      },
+      "updated_at": {
+        "seconds": "1744618776",
+        "nanos": 439292000
+      }
     },
     {
       "id": 2,
       "code": "hospital_crm",
       "name": "Hospital Management",
       "is_active": true,
-      "created_at": "2024-02-25T11:00:00Z",
-      "updated_at": "2024-02-25T11:00:00Z"
+      "created_at": {
+        "seconds": "1744618602",
+        "nanos": 798227000
+      },
+      "updated_at": {
+        "seconds": "1744618776",
+        "nanos": 439292000
+      }
     }
   ],
   "total_count": 5,
@@ -160,7 +190,7 @@ gRPC сервис для управления приложениями. Обес
 Запуск и тестирование
 Запуск сервиса:
 
-```json
+```bash
 go run cmd/apps/main.go -config-path=config/apps/development.yaml
 ```
 

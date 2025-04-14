@@ -11,22 +11,42 @@ import (
 func (s *Service) List(ctx context.Context, req *pb.ListRequest) (*pb.ListResponse, error) {
 	const op = "service.List"
 	logger := s.logger.With(slog.String("op", op))
-	if req.Page < 1 || req.Count < 1 || req.Count > 100 {
-		return nil, fmt.Errorf("%s: %w: invalid pagination params", op, ErrInvalidArgument)
+
+	if err := validatePagination(req.Page, req.Count); err != nil {
+		logger.Warn("invalid pagination", slog.Int("page", int(req.Page)), slog.Int("count", int(req.Count)), sl.Err(err, false))
+		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	offset := (req.Page - 1) * req.Count
+	if req.ClientId != nil {
+		if err := validateClientID(*req.ClientId); err != nil {
+			logger.Warn("invalid client_id filter", slog.String("client_id", *req.ClientId), sl.Err(err, false))
+			return nil, fmt.Errorf("%s: %w", op, err)
+		}
+	}
 
-	clientApps, total, err := s.provider.List(ctx, req.Filter, req.Count, offset)
+	if req.AppId != nil {
+		if err := validateAppID(*req.AppId); err != nil {
+			logger.Warn("invalid app_id filter", slog.Int("app_id", int(*req.AppId)), sl.Err(err, false))
+			return nil, fmt.Errorf("%s: %w", op, err)
+		}
+	}
+
+	filter := Filter{
+		ClientID: *req.ClientId,
+		AppID:    int(*req.AppId),
+		IsActive: req.IsActive,
+	}
+
+	apps, total, err := s.provider.List(ctx, filter, int(req.Page), int(req.Count))
 	if err != nil {
-		logger.Error("failed to list client apps", sl.Err(err, true))
+		logger.Error("list failed", slog.Any("error", err))
 		return nil, fmt.Errorf("%s: %w", op, ErrInternal)
 	}
 
 	return &pb.ListResponse{
-		ClientApps: clientApps,
-		TotalCount: total,
+		ClientApps: apps,
+		TotalCount: int32(total),
 		Page:       req.Page,
-		Count:      int32(len(clientApps)),
+		Count:      req.Count,
 	}, nil
 }

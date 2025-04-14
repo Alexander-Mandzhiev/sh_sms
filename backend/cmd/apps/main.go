@@ -5,9 +5,13 @@ import (
 	"backend/pkg/dbManager"
 	sl "backend/pkg/logger"
 	"backend/pkg/server/grpc_server"
-	"backend/service/apps/app_manager/handle"
-	"backend/service/apps/app_manager/repository"
-	"backend/service/apps/app_manager/service"
+	handleAppManager "backend/service/apps/app_manager/handle"
+	repoAppManager "backend/service/apps/app_manager/repository"
+	srvAppManager "backend/service/apps/app_manager/service"
+	handleclientApp "backend/service/apps/client_apps/handle"
+	repoClientApps "backend/service/apps/client_apps/repository"
+	srvClientApps "backend/service/apps/client_apps/service"
+
 	"os"
 	"os/signal"
 	"syscall"
@@ -33,21 +37,28 @@ func main() {
 	}()
 
 	// 4. Инициализация репозитория
-	repo, err := repository.New(dbPool, logger)
+	repoAM, err := repoAppManager.New(dbPool, logger)
+	if err != nil {
+		logger.Error("Failed to create repository", sl.Err(err, true))
+		return
+	}
+
+	reposCA, err := repoClientApps.New(dbPool, logger)
 	if err != nil {
 		logger.Error("Failed to create repository", sl.Err(err, true))
 		return
 	}
 
 	// 5. Инициализация сервиса
-	srv := service.New(repo, logger)
+	srvAM := srvAppManager.New(repoAM, logger)
+	srvCA := srvClientApps.New(reposCA, logger)
 
 	// 6. Инициализация gRPC сервера
 	app := grpc_server.New()
 
 	// 7. Регистрация сервиса в gRPC сервере
-	handle.Register(app.GRPCServer, srv, logger)
-
+	handleAppManager.Register(app.GRPCServer, srvAM, logger)
+	handleclientApp.Register(app.GRPCServer, srvCA, logger)
 	// 8. Запуск gRPC сервера
 	go func() {
 		app.MustRun(logger, cfg.GRPCServer.Port)
