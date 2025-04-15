@@ -23,7 +23,6 @@ type ClientAppsProvider interface {
 	List(ctx context.Context, filter Filter, page, count int) ([]*pb.ClientApp, int, error)
 }
 
-// Filter содержит параметры фильтрации для List
 type Filter struct {
 	ClientID string
 	AppID    int

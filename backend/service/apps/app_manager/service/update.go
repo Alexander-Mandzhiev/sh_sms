@@ -1,65 +1,84 @@
 package service
 
 import (
-	pb "backend/protos/gen/go/apps/app_manager"
+	sl "backend/pkg/logger"
+	"backend/service/apps/app_manager/handle"
+	"backend/service/apps/models"
 	"context"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-	"google.golang.org/protobuf/types/known/timestamppb"
+	"errors"
+	"fmt"
 	"log/slog"
 )
 
-func (s *Service) Update(ctx context.Context, req *pb.UpdateRequest) (*pb.App, error) {
-	const op = "service.Update"
-	logger := s.logger.With(slog.String("op", op))
+func (s *Service) Update(ctx context.Context, id int, params models.UpdateApp) (*models.App, error) {
+	const op = "service.AppService.Update"
+	logger := s.logger.With(slog.String("op", op), slog.Int("app_id", id))
 
-	if req.GetId() <= 0 {
-		logger.Error("Invalid ID")
-		return nil, ErrInvalidID
+	if err := validateID(id); err != nil {
+		logger.Warn("Invalid app ID", sl.Err(err, false))
+		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	if req.Name != nil && len(req.GetName()) > 250 {
-		logger.Error("Name exceeds maximum length")
-		return nil, status.Error(codes.InvalidArgument, "name must be ≤ 250 characters")
+	if !params.HasUpdates() {
+		logger.Warn("No fields to update")
+		return nil, fmt.Errorf("%s: %w", op, handle.ErrNoUpdateFields)
 	}
 
-	existingApp, err := s.provider.Get(ctx, &pb.GetRequest{Id: ptrInt32(req.GetId())})
+	if params.Code != nil {
+		if err := validateCode(*params.Code, 50); err != nil {
+			logger.Warn("Invalid code format", sl.Err(err, false))
+			return nil, fmt.Errorf("%s: %w", op, err)
+		}
+	}
+
+	if params.Name != nil {
+		if err := validateName(*params.Name, 250); err != nil {
+			logger.Warn("Invalid name format", sl.Err(err, false))
+			return nil, fmt.Errorf("%s: %w", op, err)
+		}
+	}
+
+	currentApp, err := s.provider.GetByID(ctx, id)
 	if err != nil {
-		logger.Error("Failed to get app", slog.Int("id", int(req.GetId())), slog.Any("error", err))
-		return nil, err
+		if errors.Is(err, handle.ErrNotFound) {
+			logger.Warn("App not found")
+			return nil, fmt.Errorf("%s: %w", op, handle.ErrNotFound)
+		}
+		logger.Error("Failed to get current app", sl.Err(err, true))
+		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	updated := false
-
-	if req.Name != nil && req.GetName() != existingApp.GetName() {
-		existingApp.Name = req.GetName()
-		updated = true
+	updatedApp := mergeAppUpdates(currentApp, params)
+	result, err := s.provider.Update(ctx, updatedApp)
+	if err != nil {
+		if errors.Is(err, handle.ErrVersionConflict) {
+			logger.Warn("Version conflict, retrying...")
+			return s.Update(ctx, id, params)
+		}
+		logger.Error("Update failed", sl.Err(err, true))
+		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	if req.Description != nil && req.GetDescription() != existingApp.GetDescription() {
-		existingApp.Description = req.GetDescription()
-		updated = true
-	}
+	logger.Info("App updated successfully", slog.Int("new_version", result.Version))
+	return result, nil
 
-	if req.IsActive != nil && req.GetIsActive() != existingApp.GetIsActive() {
-		existingApp.IsActive = req.GetIsActive()
-		updated = true
-	}
-
-	if req.Code != nil && req.GetCode() != existingApp.GetCode() {
-		existingApp.Code = req.GetCode()
-		updated = true
-	}
-
-	if !updated {
-		logger.Error("No changes detected")
-		return existingApp, nil
-	}
-
-	existingApp.UpdatedAt = timestamppb.Now()
-	return s.provider.Update(ctx, existingApp)
 }
 
-func ptrInt32(v int32) *int32 {
-	return &v
+func mergeAppUpdates(current *models.App, updates models.UpdateApp) *models.App {
+	updated := *current
+
+	if updates.Code != nil {
+		updated.Code = *updates.Code
+	}
+	if updates.Name != nil {
+		updated.Name = *updates.Name
+	}
+	if updates.Description != nil {
+		updated.Description = *updates.Description
+	}
+	if updates.IsActive != nil {
+		updated.IsActive = *updates.IsActive
+	}
+
+	return &updated
 }

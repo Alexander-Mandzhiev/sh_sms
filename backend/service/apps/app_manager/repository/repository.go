@@ -1,15 +1,9 @@
 package repository
 
 import (
-	"errors"
 	"fmt"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"log/slog"
-)
-
-var (
-	ErrNotFound      = errors.New("application not found")
-	ErrAlreadyExists = errors.New("application already exists")
 )
 
 type Repository struct {

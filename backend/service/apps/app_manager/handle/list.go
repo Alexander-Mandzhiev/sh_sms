@@ -1,29 +1,48 @@
 package handle
 
 import (
+	sl "backend/pkg/logger"
 	pb "backend/protos/gen/go/apps/app_manager"
+	"backend/service/apps/models"
 	"context"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
+	"fmt"
 	"log/slog"
 )
 
 func (s *serverAPI) List(ctx context.Context, req *pb.ListRequest) (*pb.ListResponse, error) {
-	const op = "handler.List"
+	const op = "grpc.handler.List"
 	logger := s.logger.With(slog.String("op", op))
-	logger.Debug("List request received", slog.Int("page", int(req.GetPage())), slog.Int("count", int(req.GetCount())))
+	logger.Debug("List request received", slog.Int64("page", req.GetPage()), slog.Int64("count", req.GetCount()), slog.Any("filter_is_active", req.GetFilterIsActive()))
 
 	if req.GetPage() <= 0 || req.GetCount() <= 0 {
-		logger.Error("Invalid pagination", slog.Int("page", int(req.GetPage())), slog.Int("count", int(req.GetCount())))
-		return nil, status.Error(codes.InvalidArgument, "invalid pagination parameters")
+		err := fmt.Errorf("%w: page=%d count=%d", ErrInvalidPagination, req.GetPage(), req.GetCount())
+		logger.Warn("Invalid pagination parameters", sl.Err(err, false), slog.Int64("page", req.GetPage()), slog.Int64("count", req.GetCount()))
+		return nil, s.convertError(err)
 	}
 
-	res, err := s.service.List(ctx, req)
+	filter := models.ListFilter{
+		Page:         int(req.GetPage()),
+		Count:        int(req.GetCount()),
+		FilterActive: req.FilterIsActive,
+	}
+
+	apps, total, err := s.service.List(ctx, filter)
 	if err != nil {
-		logger.Error("List failed", slog.String("error", err.Error()))
-		return nil, convertError(err)
+		logger.Error("Failed to list apps", sl.Err(err, true), slog.Any("filter", filter))
+		return nil, s.convertError(err)
 	}
 
-	logger.Debug("List results", slog.Int("total", int(res.GetTotalCount())), slog.Int("returned", len(res.GetApps())))
-	return res, nil
+	pbApps := make([]*pb.App, 0, len(apps))
+	for _, app := range apps {
+		pbApps = append(pbApps, s.convertAppToProto(&app))
+	}
+
+	logger.Info("List completed successfully", slog.Int("returned_items", len(pbApps)), slog.Int("total_items", total))
+
+	return &pb.ListResponse{
+		Apps:       pbApps,
+		TotalCount: int32(total),
+		Page:       req.Page,
+		Count:      req.Count,
+	}, nil
 }

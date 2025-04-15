@@ -6,10 +6,12 @@ CREATE TABLE apps (
     name VARCHAR(250) NOT NULL,
     description TEXT,
     is_active BOOLEAN DEFAULT TRUE,
+    version INT DEFAULT 1,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE INDEX idx_apps_active ON apps(is_active);
 -- +goose StatementEnd
 
 -- +goose Down

@@ -1,19 +1,33 @@
 package service
 
 import (
-	pb "backend/protos/gen/go/apps/app_manager"
+	sl "backend/pkg/logger"
+	"backend/service/apps/models"
 	"context"
+	"fmt"
 	"log/slog"
 )
 
-func (s *Service) List(ctx context.Context, req *pb.ListRequest) (*pb.ListResponse, error) {
-	const op = "service.List"
-	logger := s.logger.With(slog.String("op", op))
-
-	if req.GetPage() <= 0 || req.GetCount() <= 0 {
-		logger.Error("Invalid page or count")
-		return nil, ErrInvalidPagination
+func (s *Service) List(ctx context.Context, filter models.ListFilter) ([]models.App, int, error) {
+	const op = "service.AppService.List"
+	logger := s.logger.With(slog.String("op", op), slog.Int("page", filter.Page), slog.Int("count", filter.Count))
+	if err := validatePagination(filter.Page, filter.Count); err != nil {
+		logger.Warn("Invalid pagination parameters", sl.Err(err, false))
+		return nil, 0, fmt.Errorf("%s: %w", op, err)
+	}
+	if filter.FilterActive != nil {
+		logger = logger.With(slog.Bool("filter_active", *filter.FilterActive))
+	}
+	apps, total, err := s.provider.List(ctx, filter)
+	if err != nil {
+		logger.Error("Failed to list applications", sl.Err(err, true), slog.Any("filter", filter))
+		return nil, 0, fmt.Errorf("%s: %w", op, err)
+	}
+	if apps == nil {
+		logger.Warn("Unexpected nil apps list")
+		return make([]models.App, 0), total, nil
 	}
 
-	return s.provider.List(ctx, req)
+	logger.Info("List operation completed", slog.Int("returned", len(apps)), slog.Int("total", total))
+	return apps, total, nil
 }

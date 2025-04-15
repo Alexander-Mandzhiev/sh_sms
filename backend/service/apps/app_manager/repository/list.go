@@ -1,70 +1,65 @@
 package repository
 
 import (
-	pb "backend/protos/gen/go/apps/app_manager"
+	sl "backend/pkg/logger"
+	"backend/service/apps/models"
 	"context"
 	"fmt"
-	"google.golang.org/protobuf/types/known/timestamppb"
 	"log/slog"
-	"strings"
-	"time"
 )
 
-func (r *Repository) List(ctx context.Context, req *pb.ListRequest) (*pb.ListResponse, error) {
-	const op = "repository.List"
-	logger := r.logger.With(slog.String("op", op))
-	baseQuery := "SELECT id, code, name, description, is_active, created_at, updated_at FROM apps"
-	countQuery := "SELECT COUNT(*) FROM apps"
-	where := []string{}
+func (r *Repository) List(ctx context.Context, filter models.ListFilter) ([]models.App, int, error) {
+	const op = "repository.AppRepository.List"
+	logger := r.logger.With(slog.String("op", op), slog.Int("page", filter.Page), slog.Int("count", filter.Count))
+	offset := (filter.Page - 1) * filter.Count
+	baseQuery := `SELECT id, code, name, description, is_active, version, created_at, updated_at FROM apps`
+	countQuery := `SELECT COUNT(*) FROM apps`
+
+	where := ""
 	args := []interface{}{}
+	argCounter := 1
 
-	if req.FilterIsActive != nil {
-		where = append(where, fmt.Sprintf("is_active = $%d", len(args)+1))
-		args = append(args, req.GetFilterIsActive())
+	if filter.FilterActive != nil {
+		where = " WHERE is_active = $1"
+		args = append(args, *filter.FilterActive)
+		argCounter++
 	}
 
-	if len(where) > 0 {
-		clause := " WHERE " + strings.Join(where, " AND ")
-		baseQuery += clause
-		countQuery += clause
-	}
+	dataQuery := fmt.Sprintf(`%s%s ORDER BY id ASC LIMIT $%d OFFSET $%d`, baseQuery, where, argCounter, argCounter+1)
 
-	var total int32
-	err := r.db.QueryRow(ctx, countQuery, args...).Scan(&total)
+	dataArgs := args
+	dataArgs = append(dataArgs, filter.Count, offset)
+
+	rows, err := r.db.Query(ctx, dataQuery, dataArgs...)
 	if err != nil {
-		logger.Error("Failed to count apps", slog.Any("error", err))
-		return nil, fmt.Errorf("%s: %w", op, err)
-	}
-
-	args = append(args, req.GetCount(), (req.GetPage()-1)*req.GetCount())
-	baseQuery += fmt.Sprintf(" ORDER BY id LIMIT $%d OFFSET $%d", len(args)-1, len(args))
-
-	rows, err := r.db.Query(ctx, baseQuery, args...)
-	if err != nil {
-		logger.Error("Failed to list apps", slog.Any("error", err))
-		return nil, fmt.Errorf("%s: %w", op, err)
+		logger.Error("Data query failed", slog.String("query", dataQuery), slog.Any("args", dataArgs), slog.String("error", err.Error()))
+		return nil, 0, fmt.Errorf("%s: %w", op, err)
 	}
 	defer rows.Close()
 
-	var apps []*pb.App
+	apps := make([]models.App, 0)
 	for rows.Next() {
-		var app pb.App
-		var createdAt, updatedAt time.Time
-		err = rows.Scan(&app.Id, &app.Code, &app.Name, &app.Description, &app.IsActive, &createdAt, &updatedAt)
+		var app models.App
+		err = rows.Scan(&app.ID, &app.Code, &app.Name, &app.Description, &app.IsActive, &app.Version, &app.CreatedAt, &app.UpdatedAt)
 		if err != nil {
-			logger.Error("Failed to scan app row", slog.Any("error", err))
-			return nil, fmt.Errorf("%s: %w", op, err)
+			logger.Error("Row scan failed", sl.Err(err, true))
+			return nil, 0, fmt.Errorf("%s: %w", op, err)
 		}
-
-		app.CreatedAt = timestamppb.New(createdAt)
-		app.UpdatedAt = timestamppb.New(updatedAt)
-		apps = append(apps, &app)
+		apps = append(apps, app)
 	}
 
-	return &pb.ListResponse{
-		Apps:       apps,
-		TotalCount: total,
-		Page:       req.GetPage(),
-		Count:      int32(len(apps)),
-	}, nil
+	if err = rows.Err(); err != nil {
+		logger.Error("Rows iteration failed", sl.Err(err, true))
+		return nil, 0, fmt.Errorf("%s: %w", op, err)
+	}
+
+	total := 0
+	err = r.db.QueryRow(ctx, countQuery+where, args...).Scan(&total)
+	if err != nil {
+		logger.Error("Count query failed", slog.String("query", countQuery), slog.Any("args", args), slog.String("error", err.Error()))
+		return nil, 0, fmt.Errorf("%s: %w", op, err)
+	}
+
+	logger.Debug("List query executed", slog.Int("returned", len(apps)), slog.Int("total", total))
+	return apps, total, nil
 }

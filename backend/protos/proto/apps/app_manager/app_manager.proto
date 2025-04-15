@@ -7,9 +7,9 @@ import "google/protobuf/timestamp.proto";
 
 service AppService {
   rpc Create(CreateRequest) returns (App);
-  rpc Get(GetRequest) returns (App);
+  rpc Get(AppIdentifier) returns (App);
   rpc Update(UpdateRequest) returns (App);
-  rpc Delete(DeleteRequest) returns (DeleteResponse);
+  rpc Delete(AppIdentifier) returns (DeleteResponse);
   rpc List(ListRequest) returns (ListResponse);
 }
 
@@ -30,9 +30,11 @@ message CreateRequest {
   optional bool is_active = 4;
 }
 
-message GetRequest {
-  optional int32 id = 1;
-  optional string code = 2;
+message AppIdentifier {
+  oneof identifier {
+    int32 id = 1;
+    string code = 2;
+  }
 }
 
 message UpdateRequest {
@@ -43,24 +45,20 @@ message UpdateRequest {
   optional bool is_active = 5;
 }
 
-message DeleteRequest {
-  optional int32 id = 1;
-  optional string code = 2;
-}
 
 message DeleteResponse {
   bool success = 1;
 }
 
 message ListRequest {
-  int32 page = 1;
-  int32 count = 2;
+  int64 page = 1;
+  int64 count = 2;
   optional bool filter_is_active = 3;
 }
 
 message ListResponse {
   repeated App apps = 1;
   int32 total_count = 2;
-  int32 page = 3;
-  int32 count = 4;
+  int64 page = 3;
+  int64 count = 4;
 }
