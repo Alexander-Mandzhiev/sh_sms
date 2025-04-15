@@ -104,13 +104,13 @@ message AppIdentifier {
 
 ```json
 {
-  "identifier": { "id": 1 }
+  "id": 1
 }
 ```
 **Пример запроса (Code)**
 ```json
 {
-"identifier": { "code": "school" }
+  "code": "school" 
 }
 ```
 **Пример ответа**
@@ -224,7 +224,7 @@ message DeleteResponse {
 
 ```json
 {
-    "identifier": { "code": "school" }
+    "code": "school"
 }
 ```
 **Пример ответа**
