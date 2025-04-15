@@ -6,7 +6,7 @@ import (
 	"log/slog"
 )
 
-func (s *serverAPI) Delete(ctx context.Context, req *pb.DeleteRequest) (*pb.DeleteResponse, error) {
+func (s *serverAPI) Delete(ctx context.Context, req *pb.IdentifierRequest) (*pb.DeleteResponse, error) {
 	const op = "handler.Delete"
 	logger := s.logger.With(slog.String("op", op))
 	logger.Debug("starting operation", slog.Any("request", req))

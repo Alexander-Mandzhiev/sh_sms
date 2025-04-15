@@ -2,27 +2,39 @@ package handle
 
 import (
 	pb "backend/protos/gen/go/apps/clients_apps"
+	"backend/service/apps/models"
 	"context"
 	"log/slog"
 )
 
 func (s *serverAPI) Create(ctx context.Context, req *pb.CreateRequest) (*pb.ClientApp, error) {
-	const op = "handler.Create"
+	const op = "grpc.handler.ClientApp.Create"
 	logger := s.logger.With(slog.String("op", op))
-	logger.Debug("starting operation", slog.Any("request", req))
+	logger.Debug("Create request received", slog.String("client_id", req.GetClientId()), slog.Int("app_id", int(req.GetAppId())))
 
-	if err := validateClientID(req.ClientId); err != nil {
-		return nil, err
+	if err := validateClientID(req.GetClientId()); err != nil {
+		logger.Warn("client_id validation failed", slog.Any("error", err))
+		return nil, s.convertError(err)
 	}
-	if err := validateAppID(req.AppId); err != nil {
-		return nil, err
+	if err := validateAppID(req.GetAppId()); err != nil {
+		logger.Warn("app_id validation failed", slog.Any("error", err))
+		return nil, s.convertError(err)
 	}
 
-	resp, err := s.service.Create(ctx, req)
+	params := models.CreateClientApp{
+		ClientID: req.GetClientId(),
+		AppID:    req.GetAppId(),
+		IsActive: true,
+	}
+	if req.IsActive != nil {
+		params.IsActive = *req.IsActive
+	}
+
+	createdApp, err := s.service.Create(ctx, params)
 	if err != nil {
-		return nil, s.handleError(op, err)
+		return nil, s.convertError(err)
 	}
 
-	logger.Info("operation completed successfully")
-	return resp, nil
+	logger.Info("Client app created successfully", slog.String("client_id", createdApp.ClientID), slog.Int("app_id", int(createdApp.AppID)))
+	return s.convertToPbClientApp(createdApp), nil
 }

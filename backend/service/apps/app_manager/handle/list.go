@@ -10,7 +10,7 @@ import (
 )
 
 func (s *serverAPI) List(ctx context.Context, req *pb.ListRequest) (*pb.ListResponse, error) {
-	const op = "grpc.handler.List"
+	const op = "grpc.handler.AppManager.List"
 	logger := s.logger.With(slog.String("op", op))
 	logger.Debug("List request received", slog.Int64("page", req.GetPage()), slog.Int64("count", req.GetCount()), slog.Any("filter_is_active", req.GetFilterIsActive()))
 
@@ -21,9 +21,9 @@ func (s *serverAPI) List(ctx context.Context, req *pb.ListRequest) (*pb.ListResp
 	}
 
 	filter := models.ListFilter{
-		Page:         int(req.GetPage()),
-		Count:        int(req.GetCount()),
-		FilterActive: req.FilterIsActive,
+		Page:     int(req.GetPage()),
+		Count:    int(req.GetCount()),
+		IsActive: req.FilterIsActive,
 	}
 
 	apps, total, err := s.service.List(ctx, filter)

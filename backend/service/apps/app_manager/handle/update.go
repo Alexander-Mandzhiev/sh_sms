@@ -11,7 +11,7 @@ import (
 )
 
 func (s *serverAPI) Update(ctx context.Context, req *pb.UpdateRequest) (*pb.App, error) {
-	const op = "grpc.handler.Update"
+	const op = "grpc.handler.AppManager.Update"
 	id := req.GetId()
 	logger := s.logger.With(slog.String("op", op), slog.Int("id", int(req.Id)), slog.Time("timestamp", time.Now()))
 

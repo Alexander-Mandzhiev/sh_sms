@@ -9,7 +9,7 @@ import (
 	"log/slog"
 )
 
-func (s *Service) Get(ctx context.Context, req *pb.GetRequest) (*pb.ClientApp, error) {
+func (s *Service) Get(ctx context.Context, req *pb.IdentifierRequest) (*pb.ClientApp, error) {
 	const op = "service.Get"
 	logger := s.logger.With(slog.String("op", op))
 

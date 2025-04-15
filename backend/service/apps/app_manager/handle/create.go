@@ -10,7 +10,7 @@ import (
 )
 
 func (s *serverAPI) Create(ctx context.Context, req *pb.CreateRequest) (*pb.App, error) {
-	const op = "grpc.handler.Create"
+	const op = "grpc.handler.AppManager.Create"
 	logger := s.logger.With(slog.String("op", op), slog.Time("timestamp", time.Now()))
 
 	if err := validateName(req.Name, 250); err != nil {

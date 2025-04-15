@@ -31,9 +31,9 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ClientsAppServiceClient interface {
 	Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*ClientApp, error)
-	Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*ClientApp, error)
+	Get(ctx context.Context, in *IdentifierRequest, opts ...grpc.CallOption) (*ClientApp, error)
 	Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*ClientApp, error)
-	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
+	Delete(ctx context.Context, in *IdentifierRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
 	List(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*ListResponse, error)
 }
 
@@ -55,7 +55,7 @@ func (c *clientsAppServiceClient) Create(ctx context.Context, in *CreateRequest,
 	return out, nil
 }
 
-func (c *clientsAppServiceClient) Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*ClientApp, error) {
+func (c *clientsAppServiceClient) Get(ctx context.Context, in *IdentifierRequest, opts ...grpc.CallOption) (*ClientApp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ClientApp)
 	err := c.cc.Invoke(ctx, ClientsAppService_Get_FullMethodName, in, out, cOpts...)
@@ -75,7 +75,7 @@ func (c *clientsAppServiceClient) Update(ctx context.Context, in *UpdateRequest,
 	return out, nil
 }
 
-func (c *clientsAppServiceClient) Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error) {
+func (c *clientsAppServiceClient) Delete(ctx context.Context, in *IdentifierRequest, opts ...grpc.CallOption) (*DeleteResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(DeleteResponse)
 	err := c.cc.Invoke(ctx, ClientsAppService_Delete_FullMethodName, in, out, cOpts...)
@@ -100,9 +100,9 @@ func (c *clientsAppServiceClient) List(ctx context.Context, in *ListRequest, opt
 // for forward compatibility.
 type ClientsAppServiceServer interface {
 	Create(context.Context, *CreateRequest) (*ClientApp, error)
-	Get(context.Context, *GetRequest) (*ClientApp, error)
+	Get(context.Context, *IdentifierRequest) (*ClientApp, error)
 	Update(context.Context, *UpdateRequest) (*ClientApp, error)
-	Delete(context.Context, *DeleteRequest) (*DeleteResponse, error)
+	Delete(context.Context, *IdentifierRequest) (*DeleteResponse, error)
 	List(context.Context, *ListRequest) (*ListResponse, error)
 	mustEmbedUnimplementedClientsAppServiceServer()
 }
@@ -117,13 +117,13 @@ type UnimplementedClientsAppServiceServer struct{}
 func (UnimplementedClientsAppServiceServer) Create(context.Context, *CreateRequest) (*ClientApp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
-func (UnimplementedClientsAppServiceServer) Get(context.Context, *GetRequest) (*ClientApp, error) {
+func (UnimplementedClientsAppServiceServer) Get(context.Context, *IdentifierRequest) (*ClientApp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
 func (UnimplementedClientsAppServiceServer) Update(context.Context, *UpdateRequest) (*ClientApp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
-func (UnimplementedClientsAppServiceServer) Delete(context.Context, *DeleteRequest) (*DeleteResponse, error) {
+func (UnimplementedClientsAppServiceServer) Delete(context.Context, *IdentifierRequest) (*DeleteResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
 func (UnimplementedClientsAppServiceServer) List(context.Context, *ListRequest) (*ListResponse, error) {
@@ -169,7 +169,7 @@ func _ClientsAppService_Create_Handler(srv interface{}, ctx context.Context, dec
 }
 
 func _ClientsAppService_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetRequest)
+	in := new(IdentifierRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -181,7 +181,7 @@ func _ClientsAppService_Get_Handler(srv interface{}, ctx context.Context, dec fu
 		FullMethod: ClientsAppService_Get_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ClientsAppServiceServer).Get(ctx, req.(*GetRequest))
+		return srv.(ClientsAppServiceServer).Get(ctx, req.(*IdentifierRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -205,7 +205,7 @@ func _ClientsAppService_Update_Handler(srv interface{}, ctx context.Context, dec
 }
 
 func _ClientsAppService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteRequest)
+	in := new(IdentifierRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -217,7 +217,7 @@ func _ClientsAppService_Delete_Handler(srv interface{}, ctx context.Context, dec
 		FullMethod: ClientsAppService_Delete_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ClientsAppServiceServer).Delete(ctx, req.(*DeleteRequest))
+		return srv.(ClientsAppServiceServer).Delete(ctx, req.(*IdentifierRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

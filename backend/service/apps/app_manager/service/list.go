@@ -15,8 +15,8 @@ func (s *Service) List(ctx context.Context, filter models.ListFilter) ([]models.
 		logger.Warn("Invalid pagination parameters", sl.Err(err, false))
 		return nil, 0, fmt.Errorf("%s: %w", op, err)
 	}
-	if filter.FilterActive != nil {
-		logger = logger.With(slog.Bool("filter_active", *filter.FilterActive))
+	if filter.IsActive != nil {
+		logger = logger.With(slog.Bool("filter_active", *filter.IsActive))
 	}
 	apps, total, err := s.provider.List(ctx, filter)
 	if err != nil {

@@ -10,7 +10,7 @@ import (
 )
 
 func (s *serverAPI) Delete(ctx context.Context, req *pb.AppIdentifier) (*pb.DeleteResponse, error) {
-	const op = "grpc.handler.Delete"
+	const op = "grpc.handler.AppManager.Delete"
 	logger := s.logger.With(slog.String("op", op))
 	logger.Debug("Delete request received", slog.Any("request", req))
 

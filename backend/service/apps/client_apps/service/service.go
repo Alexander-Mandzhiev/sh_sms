@@ -3,16 +3,7 @@ package service
 import (
 	pb "backend/protos/gen/go/apps/clients_apps"
 	"context"
-	"errors"
 	"log/slog"
-)
-
-var (
-	ErrNotFound         = errors.New("not found")
-	ErrInvalidArgument  = errors.New("invalid argument")
-	ErrAlreadyExists    = errors.New("already exists")
-	ErrInternal         = errors.New("internal server error")
-	ErrPermissionDenied = errors.New("permission denied")
 )
 
 type ClientAppsProvider interface {

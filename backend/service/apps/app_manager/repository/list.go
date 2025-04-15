@@ -19,9 +19,9 @@ func (r *Repository) List(ctx context.Context, filter models.ListFilter) ([]mode
 	args := []interface{}{}
 	argCounter := 1
 
-	if filter.FilterActive != nil {
+	if filter.IsActive != nil {
 		where = " WHERE is_active = $1"
-		args = append(args, *filter.FilterActive)
+		args = append(args, *filter.IsActive)
 		argCounter++
 	}
 

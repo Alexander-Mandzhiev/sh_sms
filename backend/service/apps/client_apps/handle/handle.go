@@ -2,30 +2,39 @@ package handle
 
 import (
 	pb "backend/protos/gen/go/apps/clients_apps"
+	"backend/service/apps/models"
 	"context"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"log/slog"
 )
 
-type ClientAppsService interface {
-	Create(ctx context.Context, req *pb.CreateRequest) (*pb.ClientApp, error)
-	Get(ctx context.Context, req *pb.GetRequest) (*pb.ClientApp, error)
-	Update(ctx context.Context, req *pb.UpdateRequest) (*pb.ClientApp, error)
-	Delete(ctx context.Context, req *pb.DeleteRequest) (*pb.DeleteResponse, error)
-	List(ctx context.Context, req *pb.ListRequest) (*pb.ListResponse, error)
+type ClientAppService interface {
+	Create(ctx context.Context, params models.CreateClientApp) (*models.ClientApp, error)
+	Get(ctx context.Context, clientID string, appID int32) (*models.ClientApp, error)
+	Update(ctx context.Context, clientID string, appID int32, isActive bool) (*models.ClientApp, error)
+	Delete(ctx context.Context, clientID string, appID int32) error
+	List(ctx context.Context, filter models.ListFilter) ([]models.ClientApp, int32, error)
 }
-
 type serverAPI struct {
 	pb.UnimplementedClientsAppServiceServer
-	service ClientAppsService
+	service ClientAppService
 	logger  *slog.Logger
 }
 
-func Register(gRPCServer *grpc.Server, service ClientAppsService, logger *slog.Logger) {
-	pb.RegisterClientsAppServiceServer(gRPCServer, &serverAPI{service: service, logger: logger})
+func Register(gRPCServer *grpc.Server, service ClientAppService, logger *slog.Logger) {
+	pb.RegisterClientsAppServiceServer(gRPCServer, &serverAPI{
+		service: service,
+		logger:  logger,
+	})
 }
 
-func (s *serverAPI) handleError(op string, err error) error {
-	s.logger.Error("operation failed", slog.String("op", op), slog.Any("error", err))
-	return convertError(err)
+func (s *serverAPI) convertToPbClientApp(app *models.ClientApp) *pb.ClientApp {
+	return &pb.ClientApp{
+		ClientId:  app.ClientID,
+		AppId:     app.AppID,
+		IsActive:  app.IsActive,
+		CreatedAt: timestamppb.New(app.CreatedAt),
+		UpdatedAt: timestamppb.New(app.UpdatedAt),
+	}
 }

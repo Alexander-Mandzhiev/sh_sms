@@ -9,7 +9,7 @@ import (
 	"log/slog"
 )
 
-func (s *Service) Delete(ctx context.Context, req *pb.DeleteRequest) (*pb.DeleteResponse, error) {
+func (s *Service) Delete(ctx context.Context, req *pb.IdentifierRequest) (*pb.DeleteResponse, error) {
 	const op = "service.Delete"
 	logger := s.logger.With(slog.String("op", op))
 
