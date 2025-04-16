@@ -16,16 +16,17 @@ func (s *serverAPI) Create(ctx context.Context, req *pb.CreateRequest) (*pb.Clie
 		logger.Warn("client_id validation failed", slog.Any("error", err))
 		return nil, s.convertError(err)
 	}
-	if err := validateAppID(req.GetAppId()); err != nil {
+	if err := validateAppID(int(req.GetAppId())); err != nil {
 		logger.Warn("app_id validation failed", slog.Any("error", err))
 		return nil, s.convertError(err)
 	}
 
 	params := models.CreateClientApp{
 		ClientID: req.GetClientId(),
-		AppID:    req.GetAppId(),
+		AppID:    int(req.GetAppId()),
 		IsActive: true,
 	}
+
 	if req.IsActive != nil {
 		params.IsActive = *req.IsActive
 	}

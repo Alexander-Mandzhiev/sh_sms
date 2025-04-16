@@ -7,22 +7,25 @@ import (
 )
 
 func (s *serverAPI) Update(ctx context.Context, req *pb.UpdateRequest) (*pb.ClientApp, error) {
-	const op = "handler.Update"
-	logger := s.logger.With(slog.String("op", op))
-	logger.Debug("starting operation", slog.Any("request", req))
+	const op = "grpc.handler.ClientApp.Update"
+	logger := s.logger.With(slog.String("op", op), slog.String("client_id", req.GetClientId()), slog.Int("app_id", int(req.GetAppId())))
+	logger.Debug("starting operation")
 
-	if err := validateClientID(req.ClientId); err != nil {
-		return nil, err
+	if err := validateClientID(req.GetClientId()); err != nil {
+		logger.Warn("client_id validation failed", slog.Any("error", err))
+		return nil, s.convertError(err)
 	}
-	if err := validateAppID(req.AppId); err != nil {
-		return nil, err
+	if err := validateAppID(int(req.GetAppId())); err != nil {
+		logger.Warn("app_id validation failed", slog.Any("error", err))
+		return nil, s.convertError(err)
 	}
 
-	resp, err := s.service.Update(ctx, req)
+	updatedApp, err := s.service.Update(ctx, req.GetClientId(), int(req.GetAppId()), req.IsActive)
 	if err != nil {
-		return nil, s.handleError(op, err)
+		return nil, s.convertError(err)
 	}
 
-	logger.Info("operation completed successfully")
-	return resp, nil
+	pbClientApp := s.convertToPbClientApp(updatedApp)
+	logger.Info("client app updated successfully", slog.Bool("is_active", updatedApp.IsActive), slog.Time("updated_at", updatedApp.UpdatedAt))
+	return pbClientApp, nil
 }

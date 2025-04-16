@@ -2,6 +2,6 @@ package models
 
 type CreateClientApp struct {
 	ClientID string
-	AppID    int32
+	AppID    int
 	IsActive bool
 }

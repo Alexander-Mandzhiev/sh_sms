@@ -2,34 +2,35 @@ package service
 
 import (
 	sl "backend/pkg/logger"
-	pb "backend/protos/gen/go/apps/clients_apps"
+	"backend/service/apps/client_apps/handle"
+	"backend/service/apps/models"
 	"context"
-	"errors"
 	"fmt"
 	"log/slog"
 )
 
-func (s *Service) Get(ctx context.Context, req *pb.IdentifierRequest) (*pb.ClientApp, error) {
-	const op = "service.Get"
-	logger := s.logger.With(slog.String("op", op))
+func (s *Service) Get(ctx context.Context, clientID string, appID int) (*models.ClientApp, error) {
+	const op = "service.ClientApp.Get"
+	logger := s.logger.With(slog.String("op", op), slog.String("client_id", clientID), slog.Int("app_id", appID))
 
-	if err := validateClientID(req.ClientId); err != nil {
-		logger.Warn("invalid client_id", slog.String("client_id", req.ClientId), sl.Err(err, false))
-		return nil, fmt.Errorf("%s: %w", op, err)
-	}
-	if err := validateAppID(req.AppId); err != nil {
-		logger.Warn("invalid app_id", slog.Int("app_id", int(req.AppId)), sl.Err(err, false))
-		return nil, fmt.Errorf("%s: %w", op, err)
+	if err := validateClientID(clientID); err != nil {
+		logger.Warn("client ID validation failed", sl.Err(err, false))
+		return nil, fmt.Errorf("%w: %v", handle.ErrInvalidArgument, err)
 	}
 
-	clientApp, err := s.provider.Get(ctx, req.ClientId, int(req.AppId))
+	if appID <= 0 {
+		err := fmt.Errorf("invalid app_id: %d", appID)
+		logger.Warn("app ID validation failed", sl.Err(err, false))
+		return nil, fmt.Errorf("%w: %v", handle.ErrInvalidArgument, err)
+	}
+
+	clientApp, err := s.provider.Get(ctx, clientID, appID)
 	if err != nil {
-		logger.Error("get failed", slog.Any("error", err))
-		if errors.Is(err, ErrNotFound) {
-			return nil, fmt.Errorf("%s: %w", op, ErrNotFound)
-		}
-		return nil, fmt.Errorf("%s: %w", op, ErrInternal)
+		logger.Error("failed to get client app", sl.Err(err, false))
+		return nil, s.convertError(err)
 	}
+
+	logger.Info("client app retrieved successfully", slog.Bool("is_active", clientApp.IsActive), slog.Time("updated_at", clientApp.UpdatedAt))
 
 	return clientApp, nil
 }

@@ -1,40 +1,34 @@
 package service
 
 import (
-	sl "backend/pkg/logger"
-	pb "backend/protos/gen/go/apps/clients_apps"
+	"backend/service/apps/client_apps/handle"
+	"backend/service/apps/models"
 	"context"
-	"errors"
 	"fmt"
 	"log/slog"
 )
 
-func (s *Service) Create(ctx context.Context, req *pb.CreateRequest) (*pb.ClientApp, error) {
-	const op = "service.Create"
-	logger := s.logger.With(slog.String("op", op))
+func (s *Service) Create(ctx context.Context, params models.CreateClientApp) (*models.ClientApp, error) {
+	const op = "service.ClientApp.Create"
+	logger := s.logger.With(slog.String("op", op), slog.String("client_id", params.ClientID), slog.Int("app_id", params.AppID))
 
-	if err := validateClientID(req.ClientId); err != nil {
-		logger.Warn("invalid client_id", slog.String("client_id", req.ClientId), sl.Err(err, false))
-		return nil, fmt.Errorf("%s: %w", op, err)
-	}
-	if err := validateAppID(req.AppId); err != nil {
-		logger.Warn("invalid app_id", slog.Int("app_id", int(req.AppId)), sl.Err(err, false))
-		return nil, fmt.Errorf("%s: %w", op, err)
+	if err := validateClientID(params.ClientID); err != nil {
+		logger.Warn("client ID validation failed", slog.Any("error", err))
+		return nil, fmt.Errorf("%w: %v", handle.ErrInvalidArgument, err)
 	}
 
-	isActive := true
-	if req.IsActive != nil {
-		isActive = *req.IsActive
+	if params.AppID <= 0 {
+		err := fmt.Errorf("invalid app_id: %d", params.AppID)
+		logger.Warn("app ID validation failed", slog.Any("error", err))
+		return nil, fmt.Errorf("%w: %v", handle.ErrInvalidArgument, err)
 	}
 
-	clientApp, err := s.provider.Create(ctx, req.ClientId, int(req.AppId), isActive)
+	clientApp, err := s.provider.Create(ctx, params)
 	if err != nil {
-		logger.Error("create failed", slog.Any("error", err))
-		if errors.Is(err, ErrAlreadyExists) {
-			return nil, fmt.Errorf("%s: %w", op, ErrAlreadyExists)
-		}
-		return nil, fmt.Errorf("%s: %w", op, ErrInternal)
+		logger.Error("failed to create client app", slog.Any("error", err))
+		return nil, s.convertError(err)
 	}
 
+	logger.Info("client app created", slog.Bool("is_active", clientApp.IsActive), slog.Time("created_at", clientApp.CreatedAt))
 	return clientApp, nil
 }

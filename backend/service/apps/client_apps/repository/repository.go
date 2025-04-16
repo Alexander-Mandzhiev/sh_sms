@@ -8,9 +8,9 @@ import (
 )
 
 var (
-	ErrNotFound      = errors.New("client app not found")
-	ErrAlreadyExists = errors.New("client app already exists")
+	ErrAlreadyExists = errors.New("entity already exists")
 	ErrInternal      = errors.New("internal error")
+	ErrNotFound      = errors.New("entity not found")
 )
 
 type Repository struct {

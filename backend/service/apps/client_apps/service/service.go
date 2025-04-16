@@ -1,23 +1,17 @@
 package service
 
 import (
-	pb "backend/protos/gen/go/apps/clients_apps"
+	"backend/service/apps/models"
 	"context"
 	"log/slog"
 )
 
 type ClientAppsProvider interface {
-	Create(ctx context.Context, clientID string, appID int, isActive bool) (*pb.ClientApp, error)
-	Get(ctx context.Context, clientID string, appID int) (*pb.ClientApp, error)
-	Update(ctx context.Context, clientID string, appID int, isActive bool) (*pb.ClientApp, error)
+	Create(ctx context.Context, params models.CreateClientApp) (*models.ClientApp, error)
+	Get(ctx context.Context, clientID string, appID int) (*models.ClientApp, error)
+	Update(ctx context.Context, params models.UpdateClientApp) (*models.ClientApp, error)
 	Delete(ctx context.Context, clientID string, appID int) error
-	List(ctx context.Context, filter Filter, page, count int) ([]*pb.ClientApp, int, error)
-}
-
-type Filter struct {
-	ClientID string
-	AppID    int
-	IsActive *bool
+	List(ctx context.Context, filter models.ListFilter) ([]*models.ClientApp, int, error)
 }
 
 type Service struct {

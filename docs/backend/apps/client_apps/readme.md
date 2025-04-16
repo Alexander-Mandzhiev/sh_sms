@@ -18,8 +18,8 @@ gRPC сервис для управления связями клиентов и
 **Запрос**:
 ```json
 {
-  "client_id": "8268ec76-d6c2-48b5-a0e4-a9c2538b8f48",
   "app_id": 1,
+  "client_id": "8268ec76-d6c2-48b5-a0e4-a9c2538b8f48",
   "is_active": true
 }
 ```
@@ -31,12 +31,12 @@ gRPC сервис для управления связями клиентов и
   "app_id": 1,
   "is_active": true,
   "created_at": {
-    "seconds": "1744623168",
-    "nanos": 154309300
+    "seconds": "1744794472",
+    "nanos": 649169000
   },
   "updated_at": {
-    "seconds": "1744623168",
-    "nanos": 154309300
+    "seconds": "1744794472",
+    "nanos": 649169000
   }
 }
 ```
@@ -45,25 +45,25 @@ gRPC сервис для управления связями клиентов и
 
 ```json
 {
-  "client_id": "a1b2c3d4-e5f6-7890-g1h2-i3j4k5l6m7n8",
-  "app_id": 123
+  "app_id": 1,
+  "client_id": "8268ec76-d6c2-48b5-a0e4-a9c2538b8f48"
 }
 ```
 Ответ:
 
 ``` json
 {
-  "client_id": "a1b2c3d4-e5f6-7890-g1h2-i3j4k5l6m7n8",
-  "app_id": 123,
-  "is_active": true,
-  "created_at": {
-    "seconds": "1744623168",
-    "nanos": 154309300
-  },
-  "updated_at": {
-    "seconds": "1744623168",
-    "nanos": 154309300
-  }
+	"client_id": "8268ec76-d6c2-48b5-a0e4-a9c2538b8f48",
+	"app_id": 1,
+	"is_active": true,
+	"created_at": {
+		"seconds": "1744794472",
+		"nanos": 649169000
+	},
+	"updated_at": {
+		"seconds": "1744794472",
+		"nanos": 649169000
+	}
 }
 ```
 ### 3. Обновление связи (Update)
@@ -72,8 +72,8 @@ gRPC сервис для управления связями клиентов и
 ```json
 
 {
-  "client_id": "a1b2c3d4-e5f6-7890-g1h2-i3j4k5l6m7n8",
-  "app_id": 123,
+  "app_id": 1,
+  "client_id": "8268ec76-d6c2-48b5-a0e4-a9c2538b8f48",
   "is_active": false
 }
 ```
@@ -81,16 +81,16 @@ gRPC сервис для управления связями клиентов и
 
 ```json
 {
-  "client_id": "a1b2c3d4-e5f6-7890-g1h2-i3j4k5l6m7n8",
-  "app_id": 123,
+  "client_id": "8268ec76-d6c2-48b5-a0e4-a9c2538b8f48",
+  "app_id": 1,
   "is_active": false,
   "created_at": {
-    "seconds": "1744623168",
-    "nanos": 154309300
+    "seconds": "1744794472",
+    "nanos": 649169000
   },
   "updated_at": {
-    "seconds": "1744623168",
-    "nanos": 154309300
+    "seconds": "1744794547",
+    "nanos": 721660000
   }
 }
 ```
@@ -99,8 +99,8 @@ gRPC сервис для управления связями клиентов и
 
 ```json
 {
-  "client_id": "a1b2c3d4-e5f6-7890-g1h2-i3j4k5l6m7n8",
-  "app_id": 123
+  "app_id": 1,
+  "client_id": "8268ec76-d6c2-48b5-a0e4-a9c2538b8f48"
 }
 ```
 Ответ:
@@ -117,9 +117,7 @@ gRPC сервис для управления связями клиентов и
 {
   "page": 1,
   "count": 20,
-  "app_id": 1,
-  "client_id": "8268ec76-d6c2-48b5-a0e4-a9c2538b8f48",
-  "is_active": true
+  "is_active": true // опциональное поле
 }
 ```
 Ответ:
@@ -132,12 +130,12 @@ gRPC сервис для управления связями клиентов и
       "app_id": 1,
       "is_active": true,
       "created_at": {
-        "seconds": "1744623168",
-        "nanos": 154309000
+        "seconds": "1744794472",
+        "nanos": 649169000
       },
       "updated_at": {
-        "seconds": "1744623353",
-        "nanos": 679908000
+        "seconds": "1744794585",
+        "nanos": 276850000
       }
     }
   ],

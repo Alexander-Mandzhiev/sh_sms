@@ -1,43 +1,55 @@
 package repository
 
 import (
-	sl "backend/pkg/logger"
-	pb "backend/protos/gen/go/apps/clients_apps"
+	"backend/service/apps/models"
 	"context"
 	"errors"
 	"fmt"
 	"github.com/jackc/pgx/v5"
-	"google.golang.org/protobuf/types/known/timestamppb"
+	"github.com/jackc/pgx/v5/pgconn"
 	"log/slog"
 	"time"
 )
 
-func (r *Repository) Update(ctx context.Context, clientID string, appID int, isActive bool) (*pb.ClientApp, error) {
-	const op = "repository.Update"
-	logger := r.logger.With(slog.String("op", op))
-	query := `UPDATE client_apps SET is_active = $1, updated_at = $2 WHERE client_id = $3 AND app_id = $4 RETURNING created_at, updated_at`
+func (r *Repository) Update(ctx context.Context, params models.UpdateClientApp) (*models.ClientApp, error) {
+	const op = "repository.ClientApp.Update"
+	logger := r.logger.With(slog.String("op", op), slog.String("client_id", params.ClientID), slog.Int("app_id", params.AppID))
 
-	now := time.Now().UTC()
-	var createdAt, updatedAt time.Time
+	if err := ctx.Err(); err != nil {
+		logger.Warn("context cancelled before update")
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
 
-	err := r.db.QueryRow(ctx, query, isActive, now, clientID, appID).Scan(&createdAt, &updatedAt)
+	query := `UPDATE client_apps SET is_active = COALESCE($1, is_active), updated_at = NOW() WHERE client_id = $2 AND app_id = $3
+              RETURNING client_id, app_id, is_active, created_at, updated_at`
+
+	var updatedApp models.ClientApp
+	start := time.Now()
+	err := r.db.QueryRow(ctx, query, params.IsActive, params.ClientID, params.AppID).Scan(
+		&updatedApp.ClientID, &updatedApp.AppID, &updatedApp.IsActive, &updatedApp.CreatedAt, &updatedApp.UpdatedAt,
+	)
+
+	defer func() {
+		logger.Debug("update query timing",
+			slog.Duration("duration", time.Since(start)))
+	}()
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			logger.Warn("client app not found for update", slog.String("client_id", clientID), slog.Int("app_id", appID))
+			logger.Warn("client app not found for update")
 			return nil, fmt.Errorf("%s: %w", op, ErrNotFound)
 		}
-		logger.Error("failed to update client app", sl.Err(err, false))
+
+		var pgErr *pgconn.PgError
+		if errors.As(err, &pgErr) {
+			logger.Error("database error during update", slog.String("code", pgErr.Code), slog.String("message", pgErr.Message))
+		} else {
+			logger.Error("failed to update client app",
+				slog.String("error", err.Error()))
+		}
 		return nil, fmt.Errorf("%s: %w", op, ErrInternal)
 	}
 
-	logger.Info("client app updated", slog.String("client_id", clientID), slog.Int("app_id", appID), slog.Bool("is_active", isActive))
-
-	return &pb.ClientApp{
-		ClientId:  clientID,
-		AppId:     int32(appID),
-		IsActive:  isActive,
-		CreatedAt: timestamppb.New(createdAt),
-		UpdatedAt: timestamppb.New(updatedAt),
-	}, nil
+	logger.Info("client app updated successfully", slog.Bool("new_is_active", updatedApp.IsActive), slog.Time("updated_at", updatedApp.UpdatedAt))
+	return &updatedApp, nil
 }

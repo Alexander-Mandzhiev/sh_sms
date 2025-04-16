@@ -7,22 +7,23 @@ import (
 )
 
 func (s *serverAPI) Delete(ctx context.Context, req *pb.IdentifierRequest) (*pb.DeleteResponse, error) {
-	const op = "handler.Delete"
-	logger := s.logger.With(slog.String("op", op))
-	logger.Debug("starting operation", slog.Any("request", req))
+	const op = "grpc.handler.ClientApp.Delete"
+	logger := s.logger.With(slog.String("op", op), slog.String("client_id", req.GetClientId()), slog.Int("app_id", int(req.GetAppId())))
+	logger.Debug("starting operation")
 
-	if err := validateClientID(req.ClientId); err != nil {
-		return nil, err
+	if err := validateClientID(req.GetClientId()); err != nil {
+		logger.Warn("client_id validation failed", slog.Any("error", err))
+		return nil, s.convertError(err)
 	}
-	if err := validateAppID(req.AppId); err != nil {
-		return nil, err
-	}
-
-	resp, err := s.service.Delete(ctx, req)
-	if err != nil {
-		return nil, s.handleError(op, err)
+	if err := validateAppID(int(req.GetAppId())); err != nil {
+		logger.Warn("app_id validation failed", slog.Any("error", err))
+		return nil, s.convertError(err)
 	}
 
-	logger.Info("operation completed successfully")
-	return resp, nil
+	if err := s.service.Delete(ctx, req.GetClientId(), int(req.GetAppId())); err != nil {
+		return nil, s.convertError(err)
+	}
+
+	logger.Info("client app deleted successfully")
+	return &pb.DeleteResponse{Success: true}, nil
 }

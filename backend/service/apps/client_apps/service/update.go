@@ -1,39 +1,42 @@
 package service
 
 import (
-	sl "backend/pkg/logger"
-	pb "backend/protos/gen/go/apps/clients_apps"
+	"backend/service/apps/client_apps/handle"
+	"backend/service/apps/models"
 	"context"
-	"errors"
 	"fmt"
 	"log/slog"
+	"time"
 )
 
-func (s *Service) Update(ctx context.Context, req *pb.UpdateRequest) (*pb.ClientApp, error) {
-	const op = "service.Update"
-	logger := s.logger.With(slog.String("op", op))
+func (s *Service) Update(ctx context.Context, clientID string, appID int, isActive *bool) (*models.ClientApp, error) {
+	const op = "service.ClientApp.Update"
+	logger := s.logger.With(slog.String("op", op), slog.String("client_id", clientID), slog.Int("app_id", appID))
 
-	if err := validateClientID(req.ClientId); err != nil {
-		logger.Warn("invalid client_id", slog.String("client_id", req.ClientId), sl.Err(err, false))
-		return nil, fmt.Errorf("%s: %w", op, err)
-	}
-	if err := validateAppID(req.AppId); err != nil {
-		logger.Warn("invalid app_id", slog.Int("app_id", int(req.AppId)), sl.Err(err, false))
-		return nil, fmt.Errorf("%s: %w", op, err)
-	}
-	if req.IsActive == nil {
-		logger.Warn("missing is_active field")
-		return nil, fmt.Errorf("%s: %w", op, ErrInvalidArgument)
+	if err := validateClientID(clientID); err != nil {
+		logger.Warn("client ID validation failed", slog.Any("error", err))
+		return nil, fmt.Errorf("%w: %v", handle.ErrInvalidArgument, err)
 	}
 
-	updatedApp, err := s.provider.Update(ctx, req.ClientId, int(req.AppId), *req.IsActive)
+	if appID <= 0 {
+		err := fmt.Errorf("invalid app_id: %d", appID)
+		logger.Warn("app ID validation failed", slog.Any("error", err))
+		return nil, fmt.Errorf("%w: %v", handle.ErrInvalidArgument, err)
+	}
+
+	updateParams := models.UpdateClientApp{
+		ClientID:  clientID,
+		AppID:     appID,
+		IsActive:  isActive,
+		UpdatedAt: time.Now().UTC(),
+	}
+
+	updatedApp, err := s.provider.Update(ctx, updateParams)
 	if err != nil {
-		logger.Error("update failed", slog.Any("error", err))
-		if errors.Is(err, ErrNotFound) {
-			return nil, fmt.Errorf("%s: %w", op, ErrNotFound)
-		}
-		return nil, fmt.Errorf("%s: %w", op, ErrInternal)
+		logger.Error("failed to update client app", slog.Any("error", err))
+		return nil, s.convertError(err)
 	}
 
+	logger.Info("client app updated successfully", slog.Bool("new_is_active", updatedApp.IsActive), slog.Time("updated_at", updatedApp.UpdatedAt))
 	return updatedApp, nil
 }

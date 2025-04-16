@@ -2,51 +2,43 @@ package service
 
 import (
 	sl "backend/pkg/logger"
-	pb "backend/protos/gen/go/apps/clients_apps"
+	"backend/service/apps/client_apps/handle"
+	"backend/service/apps/models"
 	"context"
 	"fmt"
 	"log/slog"
 )
 
-func (s *Service) List(ctx context.Context, req *pb.ListRequest) (*pb.ListResponse, error) {
-	const op = "service.List"
-	logger := s.logger.With(slog.String("op", op))
+func (s *Service) List(ctx context.Context, filter models.ListFilter) ([]*models.ClientApp, int, error) {
+	const op = "service.ClientApp.List"
+	logger := s.logger.With(slog.String("op", op), slog.Int("page", filter.Page), slog.Int("count", filter.Count))
 
-	if err := validatePagination(req.Page, req.Count); err != nil {
-		logger.Warn("invalid pagination", slog.Int("page", int(req.Page)), slog.Int("count", int(req.Count)), sl.Err(err, false))
-		return nil, fmt.Errorf("%s: %w", op, err)
+	if err := validatePagination(filter.Page, filter.Count); err != nil {
+		logger.Warn("invalid pagination parameters", sl.Err(err, false))
+		return nil, 0, fmt.Errorf("%w: %v", handle.ErrInvalidArgument, err)
 	}
 
-	if req.ClientId != nil {
-		if err := validateClientID(*req.ClientId); err != nil {
-			logger.Warn("invalid client_id filter", slog.String("client_id", *req.ClientId), sl.Err(err, false))
-			return nil, fmt.Errorf("%s: %w", op, err)
+	if filter.ClientID != nil {
+		if err := validateClientID(*filter.ClientID); err != nil {
+			logger.Warn("invalid client_id filter", slog.String("client_id", *filter.ClientID), sl.Err(err, false))
+			return nil, 0, fmt.Errorf("%w: %v", handle.ErrInvalidArgument, err)
 		}
 	}
 
-	if req.AppId != nil {
-		if err := validateAppID(*req.AppId); err != nil {
-			logger.Warn("invalid app_id filter", slog.Int("app_id", int(*req.AppId)), sl.Err(err, false))
-			return nil, fmt.Errorf("%s: %w", op, err)
+	if filter.AppID != nil {
+		if err := validateAppID(*filter.AppID); err != nil {
+			logger.Warn("invalid app_id filter", slog.Int("app_id", *filter.AppID), sl.Err(err, false))
+			return nil, 0, fmt.Errorf("%w: %v", handle.ErrInvalidArgument, err)
 		}
 	}
 
-	filter := Filter{
-		ClientID: *req.ClientId,
-		AppID:    int(*req.AppId),
-		IsActive: req.IsActive,
-	}
-
-	apps, total, err := s.provider.List(ctx, filter, int(req.Page), int(req.Count))
+	apps, total, err := s.provider.List(ctx, filter)
 	if err != nil {
-		logger.Error("list failed", slog.Any("error", err))
-		return nil, fmt.Errorf("%s: %w", op, ErrInternal)
+		logger.Error("failed to list client apps", sl.Err(err, false))
+		return nil, 0, s.convertError(err)
 	}
 
-	return &pb.ListResponse{
-		ClientApps: apps,
-		TotalCount: int32(total),
-		Page:       req.Page,
-		Count:      req.Count,
-	}, nil
+	logger.Info("successfully listed client apps", slog.Int("returned", len(apps)), slog.Int("total", total))
+
+	return apps, total, nil
 }

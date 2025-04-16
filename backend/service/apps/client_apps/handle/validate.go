@@ -16,7 +16,7 @@ func validateClientID(clientID string) error {
 	return nil
 }
 
-func validateAppID(appID int32) error {
+func validateAppID(appID int) error {
 	if appID <= 0 {
 		return status.Error(codes.InvalidArgument, "app_id must be positive")
 	}

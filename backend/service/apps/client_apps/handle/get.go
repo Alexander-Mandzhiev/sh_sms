@@ -15,12 +15,12 @@ func (s *serverAPI) Get(ctx context.Context, req *pb.IdentifierRequest) (*pb.Cli
 		logger.Warn("validation failed", slog.Any("error", err))
 		return nil, s.convertError(err)
 	}
-	if err := validateAppID(req.GetAppId()); err != nil {
+	if err := validateAppID(int(req.GetAppId())); err != nil {
 		logger.Warn("validation failed", slog.Any("error", err))
 		return nil, s.convertError(err)
 	}
 
-	clientApp, err := s.service.Get(ctx, req.GetClientId(), req.GetAppId())
+	clientApp, err := s.service.Get(ctx, req.GetClientId(), int(req.GetAppId()))
 	if err != nil {
 		return nil, s.convertError(err)
 	}

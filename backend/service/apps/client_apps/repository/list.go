@@ -1,34 +1,33 @@
 package repository
 
 import (
-	sl "backend/pkg/logger"
-	pb "backend/protos/gen/go/apps/clients_apps"
-	"backend/service/apps/client_apps/service"
+	"backend/service/apps/models"
 	"context"
 	"fmt"
-	"google.golang.org/protobuf/types/known/timestamppb"
 	"log/slog"
 	"strings"
-	"time"
 )
 
-func (r *Repository) List(ctx context.Context, filter service.Filter, page, count int) ([]*pb.ClientApp, int, error) {
-	const op = "repository.List"
+func (r *Repository) List(ctx context.Context, filter models.ListFilter) ([]*models.ClientApp, int, error) {
+	const op = "repository.ClientApp.List"
 	logger := r.logger.With(slog.String("op", op))
-	baseQuery := `SELECT client_id, app_id, is_active, created_at, updated_at FROM client_apps WHERE 1=1`
-	countQuery := `SELECT COUNT(*) FROM client_apps WHERE 1=1`
+
+	baseQuery := `SELECT client_id, app_id, is_active, created_at, updated_at FROM client_apps WHERE is_active = true`
+	countQuery := `SELECT COUNT(*) FROM client_apps WHERE is_active = true`
 
 	var args []interface{}
 	var conditions []string
 
-	if filter.ClientID != "" {
+	if filter.ClientID != nil && *filter.ClientID != "" {
 		conditions = append(conditions, fmt.Sprintf("client_id = $%d", len(args)+1))
-		args = append(args, filter.ClientID)
+		args = append(args, *filter.ClientID)
 	}
-	if filter.AppID > 0 {
+
+	if filter.AppID != nil && *filter.AppID > 0 {
 		conditions = append(conditions, fmt.Sprintf("app_id = $%d", len(args)+1))
-		args = append(args, filter.AppID)
+		args = append(args, *filter.AppID)
 	}
+
 	if filter.IsActive != nil {
 		conditions = append(conditions, fmt.Sprintf("is_active = $%d", len(args)+1))
 		args = append(args, *filter.IsActive)
@@ -41,43 +40,36 @@ func (r *Repository) List(ctx context.Context, filter service.Filter, page, coun
 	}
 
 	var total int
-	err := r.db.QueryRow(ctx, countQuery, args...).Scan(&total)
-	if err != nil {
-		logger.Error("failed to get total count", sl.Err(err, false))
+	if err := r.db.QueryRow(ctx, countQuery, args...).Scan(&total); err != nil {
+		logger.Error("failed to get total count", slog.String("error", err.Error()))
 		return nil, 0, fmt.Errorf("%s: %w", op, ErrInternal)
 	}
 
 	baseQuery += fmt.Sprintf(" ORDER BY created_at DESC LIMIT $%d OFFSET $%d", len(args)+1, len(args)+2)
-	args = append(args, count, (page-1)*count)
+	args = append(args, filter.Count, (filter.Page-1)*filter.Count)
 
 	rows, err := r.db.Query(ctx, baseQuery, args...)
 	if err != nil {
-		logger.Error("failed to list client apps", sl.Err(err, false))
+		logger.Error("failed to list client apps", slog.String("error", err.Error()))
 		return nil, 0, fmt.Errorf("%s: %w", op, ErrInternal)
 	}
 	defer rows.Close()
 
-	var apps []*pb.ClientApp
+	var apps []*models.ClientApp
 	for rows.Next() {
-		var app pb.ClientApp
-		var createdAt, updatedAt time.Time
-
-		err = rows.Scan(&app.ClientId, &app.AppId, &app.IsActive, &createdAt, &updatedAt)
-		if err != nil {
-			logger.Error("failed to scan row", sl.Err(err, false))
+		var app models.ClientApp
+		if err = rows.Scan(&app.ClientID, &app.AppID, &app.IsActive, &app.CreatedAt, &app.UpdatedAt); err != nil {
+			logger.Error("failed to scan row", slog.String("error", err.Error()))
 			return nil, 0, fmt.Errorf("%s: %w", op, ErrInternal)
 		}
-
-		app.CreatedAt = timestamppb.New(createdAt)
-		app.UpdatedAt = timestamppb.New(updatedAt)
 		apps = append(apps, &app)
 	}
 
 	if err = rows.Err(); err != nil {
-		logger.Error("rows iteration error", sl.Err(err, false))
+		logger.Error("rows iteration error", slog.String("error", err.Error()))
 		return nil, 0, fmt.Errorf("%s: %w", op, ErrInternal)
 	}
 
-	logger.Debug("listed client apps", slog.Int("count", len(apps)), slog.Int("total", total))
+	logger.Debug("client apps listed successfully", slog.Int("count", len(apps)), slog.Int("total", total))
 	return apps, total, nil
 }
