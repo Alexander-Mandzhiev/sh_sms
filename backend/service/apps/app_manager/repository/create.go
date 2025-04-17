@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"backend/service/apps/app_manager/handle"
+	"backend/service/apps/constants"
 	"backend/service/apps/models"
 	"context"
 	"errors"
@@ -25,7 +25,7 @@ func (r *Repository) Create(ctx context.Context, req *models.CreateApp) (*models
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) && pgErr.Code == pgerrcode.UniqueViolation {
 			logger.Warn("Duplicate application code")
-			return nil, fmt.Errorf("%w: code '%s'", handle.ErrAlreadyExists, req.Code)
+			return nil, fmt.Errorf("%w: code '%s'", constants.ErrAlreadyExists, req.Code)
 		}
 		logger.Error("Database error", slog.String("error", err.Error()), slog.String("code", req.Code))
 		return nil, fmt.Errorf("%s: %w", op, err)

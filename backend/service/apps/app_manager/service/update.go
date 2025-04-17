@@ -2,7 +2,7 @@ package service
 
 import (
 	sl "backend/pkg/logger"
-	"backend/service/apps/app_manager/handle"
+	"backend/service/apps/constants"
 	"backend/service/apps/models"
 	"context"
 	"errors"
@@ -21,7 +21,7 @@ func (s *Service) Update(ctx context.Context, id int, params models.UpdateApp) (
 
 	if !params.HasUpdates() {
 		logger.Warn("No fields to update")
-		return nil, fmt.Errorf("%s: %w", op, handle.ErrNoUpdateFields)
+		return nil, fmt.Errorf("%s: %w", op, constants.ErrNoUpdateFields)
 	}
 
 	if params.Code != nil {
@@ -40,9 +40,9 @@ func (s *Service) Update(ctx context.Context, id int, params models.UpdateApp) (
 
 	currentApp, err := s.provider.GetByID(ctx, id)
 	if err != nil {
-		if errors.Is(err, handle.ErrNotFound) {
+		if errors.Is(err, constants.ErrNotFound) {
 			logger.Warn("App not found")
-			return nil, fmt.Errorf("%s: %w", op, handle.ErrNotFound)
+			return nil, fmt.Errorf("%s: %w", op, constants.ErrNotFound)
 		}
 		logger.Error("Failed to get current app", sl.Err(err, true))
 		return nil, fmt.Errorf("%s: %w", op, err)
@@ -51,7 +51,7 @@ func (s *Service) Update(ctx context.Context, id int, params models.UpdateApp) (
 	updatedApp := mergeAppUpdates(currentApp, params)
 	result, err := s.provider.Update(ctx, updatedApp)
 	if err != nil {
-		if errors.Is(err, handle.ErrVersionConflict) {
+		if errors.Is(err, constants.ErrVersionConflict) {
 			logger.Warn("Version conflict, retrying...")
 			return s.Update(ctx, id, params)
 		}

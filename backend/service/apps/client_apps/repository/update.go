@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"backend/service/apps/constants"
 	"backend/service/apps/models"
 	"context"
 	"errors"
@@ -37,7 +38,7 @@ func (r *Repository) Update(ctx context.Context, params models.UpdateClientApp) 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			logger.Warn("client app not found for update")
-			return nil, fmt.Errorf("%s: %w", op, ErrNotFound)
+			return nil, fmt.Errorf("%s: %w", op, constants.ErrNotFound)
 		}
 
 		var pgErr *pgconn.PgError
@@ -47,7 +48,7 @@ func (r *Repository) Update(ctx context.Context, params models.UpdateClientApp) 
 			logger.Error("failed to update client app",
 				slog.String("error", err.Error()))
 		}
-		return nil, fmt.Errorf("%s: %w", op, ErrInternal)
+		return nil, fmt.Errorf("%s: %w", op, constants.ErrInternal)
 	}
 
 	logger.Info("client app updated successfully", slog.Bool("new_is_active", updatedApp.IsActive), slog.Time("updated_at", updatedApp.UpdatedAt))

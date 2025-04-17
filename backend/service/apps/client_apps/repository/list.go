@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"backend/service/apps/constants"
 	"backend/service/apps/models"
 	"context"
 	"fmt"
@@ -42,7 +43,7 @@ func (r *Repository) List(ctx context.Context, filter models.ListFilter) ([]*mod
 	var total int
 	if err := r.db.QueryRow(ctx, countQuery, args...).Scan(&total); err != nil {
 		logger.Error("failed to get total count", slog.String("error", err.Error()))
-		return nil, 0, fmt.Errorf("%s: %w", op, ErrInternal)
+		return nil, 0, fmt.Errorf("%s: %w", op, constants.ErrInternal)
 	}
 
 	baseQuery += fmt.Sprintf(" ORDER BY created_at DESC LIMIT $%d OFFSET $%d", len(args)+1, len(args)+2)
@@ -51,7 +52,7 @@ func (r *Repository) List(ctx context.Context, filter models.ListFilter) ([]*mod
 	rows, err := r.db.Query(ctx, baseQuery, args...)
 	if err != nil {
 		logger.Error("failed to list client apps", slog.String("error", err.Error()))
-		return nil, 0, fmt.Errorf("%s: %w", op, ErrInternal)
+		return nil, 0, fmt.Errorf("%s: %w", op, constants.ErrInternal)
 	}
 	defer rows.Close()
 
@@ -60,14 +61,14 @@ func (r *Repository) List(ctx context.Context, filter models.ListFilter) ([]*mod
 		var app models.ClientApp
 		if err = rows.Scan(&app.ClientID, &app.AppID, &app.IsActive, &app.CreatedAt, &app.UpdatedAt); err != nil {
 			logger.Error("failed to scan row", slog.String("error", err.Error()))
-			return nil, 0, fmt.Errorf("%s: %w", op, ErrInternal)
+			return nil, 0, fmt.Errorf("%s: %w", op, constants.ErrInternal)
 		}
 		apps = append(apps, &app)
 	}
 
 	if err = rows.Err(); err != nil {
 		logger.Error("rows iteration error", slog.String("error", err.Error()))
-		return nil, 0, fmt.Errorf("%s: %w", op, ErrInternal)
+		return nil, 0, fmt.Errorf("%s: %w", op, constants.ErrInternal)
 	}
 
 	logger.Debug("client apps listed successfully", slog.Int("count", len(apps)), slog.Int("total", total))

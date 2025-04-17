@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"backend/service/apps/constants"
 	"backend/service/apps/models"
 	"context"
 	"errors"
@@ -26,11 +27,11 @@ func (r *Repository) Create(ctx context.Context, params models.CreateClientApp) 
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) && pgErr.Code == pgerrcode.UniqueViolation {
 			logger.Error("client app already exists", slog.String("client_id", params.ClientID), slog.Int("app_id", params.AppID))
-			return nil, fmt.Errorf("%s: %w", op, ErrAlreadyExists)
+			return nil, fmt.Errorf("%s: %w", op, constants.ErrAlreadyExists)
 		}
 
 		logger.Error("failed to create client app", slog.String("error", err.Error()))
-		return nil, fmt.Errorf("%s: %w", op, ErrInternal)
+		return nil, fmt.Errorf("%s: %w", op, constants.ErrInternal)
 	}
 
 	logger.Info("client app created successfully", slog.String("client_id", params.ClientID), slog.Int("app_id", params.AppID))

@@ -2,25 +2,26 @@ package handle
 
 import (
 	pb "backend/protos/gen/go/apps/app_manager"
+	"backend/service/apps/constants"
 	"fmt"
 )
 
 func validateName(name string, maxLength int) error {
 	if name == "" {
-		return ErrEmptyName
+		return constants.ErrEmptyName
 	}
 	if len(name) > maxLength {
-		return fmt.Errorf("%w: max length %d", ErrInvalidName, maxLength)
+		return fmt.Errorf("%w: max length %d", constants.ErrInvalidName, maxLength)
 	}
 	return nil
 }
 
 func validateCode(code string, maxLength int) error {
 	if code == "" {
-		return ErrEmptyCode
+		return constants.ErrEmptyCode
 	}
 	if len(code) > 50 {
-		return fmt.Errorf("%w: max length %d", ErrInvalidCode, maxLength)
+		return fmt.Errorf("%w: max length %d", constants.ErrInvalidCode, maxLength)
 	}
 	return nil
 }
@@ -31,7 +32,7 @@ func validateUpdateRequest(req *pb.UpdateRequest) error {
 	}
 
 	if req.Code == nil && req.Name == nil && req.Description == nil && req.IsActive == nil {
-		return ErrNoUpdateFields
+		return constants.ErrNoUpdateFields
 	}
 
 	if req.Name != nil {
@@ -52,7 +53,7 @@ func validateUpdateRequest(req *pb.UpdateRequest) error {
 func validateNoConflict(req *pb.AppIdentifier) error {
 	hasBoth := req.GetId() != 0 && req.GetCode() != ""
 	if hasBoth {
-		return ErrConflictParams
+		return constants.ErrConflictParams
 	}
 	return nil
 }
@@ -60,14 +61,14 @@ func validateNoConflict(req *pb.AppIdentifier) error {
 func validateAtLeastOne(req *pb.AppIdentifier) error {
 	hasAny := req.GetId() != 0 || req.GetCode() != ""
 	if !hasAny {
-		return ErrIdentifierRequired
+		return constants.ErrIdentifierRequired
 	}
 	return nil
 }
 
 func validateID(id int32) error {
 	if id <= 0 {
-		return fmt.Errorf("%w: %d", ErrInvalidID, id)
+		return fmt.Errorf("%w: %d", constants.ErrInvalidID, id)
 	}
 	return nil
 }

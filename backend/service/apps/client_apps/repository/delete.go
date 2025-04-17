@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"backend/service/apps/constants"
 	"context"
 	"errors"
 	"fmt"
@@ -18,10 +19,10 @@ func (r *Repository) Delete(ctx context.Context, clientID string, appID int) err
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			logger.Warn("client app not found for deactivation")
-			return fmt.Errorf("%s: %w", op, ErrNotFound)
+			return fmt.Errorf("%s: %w", op, constants.ErrNotFound)
 		}
 		logger.Error("failed to deactivate client app", slog.String("error", err.Error()))
-		return fmt.Errorf("%s: %w", op, ErrInternal)
+		return fmt.Errorf("%s: %w", op, constants.ErrInternal)
 	}
 
 	logger.Info("client app deactivated successfully", slog.String("client_id", clientID), slog.Int("app_id", appID))

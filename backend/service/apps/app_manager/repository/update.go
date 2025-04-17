@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"backend/service/apps/app_manager/handle"
+	"backend/service/apps/constants"
 	"backend/service/apps/models"
 	"context"
 	"errors"
@@ -21,7 +21,7 @@ func (r *Repository) Update(ctx context.Context, app *models.App) (*models.App, 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			logger.Warn("Version conflict or app not found")
-			return nil, handle.ErrVersionConflict
+			return nil, constants.ErrVersionConflict
 		}
 		logger.Error("Update failed", slog.String("query", query), slog.String("error", err.Error()))
 		return nil, fmt.Errorf("%s: %w", op, err)

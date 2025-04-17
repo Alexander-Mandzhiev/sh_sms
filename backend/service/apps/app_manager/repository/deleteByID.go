@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"backend/service/apps/app_manager/handle"
+	"backend/service/apps/constants"
 	"context"
 	"fmt"
 	"log/slog"
@@ -19,7 +19,7 @@ func (r *Repository) DeleteByID(ctx context.Context, id int) error {
 
 	if result.RowsAffected() == 0 {
 		logger.Warn("No active app found with ID")
-		return handle.ErrNotFound
+		return constants.ErrNotFound
 	}
 
 	logger.Info("App deactivated successfully")

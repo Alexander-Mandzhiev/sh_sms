@@ -3,6 +3,7 @@ package service
 import (
 	sl "backend/pkg/logger"
 	"backend/service/apps/models"
+	"backend/service/utils"
 	"context"
 	"fmt"
 	"log/slog"
@@ -11,7 +12,7 @@ import (
 func (s *Service) List(ctx context.Context, filter models.ListFilter) ([]models.App, int, error) {
 	const op = "service.AppService.List"
 	logger := s.logger.With(slog.String("op", op), slog.Int("page", filter.Page), slog.Int("count", filter.Count))
-	if err := validatePagination(filter.Page, filter.Count); err != nil {
+	if err := utils.ValidatePagination(filter.Page, filter.Count); err != nil {
 		logger.Warn("Invalid pagination parameters", sl.Err(err, false))
 		return nil, 0, fmt.Errorf("%s: %w", op, err)
 	}

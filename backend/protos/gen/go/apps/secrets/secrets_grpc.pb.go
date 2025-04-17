@@ -19,12 +19,14 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	SecretService_Generate_FullMethodName = "/apps.secrets.SecretService/Generate"
-	SecretService_Get_FullMethodName      = "/apps.secrets.SecretService/Get"
-	SecretService_Rotate_FullMethodName   = "/apps.secrets.SecretService/Rotate"
-	SecretService_Revoke_FullMethodName   = "/apps.secrets.SecretService/Revoke"
-	SecretService_Delete_FullMethodName   = "/apps.secrets.SecretService/Delete"
-	SecretService_List_FullMethodName     = "/apps.secrets.SecretService/List"
+	SecretService_Generate_FullMethodName      = "/apps.secrets.SecretService/Generate"
+	SecretService_Get_FullMethodName           = "/apps.secrets.SecretService/Get"
+	SecretService_Rotate_FullMethodName        = "/apps.secrets.SecretService/Rotate"
+	SecretService_Revoke_FullMethodName        = "/apps.secrets.SecretService/Revoke"
+	SecretService_Delete_FullMethodName        = "/apps.secrets.SecretService/Delete"
+	SecretService_List_FullMethodName          = "/apps.secrets.SecretService/List"
+	SecretService_GetRotation_FullMethodName   = "/apps.secrets.SecretService/GetRotation"
+	SecretService_ListRotations_FullMethodName = "/apps.secrets.SecretService/ListRotations"
 )
 
 // SecretServiceClient is the client API for SecretService service.
@@ -37,6 +39,8 @@ type SecretServiceClient interface {
 	Revoke(ctx context.Context, in *RevokeRequest, opts ...grpc.CallOption) (*Secret, error)
 	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
 	List(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*ListResponse, error)
+	GetRotation(ctx context.Context, in *GetRotationHistoryRequest, opts ...grpc.CallOption) (*RotationHistory, error)
+	ListRotations(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*ListRotationHistoryResponse, error)
 }
 
 type secretServiceClient struct {
@@ -107,6 +111,26 @@ func (c *secretServiceClient) List(ctx context.Context, in *ListRequest, opts ..
 	return out, nil
 }
 
+func (c *secretServiceClient) GetRotation(ctx context.Context, in *GetRotationHistoryRequest, opts ...grpc.CallOption) (*RotationHistory, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RotationHistory)
+	err := c.cc.Invoke(ctx, SecretService_GetRotation_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *secretServiceClient) ListRotations(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*ListRotationHistoryResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListRotationHistoryResponse)
+	err := c.cc.Invoke(ctx, SecretService_ListRotations_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SecretServiceServer is the server API for SecretService service.
 // All implementations must embed UnimplementedSecretServiceServer
 // for forward compatibility.
@@ -117,6 +141,8 @@ type SecretServiceServer interface {
 	Revoke(context.Context, *RevokeRequest) (*Secret, error)
 	Delete(context.Context, *DeleteRequest) (*DeleteResponse, error)
 	List(context.Context, *ListRequest) (*ListResponse, error)
+	GetRotation(context.Context, *GetRotationHistoryRequest) (*RotationHistory, error)
+	ListRotations(context.Context, *ListRequest) (*ListRotationHistoryResponse, error)
 	mustEmbedUnimplementedSecretServiceServer()
 }
 
@@ -144,6 +170,12 @@ func (UnimplementedSecretServiceServer) Delete(context.Context, *DeleteRequest) 
 }
 func (UnimplementedSecretServiceServer) List(context.Context, *ListRequest) (*ListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method List not implemented")
+}
+func (UnimplementedSecretServiceServer) GetRotation(context.Context, *GetRotationHistoryRequest) (*RotationHistory, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetRotation not implemented")
+}
+func (UnimplementedSecretServiceServer) ListRotations(context.Context, *ListRequest) (*ListRotationHistoryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListRotations not implemented")
 }
 func (UnimplementedSecretServiceServer) mustEmbedUnimplementedSecretServiceServer() {}
 func (UnimplementedSecretServiceServer) testEmbeddedByValue()                       {}
@@ -274,6 +306,42 @@ func _SecretService_List_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SecretService_GetRotation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRotationHistoryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SecretServiceServer).GetRotation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SecretService_GetRotation_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SecretServiceServer).GetRotation(ctx, req.(*GetRotationHistoryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SecretService_ListRotations_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SecretServiceServer).ListRotations(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SecretService_ListRotations_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SecretServiceServer).ListRotations(ctx, req.(*ListRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SecretService_ServiceDesc is the grpc.ServiceDesc for SecretService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -304,6 +372,14 @@ var SecretService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "List",
 			Handler:    _SecretService_List_Handler,
+		},
+		{
+			MethodName: "GetRotation",
+			Handler:    _SecretService_GetRotation_Handler,
+		},
+		{
+			MethodName: "ListRotations",
+			Handler:    _SecretService_ListRotations_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

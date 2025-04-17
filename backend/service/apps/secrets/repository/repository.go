@@ -1,15 +1,9 @@
 package repository
 
 import (
-	"errors"
 	"fmt"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"log/slog"
-)
-
-var (
-	ErrSentenceNotFound = errors.New("предложение не найдено")
-	ErrInvalidInput     = errors.New("некорректные входные данные")
 )
 
 type Repository struct {

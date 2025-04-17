@@ -2,6 +2,7 @@ package handle
 
 import (
 	pb "backend/protos/gen/go/apps/clients_apps"
+	"backend/service/utils"
 	"context"
 	"log/slog"
 )
@@ -11,11 +12,11 @@ func (s *serverAPI) Get(ctx context.Context, req *pb.IdentifierRequest) (*pb.Cli
 	logger := s.logger.With(slog.String("op", op), slog.String("client_id", req.GetClientId()), slog.Int("app_id", int(req.GetAppId())))
 	logger.Debug("starting operation")
 
-	if err := validateClientID(req.GetClientId()); err != nil {
+	if err := utils.ValidateClientID(req.GetClientId()); err != nil {
 		logger.Warn("validation failed", slog.Any("error", err))
 		return nil, s.convertError(err)
 	}
-	if err := validateAppID(int(req.GetAppId())); err != nil {
+	if err := utils.ValidateAppID(int(req.GetAppId())); err != nil {
 		logger.Warn("validation failed", slog.Any("error", err))
 		return nil, s.convertError(err)
 	}

@@ -2,7 +2,7 @@ package service
 
 import (
 	sl "backend/pkg/logger"
-	"backend/service/apps/app_manager/handle"
+	"backend/service/apps/constants"
 	"backend/service/apps/models"
 	"context"
 	"errors"
@@ -21,9 +21,9 @@ func (s *Service) GetByCode(ctx context.Context, code string) (*models.App, erro
 
 	app, err := s.provider.GetByCode(ctx, code)
 	if err != nil {
-		if errors.Is(err, handle.ErrNotFound) {
+		if errors.Is(err, constants.ErrNotFound) {
 			logger.Warn("App not found")
-			return nil, fmt.Errorf("%s: %w", op, handle.ErrNotFound)
+			return nil, fmt.Errorf("%s: %w", op, constants.ErrNotFound)
 		}
 		logger.Error("Database error", slog.String("error", err.Error()), slog.String("error_type", "database"))
 		return nil, fmt.Errorf("%s: %w", op, err)

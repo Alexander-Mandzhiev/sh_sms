@@ -1,7 +1,7 @@
 package service
 
 import (
-	"backend/service/apps/app_manager/handle"
+	"backend/service/apps/constants"
 	"backend/service/apps/models"
 	"context"
 	"errors"
@@ -24,9 +24,9 @@ func (s *Service) Create(ctx context.Context, req *models.CreateApp) (*models.Ap
 
 	app, err := s.provider.Create(ctx, req)
 	if err != nil {
-		if errors.Is(err, handle.ErrAlreadyExists) {
+		if errors.Is(err, constants.ErrAlreadyExists) {
 			logger.Warn("Code conflict", slog.String("code", req.Code))
-			return nil, fmt.Errorf("%s: %w", op, handle.ErrAlreadyExists)
+			return nil, fmt.Errorf("%s: %w", op, constants.ErrAlreadyExists)
 		}
 		logger.Error("Create failed", slog.Any("error", err), slog.String("error_type", "database"))
 		return nil, fmt.Errorf("%s: %w", op, err)

@@ -3,6 +3,7 @@ package handle
 import (
 	pb "backend/protos/gen/go/apps/clients_apps"
 	"backend/service/apps/models"
+	"backend/service/utils"
 	"context"
 	"log/slog"
 )
@@ -12,7 +13,7 @@ func (s *serverAPI) List(ctx context.Context, req *pb.ListRequest) (*pb.ListResp
 	logger := s.logger.With(slog.String("op", op))
 	logger.Debug("starting operation", slog.Int("page", int(req.GetPage())), slog.Int("count", int(req.GetCount())))
 
-	if err := validatePagination(req.GetPage(), req.GetCount()); err != nil {
+	if err := utils.ValidatePagination(int(req.GetPage()), int(req.GetCount())); err != nil {
 		logger.Warn("pagination validation failed", slog.Any("error", err))
 		return nil, s.convertError(err)
 	}
@@ -23,7 +24,7 @@ func (s *serverAPI) List(ctx context.Context, req *pb.ListRequest) (*pb.ListResp
 	}
 
 	if req.ClientId != nil {
-		if err := validateClientID(*req.ClientId); err != nil {
+		if err := utils.ValidateClientID(*req.ClientId); err != nil {
 			logger.Warn("client_id validation failed", slog.Any("error", err))
 			return nil, s.convertError(err)
 		}
@@ -32,7 +33,7 @@ func (s *serverAPI) List(ctx context.Context, req *pb.ListRequest) (*pb.ListResp
 
 	if req.AppId != nil {
 		appID := int(*req.AppId)
-		if err := validateAppID(appID); err != nil {
+		if err := utils.ValidateAppID(appID); err != nil {
 			logger.Warn("app_id validation failed", slog.Any("error", err))
 			return nil, s.convertError(err)
 		}

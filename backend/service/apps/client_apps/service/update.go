@@ -1,8 +1,9 @@
 package service
 
 import (
-	"backend/service/apps/client_apps/handle"
+	"backend/service/apps/constants"
 	"backend/service/apps/models"
+	"backend/service/utils"
 	"context"
 	"fmt"
 	"log/slog"
@@ -13,15 +14,15 @@ func (s *Service) Update(ctx context.Context, clientID string, appID int, isActi
 	const op = "service.ClientApp.Update"
 	logger := s.logger.With(slog.String("op", op), slog.String("client_id", clientID), slog.Int("app_id", appID))
 
-	if err := validateClientID(clientID); err != nil {
+	if err := utils.ValidateClientID(clientID); err != nil {
 		logger.Warn("client ID validation failed", slog.Any("error", err))
-		return nil, fmt.Errorf("%w: %v", handle.ErrInvalidArgument, err)
+		return nil, fmt.Errorf("%w: %v", constants.ErrInvalidArgument, err)
 	}
 
 	if appID <= 0 {
 		err := fmt.Errorf("invalid app_id: %d", appID)
 		logger.Warn("app ID validation failed", slog.Any("error", err))
-		return nil, fmt.Errorf("%w: %v", handle.ErrInvalidArgument, err)
+		return nil, fmt.Errorf("%w: %v", constants.ErrInvalidArgument, err)
 	}
 
 	updateParams := models.UpdateClientApp{

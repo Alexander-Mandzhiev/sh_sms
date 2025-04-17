@@ -1,7 +1,7 @@
 package service
 
 import (
-	"backend/service/apps/app_manager/handle"
+	"backend/service/apps/constants"
 	"context"
 	"errors"
 	"fmt"
@@ -14,14 +14,14 @@ func (s *Service) DeleteByID(ctx context.Context, id int) error {
 
 	if id <= 0 {
 		logger.Warn("Invalid ID requested")
-		return fmt.Errorf("%s: %w", op, handle.ErrInvalidID)
+		return fmt.Errorf("%s: %w", op, constants.ErrInvalidID)
 	}
 
 	err := s.provider.DeleteByID(ctx, id)
 	if err != nil {
-		if errors.Is(err, handle.ErrNotFound) {
+		if errors.Is(err, constants.ErrNotFound) {
 			logger.Warn("App not found for deletion")
-			return fmt.Errorf("%s: %w", op, handle.ErrNotFound)
+			return fmt.Errorf("%s: %w", op, constants.ErrNotFound)
 		}
 		logger.Error("Deletion failed", slog.String("error", err.Error()), slog.String("error_type", "database"))
 		return fmt.Errorf("%s: %w", op, err)

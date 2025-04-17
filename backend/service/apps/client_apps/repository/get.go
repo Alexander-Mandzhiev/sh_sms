@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"backend/service/apps/constants"
 	"backend/service/apps/models"
 	"context"
 	"errors"
@@ -30,16 +31,16 @@ func (r *Repository) Get(ctx context.Context, clientID string, appID int) (*mode
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			logger.Warn("active client app not found")
-			return nil, fmt.Errorf("%s: %w", op, ErrNotFound)
+			return nil, fmt.Errorf("%s: %w", op, constants.ErrNotFound)
 		}
 
 		logger.Error("database query failed", slog.String("error", err.Error()))
-		return nil, fmt.Errorf("%s: %w", op, ErrInternal)
+		return nil, fmt.Errorf("%s: %w", op, constants.ErrInternal)
 	}
 
 	if app.ClientID != clientID || app.AppID != appID {
 		logger.Error("database returned inconsistent data", slog.String("returned_client_id", app.ClientID), slog.Int("returned_app_id", app.AppID))
-		return nil, fmt.Errorf("%s: %w", op, ErrInternal)
+		return nil, fmt.Errorf("%s: %w", op, constants.ErrInternal)
 	}
 
 	logger.Info("client app retrieved successfully", slog.Bool("is_active", app.IsActive), slog.Time("updated_at", app.UpdatedAt))

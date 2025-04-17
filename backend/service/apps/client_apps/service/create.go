@@ -1,8 +1,9 @@
 package service
 
 import (
-	"backend/service/apps/client_apps/handle"
+	"backend/service/apps/constants"
 	"backend/service/apps/models"
+	"backend/service/utils"
 	"context"
 	"fmt"
 	"log/slog"
@@ -12,15 +13,15 @@ func (s *Service) Create(ctx context.Context, params models.CreateClientApp) (*m
 	const op = "service.ClientApp.Create"
 	logger := s.logger.With(slog.String("op", op), slog.String("client_id", params.ClientID), slog.Int("app_id", params.AppID))
 
-	if err := validateClientID(params.ClientID); err != nil {
+	if err := utils.ValidateClientID(params.ClientID); err != nil {
 		logger.Warn("client ID validation failed", slog.Any("error", err))
-		return nil, fmt.Errorf("%w: %v", handle.ErrInvalidArgument, err)
+		return nil, fmt.Errorf("%w: %v", constants.ErrInvalidArgument, err)
 	}
 
-	if params.AppID <= 0 {
-		err := fmt.Errorf("invalid app_id: %d", params.AppID)
+	if err := utils.ValidateAppID(params.AppID); err != nil {
+		err = fmt.Errorf("invalid app_id: %d", params.AppID)
 		logger.Warn("app ID validation failed", slog.Any("error", err))
-		return nil, fmt.Errorf("%w: %v", handle.ErrInvalidArgument, err)
+		return nil, fmt.Errorf("%w: %v", constants.ErrInvalidArgument, err)
 	}
 
 	clientApp, err := s.provider.Create(ctx, params)

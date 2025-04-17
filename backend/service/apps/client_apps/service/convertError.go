@@ -1,19 +1,19 @@
 package service
 
 import (
-	"backend/service/apps/client_apps/handle"
+	"backend/service/apps/constants"
 	"errors"
 )
 
 func (s *Service) convertError(err error) error {
 	switch {
-	case errors.Is(err, handle.ErrAlreadyExists):
-		return handle.ErrAlreadyExists
-	case errors.Is(err, handle.ErrNotFound):
-		return handle.ErrNotFound
-	case errors.Is(err, handle.ErrPermissionDenied):
-		return handle.ErrPermissionDenied
+	case errors.Is(err, constants.ErrAlreadyExists):
+		return constants.ErrAlreadyExists
+	case errors.Is(err, constants.ErrNotFound):
+		return constants.ErrNotFound
+	case errors.Is(err, constants.ErrPermissionDenied):
+		return constants.ErrPermissionDenied
 	default:
-		return handle.ErrInternal
+		return constants.ErrInternal
 	}
 }

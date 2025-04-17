@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"backend/service/apps/app_manager/handle"
+	"backend/service/apps/constants"
 	"backend/service/apps/models"
 	"context"
 	"errors"
@@ -19,7 +19,7 @@ func (r *Repository) GetByID(ctx context.Context, id int) (*models.App, error) {
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			logger.Debug("Application not found")
-			return nil, handle.ErrNotFound
+			return nil, constants.ErrNotFound
 		}
 		logger.Error("Database query failed", slog.String("error", err.Error()), slog.String("query", query))
 		return nil, fmt.Errorf("%s: %w", op, err)
