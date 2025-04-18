@@ -33,7 +33,7 @@ type PermissionServiceClient interface {
 	Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*Permission, error)
 	Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*Permission, error)
 	Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*Permission, error)
-	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
+	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*SuccessResponse, error)
 	List(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*ListResponse, error)
 }
 
@@ -75,9 +75,9 @@ func (c *permissionServiceClient) Update(ctx context.Context, in *UpdateRequest,
 	return out, nil
 }
 
-func (c *permissionServiceClient) Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error) {
+func (c *permissionServiceClient) Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*SuccessResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DeleteResponse)
+	out := new(SuccessResponse)
 	err := c.cc.Invoke(ctx, PermissionService_Delete_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -102,7 +102,7 @@ type PermissionServiceServer interface {
 	Create(context.Context, *CreateRequest) (*Permission, error)
 	Get(context.Context, *GetRequest) (*Permission, error)
 	Update(context.Context, *UpdateRequest) (*Permission, error)
-	Delete(context.Context, *DeleteRequest) (*DeleteResponse, error)
+	Delete(context.Context, *DeleteRequest) (*SuccessResponse, error)
 	List(context.Context, *ListRequest) (*ListResponse, error)
 	mustEmbedUnimplementedPermissionServiceServer()
 }
@@ -123,7 +123,7 @@ func (UnimplementedPermissionServiceServer) Get(context.Context, *GetRequest) (*
 func (UnimplementedPermissionServiceServer) Update(context.Context, *UpdateRequest) (*Permission, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
-func (UnimplementedPermissionServiceServer) Delete(context.Context, *DeleteRequest) (*DeleteResponse, error) {
+func (UnimplementedPermissionServiceServer) Delete(context.Context, *DeleteRequest) (*SuccessResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
 func (UnimplementedPermissionServiceServer) List(context.Context, *ListRequest) (*ListResponse, error) {

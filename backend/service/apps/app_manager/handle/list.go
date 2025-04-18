@@ -3,8 +3,8 @@ package handle
 import (
 	sl "backend/pkg/logger"
 	pb "backend/protos/gen/go/apps/app_manager"
-	"backend/service/apps/constants"
 	"backend/service/apps/models"
+	"backend/service/constants"
 	"backend/service/utils"
 	"context"
 	"fmt"

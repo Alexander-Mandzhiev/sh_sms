@@ -1,8 +1,8 @@
 package utils
 
 import (
-	"backend/service/apps/constants"
 	"backend/service/apps/models"
+	"backend/service/constants"
 	"errors"
 	"fmt"
 	"github.com/google/uuid"

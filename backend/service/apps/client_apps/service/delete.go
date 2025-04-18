@@ -2,7 +2,7 @@ package service
 
 import (
 	sl "backend/pkg/logger"
-	"backend/service/apps/constants"
+	"backend/service/constants"
 	"backend/service/utils"
 	"context"
 	"fmt"

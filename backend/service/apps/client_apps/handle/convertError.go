@@ -1,7 +1,7 @@
 package handle
 
 import (
-	"backend/service/apps/constants"
+	"backend/service/constants"
 	"errors"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

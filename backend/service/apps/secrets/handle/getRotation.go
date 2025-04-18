@@ -2,7 +2,7 @@ package handle
 
 import (
 	pb "backend/protos/gen/go/apps/secrets"
-	"backend/service/apps/constants"
+	"backend/service/constants"
 	"backend/service/utils"
 	"context"
 	"errors"

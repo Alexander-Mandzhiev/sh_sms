@@ -8,66 +8,59 @@ service PermissionService {
   rpc Create(CreateRequest) returns (Permission);
   rpc Get(GetRequest) returns (Permission);
   rpc Update(UpdateRequest) returns (Permission);
-  rpc Delete(DeleteRequest) returns (DeleteResponse);
+  rpc Delete(DeleteRequest) returns (SuccessResponse);
   rpc List(ListRequest) returns (ListResponse);
 }
 
 message Permission {
-  string id = 1;                   // UUID формата
-  string code = 2;                 // Уникальный в рамках app_id (пример: "schedule:write")
-  string description = 3;          // Обязательное описание
-  optional string category = 4;    // Опциональная группировка
-  int32 app_id = 5;                // Идентификатор приложения
+  string id = 1;
+  string code = 2;
+  string description = 3;
+  string category = 4;
+  int32 app_id = 5;
   google.protobuf.Timestamp created_at = 6;
-  optional google.protobuf.Timestamp deleted_at = 7; // Мягкое удаление
+  google.protobuf.Timestamp updated_at = 7;
 }
 
 message CreateRequest {
-  string code = 1;                 // Формат: [a-z0-9_]:[a-z0-9_]
-  string description = 2;          // Минимум 3 символа
-  optional string category = 3;    // Максимум 50 символов
-  int32 app_id = 4;                // Положительное число
+  string code = 1;
+  string description = 2;
+  string category = 3;
+  int32 app_id = 4;
 }
 
 message GetRequest {
-  oneof identifier {
-    string id = 1;                 // UUID разрешения
-    CodeIdentifier code = 2;       // Код + app_id
-  }
-}
-
-message CodeIdentifier {
-  string code = 1;                 // Пример: "calendar:edit"
-  int32 app_id = 2;                // Соответствует app_id
+  string id = 1;
+  int32 app_id = 2;
 }
 
 message UpdateRequest {
-  string id = 1;                   // UUID разрешения
-  optional string description = 3;  // Новое описание
-  optional string category = 4;     // Новая категория
+  string id = 1;
+  int32 app_id = 2;
+  optional string code = 3;
+  optional string description = 4;
+  optional string category = 5;
 }
 
 message DeleteRequest {
-  string id = 1;                   // UUID разрешения
-}
-
-message DeleteResponse {
-  bool success = 1;
-  google.protobuf.Timestamp deleted_at = 2;
+  string id = 1;
+  int32 app_id = 2;
 }
 
 message ListRequest {
-  int32 page = 1;                  // Начинается с 1
-  int32 count = 2;                 // 1-200 элементов
-  optional int32 app_id = 3;       // Фильтр по приложению
-  optional string category = 4;    // Фильтр по категории
-  bool include_deleted = 5;        // Включая удаленные
+  int32 app_id = 1;
+  optional string code_filter = 2;
+  optional string category = 3;
+  int32 page = 4;
+  int32 page_size = 5;
 }
 
 message ListResponse {
   repeated Permission permissions = 1;
-  int32 total_count = 2;           // Всего записей
-  int32 page = 3;
-  int32 count = 4;
-  bool has_more = 5;               // Признак наличия следующих страниц
+  int32 total_count = 2;
+  int32 current_page = 3;
+}
+
+message SuccessResponse {
+  bool success = 1;
 }

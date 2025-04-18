@@ -5,43 +5,40 @@ option go_package = "sso.users.v1;users";
 import "google/protobuf/timestamp.proto";
 
 service UserService {
-  rpc Create (CreateRequest) returns (UserResponse);
-  rpc Get (GetRequest) returns (UserResponse);
-  rpc Update (UpdateRequest) returns (UserResponse);
-  rpc Delete (DeleteRequest) returns (DeleteResponse);
-  rpc List (ListRequest) returns (ListResponse);
+  rpc Create(CreateRequest) returns (User);
+  rpc Get(GetRequest) returns (User);
+  rpc Update(UpdateRequest) returns (User);
+  rpc Delete(DeleteRequest) returns (SuccessResponse);
+  rpc List(ListRequest) returns (ListResponse);
+  rpc SetPassword(SetPasswordRequest) returns (SuccessResponse);
 }
 
 message User {
   string id = 1;
   string client_id = 2;
   string email = 3;
-  optional string full_name = 4;
-  optional string phone = 5;
-  google.protobuf.Timestamp created_at = 6;
-  google.protobuf.Timestamp updated_at = 7;
-  optional google.protobuf.Timestamp deleted_at = 8;
+  string full_name = 4;
+  string phone = 5;
+  bool email_verified = 6;
+  bool phone_verified = 7;
+  bool is_active = 8;
+  google.protobuf.Timestamp created_at = 9;
+  google.protobuf.Timestamp updated_at = 10;
+  google.protobuf.Timestamp deleted_at = 11;
 }
 
-message UserResponse {
-  User user = 1;
-}
-
+// Запросы и ответы
 message CreateRequest {
   string client_id = 1;
   string email = 2;
   string password = 3;
-  optional string full_name = 4;
-  optional string phone = 5;
+  string full_name = 4;
+  string phone = 5;
 }
 
 message GetRequest {
-  string client_id = 1;
-  oneof identifier {
-    string id = 2;
-    string email = 3;
-  }
-  bool include_deleted = 4;
+  string id = 1;
+  string client_id = 2;
 }
 
 message UpdateRequest {
@@ -50,29 +47,36 @@ message UpdateRequest {
   optional string email = 3;
   optional string full_name = 4;
   optional string phone = 5;
-  optional string password = 6;
+  optional bool is_active = 6;
 }
 
 message DeleteRequest {
   string id = 1;
   string client_id = 2;
-}
-
-message DeleteResponse {
-  bool success = 1;
-  google.protobuf.Timestamp deleted_at = 2;
+  bool permanent = 3;
 }
 
 message ListRequest {
   string client_id = 1;
-  int32 page = 2;
-  int32 count = 3;
-  bool include_deleted = 4;
+  optional string email_filter = 2;
+  optional string phone_filter = 3;
+  optional bool active_only = 4;
+  int32 page = 5;
+  int32 page_size = 6;
 }
 
 message ListResponse {
   repeated User users = 1;
   int32 total_count = 2;
-  int32 page = 3;
-  int32 count = 4;
+  int32 current_page = 3;
+}
+
+message SetPasswordRequest {
+  string id = 1;
+  string client_id = 2;
+  string new_password = 3;
+}
+
+message SuccessResponse {
+  bool success = 1;
 }

@@ -2,7 +2,7 @@ package handle
 
 import (
 	pb "backend/protos/gen/go/apps/app_manager"
-	"backend/service/apps/constants"
+	"backend/service/constants"
 	"fmt"
 )
 

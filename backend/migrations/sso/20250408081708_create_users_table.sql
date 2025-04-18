@@ -5,19 +5,16 @@ CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     client_id UUID NOT NULL,
     email VARCHAR(255) NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,
-    full_name VARCHAR(255),
+    password_hash VARCHAR(255) NOT NULL CHECK (LENGTH(password_hash) = 60),
+    full_name TEXT,
     phone VARCHAR(20),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    deleted_at TIMESTAMP
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ,
+    deleted_at TIMESTAMPTZ
 );
 
-CREATE INDEX idx_users_email ON users(email);
-CREATE INDEX idx_users_phone ON users(phone);
-CREATE INDEX idx_users_deleted ON users(deleted_at);
-
--- Составной индекс для уникальности email в рамках tenant
+-- Индексы
+CREATE INDEX idx_users_client_active ON users(client_id) WHERE deleted_at IS NULL;
 CREATE UNIQUE INDEX idx_users_email_client ON users(client_id, email) WHERE deleted_at IS NULL;
 
 -- +goose StatementEnd

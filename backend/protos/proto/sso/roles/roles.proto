@@ -10,65 +10,66 @@ service RoleService {
   rpc Update(UpdateRequest) returns (Role);
   rpc Delete(DeleteRequest) returns (DeleteResponse);
   rpc List(ListRequest) returns (ListResponse);
+  rpc AddPermission(PermissionRequest) returns (Role);
+  rpc RemovePermission(PermissionRequest) returns (Role);
 }
 
 message Role {
   string id = 1;
-  string client_id = 2;            // Соответствует полю client_id в БД
+  string client_id = 2;
   string name = 3;
   string description = 4;
-  int32 level = 5;                 // Default: 0 (совпадает с DEFAULT в БД)
-  bool is_custom = 6;              // Default: false
-  optional string created_by = 7;  // Может быть NULL в БД
-  google.protobuf.Timestamp created_at = 8;
-  optional google.protobuf.Timestamp deleted_at = 9;
+  int32 level = 5;
+  repeated string permission_ids = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
 }
 
 message CreateRequest {
-  string client_id = 1;            // Переименовано tenant_id → client_id
+  string client_id = 1;
   string name = 2;
-  optional string description = 3;
-  optional int32 level = 4;        // Default: 0
-  optional bool is_custom = 5;     // Default: false
-  optional string created_by = 6;  // Сделано опциональным
+  string description = 3;
+  int32 level = 4;
 }
 
 message GetRequest {
-  string client_id = 1;            // Обязательный контекст
-  string id = 2;
-  bool include_deleted = 3;        // Добавлен флаг для удаленных
+  string id = 1;
+  string client_id = 2;
 }
 
 message UpdateRequest {
   string id = 1;
-  string client_id = 2;            // Для проверки принадлежности
+  string client_id = 2;
   optional string name = 3;
   optional string description = 4;
-  optional int32 level = 5;        // Ограничения уровня должны быть в бизнес-логике
-  optional bool is_custom = 6;     // Изменение типа роли
+  optional int32 level = 5;
 }
 
 message DeleteRequest {
   string id = 1;
-  string client_id = 2;            // Контроль принадлежности
+  string client_id = 2;
 }
 
-message DeleteResponse {
-  bool success = 1;
-  google.protobuf.Timestamp deleted_at = 2;
+message PermissionRequest {
+  string role_id = 1;
+  string client_id = 2;
+  string permission_id = 3;
 }
 
 message ListRequest {
-  string client_id = 1;            // Обязательный фильтр
-  int32 page = 2;
-  int32 count = 3;             // Рекомендуется добавить валидацию (1-100)
-  bool include_deleted = 4;
-  bool include_permissions = 5;    // Новая опция для включения прав
+  string client_id = 1;
+  optional string name_filter = 2;
+  optional int32 level_filter = 3;
+  int32 page = 4;
+  int32 page_size = 5;
 }
 
 message ListResponse {
   repeated Role roles = 1;
   int32 total_count = 2;
-  int32 page = 3;
-  int32 count = 4;
+  int32 current_page = 3;
+}
+
+message DeleteResponse {
+  bool success = 1;
 }

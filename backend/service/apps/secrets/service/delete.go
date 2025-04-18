@@ -1,7 +1,7 @@
 package service
 
 import (
-	"backend/service/apps/constants"
+	"backend/service/constants"
 	"backend/service/utils"
 	"context"
 	"fmt"
