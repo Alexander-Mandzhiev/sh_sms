@@ -8,6 +8,7 @@ import (
 
 func convertRotationHistoryToPB(h *models.RotationHistory) *pb.RotationHistory {
 	pbHistory := &pb.RotationHistory{
+		Id:         int64(h.ID),
 		ClientId:   h.ClientID,
 		AppId:      int32(h.AppID),
 		SecretType: h.SecretType,

@@ -7,60 +7,44 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
-	"strings"
-	"time"
 )
 
-func (s *Service) GetRotation(ctx context.Context, clientID string, appID int, secretType string, rotatedAt time.Time) (*models.RotationHistory, error) {
+func (s *Service) GetRotation(ctx context.Context, id int) (*models.RotationHistory, error) {
 	const op = "service.Secret.GetRotation"
-	logger := s.logger.With(slog.String("op", op), slog.String("client_id", clientID), slog.Int("app_id", appID),
-		slog.String("secret_type", secretType), slog.Time("rotated_at", rotatedAt),
-	)
+	logger := s.logger.With(slog.String("op", op), slog.Int("id", id))
 	logger.Debug("starting rotation history retrieval")
 
-	if err := utils.ValidateClientID(clientID); err != nil {
-		logger.Warn("invalid client ID", slog.Any("error", err))
-		return nil, fmt.Errorf("%w: %v", constants.ErrInvalidArgument, err)
+	if id <= 0 {
+		logger.Warn("invalid rotation ID")
+		return nil, fmt.Errorf("%w: invalid rotation ID", constants.ErrInvalidArgument)
 	}
 
-	if appID <= 0 {
-		logger.Warn("invalid app ID")
-		return nil, fmt.Errorf("%w: app_id must be positive", constants.ErrInvalidArgument)
-	}
-
-	if !utils.IsValidSecretType(secretType) {
-		logger.Warn("invalid secret type")
-		return nil, fmt.Errorf("%w: invalid secret type", constants.ErrInvalidArgument)
-	}
-
-	if rotatedAt.IsZero() {
-		logger.Warn("zero time for rotated_at")
-		return nil, fmt.Errorf("%w: rotated_at is required", constants.ErrInvalidArgument)
-	}
-
-	if rotatedAt.After(time.Now()) {
-		logger.Warn("future rotated_at time")
-		return nil, fmt.Errorf("%w: rotated_at cannot be in future", constants.ErrInvalidArgument)
-	}
-
-	normalizedSecretType := strings.ToLower(secretType)
-	if normalizedSecretType != secretType {
-		logger.Debug("normalized secret type", slog.String("original", secretType), slog.String("normalized", normalizedSecretType))
-		secretType = normalizedSecretType
-	}
-
-	history, err := s.provider.GetRotation(ctx, clientID, appID, secretType, rotatedAt)
+	history, err := s.provider.GetRotation(ctx, id)
 	if err != nil {
-		logger.Error("failed to get rotation history", slog.Any("error", err), slog.Time("rotated_at", rotatedAt))
+		logger.Error("failed to get rotation history", slog.Any("error", err), slog.Int("id", id))
 		return nil, s.convertError(err)
 	}
 
 	if history == nil {
-		logger.Error("unexpected nil history")
+		logger.Error("empty rotation history response")
 		return nil, s.convertError(constants.ErrInternal)
 	}
 
-	logger.Info("rotation history retrieved successfully", slog.String("old_secret_prefix", maskSecret(history.OldSecret)),
-		slog.String("new_secret_prefix", maskSecret(history.NewSecret)))
+	if err = utils.ValidateRotationHistory(history); err != nil {
+		logger.Error("invalid rotation history data", slog.Any("error", err), slog.Any("history", maskRotationData(history)))
+		return nil, s.convertError(constants.ErrInternal)
+	}
+
+	logger.Info("rotation history retrieved successfully", slog.String("client_id", history.ClientID), slog.Int("app_id", history.AppID), slog.String("secret_type", history.SecretType), slog.Time("rotated_at", history.RotatedAt))
 	return history, nil
+}
+
+func maskRotationData(h *models.RotationHistory) slog.Value {
+	return slog.GroupValue(
+		slog.String("client_id", h.ClientID),
+		slog.Int("app_id", h.AppID),
+		slog.String("secret_type", h.SecretType),
+		slog.String("old_secret", maskSecret(h.OldSecret)),
+		slog.String("new_secret", maskSecret(h.NewSecret)),
+		slog.Time("rotated_at", h.RotatedAt))
 }

@@ -21,6 +21,6 @@ var (
 	ErrUpdateConflict      = errors.New("update conflict")
 	ErrVersionConflict     = errors.New("version conflict")
 	ErrInvalidAppId        = errors.New("invalid app id")
-	ErrInvalidSecretType   = errors.New("invalid secret type")
 	ErrAlreadyRevoked      = errors.New("already revoked")
+	ErrRotationTooFrequent = errors.New("rotation allowed no more than once per 24 hours")
 )

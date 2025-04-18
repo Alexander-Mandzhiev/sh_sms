@@ -5,56 +5,35 @@ import (
 	"backend/service/apps/constants"
 	"backend/service/utils"
 	"context"
+	"errors"
 	"log/slog"
 )
 
 func (s *serverAPI) GetRotation(ctx context.Context, req *pb.GetRotationHistoryRequest) (*pb.RotationHistory, error) {
 	const op = "grpc.handler.Secret.GetRotation"
-	logger := s.logger.With(slog.String("op", op), slog.String("client_id", req.GetClientId()), slog.Int("app_id", int(req.GetAppId())), slog.String("secret_type", req.GetSecretType()))
-	logger.Debug("GetRotation request received")
+	logger := s.logger.With(slog.String("op", op), slog.Int("id", int(req.GetId())))
+	logger.Debug("starting rotation history retrieval")
 
-	if err := utils.ValidateClientID(req.GetClientId()); err != nil {
-		logger.Warn("empty client_id")
+	if req.GetId() <= 0 {
+		logger.Warn("invalid rotation ID", slog.Int("id", int(req.GetId())))
 		return nil, s.convertError(constants.ErrInvalidArgument)
 	}
 
-	if err := utils.ValidateAppID(int(req.GetAppId())); err != nil {
-		logger.Warn("invalid app_id", slog.Int("app_id", int(req.GetAppId())))
-		return nil, s.convertError(constants.ErrInvalidArgument)
-	}
-
-	if !utils.IsValidSecretType(req.SecretType) {
-		logger.Warn("invalid secret_type")
-		return nil, s.convertError(constants.ErrInvalidArgument)
-	}
-
-	if err := utils.ValidateClientID(req.GetClientId()); err != nil {
-		logger.Warn("invalid client_id format", slog.Any("error", err))
-		return nil, s.convertError(constants.ErrInvalidArgument)
-	}
-
-	if !utils.IsValidSecretType(req.GetSecretType()) {
-		logger.Warn("invalid secret_type", slog.String("type", req.GetSecretType()))
-		return nil, s.convertError(constants.ErrInvalidArgument)
-	}
-
-	if req.RotatedAt == nil {
-		logger.Warn("rotated_at is required")
-		return nil, s.convertError(constants.ErrInvalidArgument)
-	}
-
-	rotatedAt := req.RotatedAt.AsTime()
-	if rotatedAt.IsZero() {
-		logger.Warn("invalid rotated_at timestamp")
-		return nil, s.convertError(constants.ErrInvalidArgument)
-	}
-
-	history, err := s.service.GetRotation(ctx, req.GetClientId(), int(req.GetAppId()), req.GetSecretType(), rotatedAt)
+	history, err := s.service.GetRotation(ctx, int(req.GetId()))
 	if err != nil {
-		logger.Error("failed to get rotation history", slog.Any("error", err), slog.Time("rotated_at", rotatedAt))
+		if errors.Is(err, constants.ErrNotFound) {
+			logger.Warn("rotation history not found", slog.Int("id", int(req.GetId())))
+		} else {
+			logger.Error("database operation failed", slog.Any("error", err), slog.Int("id", int(req.GetId())))
+		}
 		return nil, s.convertError(err)
 	}
 
-	logger.Info("getting secret rotation history retrieved successfully")
+	if err = utils.ValidateRotationHistory(history); err != nil {
+		logger.Error("invalid rotation history data", slog.Any("error", err), slog.Any("history", slog.Group("rotation", slog.String("client_id", history.ClientID), slog.Int("app_id", history.AppID), slog.String("secret_type", history.SecretType), slog.Time("rotated_at", history.RotatedAt))))
+		return nil, s.convertError(constants.ErrInternal)
+	}
+
+	logger.Info("rotation history retrieved successfully", slog.String("client_id", history.ClientID), slog.Int("app_id", history.AppID), slog.String("secret_type", history.SecretType), slog.Time("rotated_at", history.RotatedAt))
 	return convertRotationHistoryToPB(history), nil
 }

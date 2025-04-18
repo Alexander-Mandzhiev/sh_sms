@@ -22,6 +22,16 @@ func (r *Repository) Rotate(ctx context.Context, params models.RotateSecretParam
 	}
 	defer tx.Rollback(ctx)
 
+	lastRotation, err := r.getLastRotation(ctx, tx, params)
+	if err != nil {
+		return nil, err
+	}
+
+	if time.Since(lastRotation) < 24*time.Hour {
+		logger.Warn("rotation frequency limit exceeded")
+		return nil, constants.ErrRotationTooFrequent
+	}
+
 	query := `SELECT client_id, app_id, secret_type, current_secret, algorithm, secret_version, generated_at, revoked_at FROM secrets WHERE client_id = $1 AND app_id = $2 AND secret_type = $3 FOR UPDATE`
 	var oldSecret models.Secret
 	err = tx.QueryRow(ctx, query, params.ClientID, params.AppID, params.SecretType).Scan(&oldSecret.ClientID, &oldSecret.AppID, &oldSecret.SecretType, &oldSecret.CurrentSecret, &oldSecret.Algorithm, &oldSecret.SecretVersion, &oldSecret.GeneratedAt, &oldSecret.RevokedAt)
@@ -58,12 +68,9 @@ func (r *Repository) Rotate(ctx context.Context, params models.RotateSecretParam
 		return nil, fmt.Errorf("update secret failed: %w", err)
 	}
 
-	query = `INSERT INTO secret_rotation_history (client_id, app_id, secret_type, old_secret, new_secret, rotated_by) VALUES ($1, $2, $3, $4, $5, $6)`
-	_, err = tx.Exec(ctx, query, params.ClientID, params.AppID, params.SecretType, oldSecret.CurrentSecret, newSecret.CurrentSecret, params.RotatedBy)
-
-	if err != nil {
+	if err = r.saveRotationHistory(ctx, tx, params, oldSecret.CurrentSecret, newSecret.CurrentSecret); err != nil {
 		logger.Error("failed to save rotation history", slog.Any("error", err))
-		return nil, fmt.Errorf("save history failed: %w", err)
+		return nil, err
 	}
 
 	if err = tx.Commit(ctx); err != nil {

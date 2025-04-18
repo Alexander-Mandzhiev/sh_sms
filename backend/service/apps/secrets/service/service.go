@@ -4,7 +4,6 @@ import (
 	"backend/service/apps/models"
 	"context"
 	"log/slog"
-	"time"
 )
 
 type SecretsProvider interface {
@@ -14,7 +13,7 @@ type SecretsProvider interface {
 	Revoke(ctx context.Context, clientID string, appID int, secretType string) (*models.Secret, error)
 	Delete(ctx context.Context, clientID string, appID int, secretType string) error
 	List(ctx context.Context, filter models.ListFilter) ([]*models.Secret, int, error)
-	GetRotation(ctx context.Context, clientID string, appID int, secretType string, rotatedAt time.Time) (*models.RotationHistory, error)
+	GetRotation(ctx context.Context, id int) (*models.RotationHistory, error)
 	ListRotations(ctx context.Context, filter models.ListFilter) ([]*models.RotationHistory, int, error)
 }
 

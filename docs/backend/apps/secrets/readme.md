@@ -164,10 +164,10 @@ message RotateRequest {
 **Пример запроса**
 ```json
 {
-    "client_id": "a3d8f7c2-45b1-4e90-8c6a-12b8e7f4d9c0",
-    "app_id": 42,
-    "secret_type": "access",
-    "rotated_by": "d9c0a3d8-45b1-4e90-8c6a-12b8e7f4a3d8"
+  "client_id": "8268ec76-d6c2-48b5-a0e4-a9c2538b8f48",
+  "app_id": 1 ,
+  "secret_type": "access",
+  "rotated_by": "15d28e5d-26ba-48c7-9c00-25fe1cb2208b"
 }
 ```
 **Пример ответа**
@@ -190,6 +190,7 @@ message RotateRequest {
 - Автоматическое увеличение secret_version
 - Старый секрет сохраняется в истории ротаций
 - Обязательная идентификация инициатора (rotated_by)
+- Обновление не чаще 1 раза в день
 
 **Ошибки**
 
@@ -368,63 +369,60 @@ message ListRequest {
 }
 ```
 ### 7. Получение ротации (GetRotation)
-gRPC Contract
-
+**gRPC Contract**
 ```protobuf
 rpc GetRotation(GetRotationHistoryRequest) returns (RotationHistory);
-
 message GetRotationHistoryRequest {
-    string client_id = 1;
-    int32 app_id = 2;
-    string secret_type = 3;
-    google.protobuf.Timestamp rotated_at = 4;
+  int32 id = 1; 
 }
 ```
 **Пример запроса**
-
 ```json
 {
-    "client_id": "a3d8f7c2-45b1-4e90-8c6a-12b8e7f4d9c0",
-    "app_id": 42,
-    "secret_type": "access",
-    "rotated_at": {
-        "seconds": 1712345690,
-        "nanos": 987654321
-    }
+    "id": 12345
 }
 ```
 **Пример ответа**
-
 ```json
 {
-    "client_id": "a3d8f7c2-45b1-4e90-8c6a-12b8e7f4d9c0",
-    "app_id": 42,
-    "secret_type": "access",
-    "old_secret": "ejJk...WEs=",
-    "new_secret": "nEwS...Kr3=",
-    "rotated_by": "d9c0a3d8-45b1-4e90-8c6a-12b8e7f4a3d8",
-    "rotated_at": {
-        "seconds": 1712345690,
-        "nanos": 987654321
-    }
+  "id": 0,
+  "client_id": "8268ec76-d6c2-48b5-a0e4-a9c2538b8f48",
+  "app_id": 1,
+  "secret_type": "access",
+  "old_secret": "PYwUITcryxl-z1zvy-F7hWVRnNkpKXRZWqNXSPzl76A=",
+  "new_secret": "QIZJQKo9wYyZQyIHQcUXBKNt0Dg7DRCZc7IFTta8kYM=",
+  "rotated_at": {
+    "seconds": "1744965325",
+    "nanos": 28468000
+  },
+  "rotated_by": "d9c0a3d8-45b1-4e90-8c6a-12b8e7f4a3d8"
 }
 ```
 **Особенности**
-- Точное совпадение времени до наносекунд
-- Возвращает полные значения секретов (только для аудита)
+- Поиск по уникальному идентификатору записи
+- Возвращает полные значения секретов (только для аудитных целей)
+- Гарантированная уникальность выборки
 
 **Ошибки**
+
 ```json
 {
-    "error": {
-        "code": 5,
+"error": {
+    "code": 5,
         "message": "Rotation record not found"
+    }
+}
+```
+```json
+{
+"error": {
+    "code": 3,
+        "message": "Invalid rotation ID format"
     }
 }
 ```
 ### 8. Список ротаций (ListRotations)
 gRPC Contract
-
 ```protobuf
 rpc ListRotations(ListRequest) returns (ListRotationHistoryResponse);
 
@@ -436,7 +434,6 @@ message ListRotationHistoryResponse {
 }
 ```
 **Пример запроса**
-
 ```json
 {
     "page": 1,
