@@ -6,7 +6,10 @@ import (
 	"errors"
 	"fmt"
 	"github.com/google/uuid"
+	"regexp"
 )
+
+var emailRegex = regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
 
 func ValidateClientID(clientID string) error {
 	if clientID == "" {
@@ -60,5 +63,28 @@ func ValidateRotationHistory(h *models.RotationHistory) error {
 		return errors.New("zero rotated_at")
 	}
 
+	return nil
+}
+func ValidatePasswordPolicy(password string) error {
+	if len(password) < 8 {
+		return errors.New("password must be at least 8 characters")
+	}
+	return nil
+}
+
+func ValidatePassword(password string) error {
+	if password == "" {
+		return fmt.Errorf("%w: password is required", constants.ErrInvalidArgument)
+	}
+	return nil
+}
+
+func ValidateEmail(email string) error {
+	if email == "" {
+		return fmt.Errorf("%w: email is required", constants.ErrInvalidArgument)
+	}
+	if !emailRegex.MatchString(email) {
+		return fmt.Errorf("%w: invalid email format", constants.ErrInvalidArgument)
+	}
 	return nil
 }

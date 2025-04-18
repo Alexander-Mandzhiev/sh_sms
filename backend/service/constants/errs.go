@@ -23,4 +23,6 @@ var (
 	ErrInvalidAppId        = errors.New("invalid app id")
 	ErrAlreadyRevoked      = errors.New("already revoked")
 	ErrRotationTooFrequent = errors.New("rotation allowed no more than once per 24 hours")
+	ErrInvalidPassword     = errors.New("invalid password")
+	ErrUnauthenticated     = errors.New("unauthenticated")
 )

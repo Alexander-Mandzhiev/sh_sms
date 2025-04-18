@@ -45,7 +45,7 @@ message UserRequest {
   string client_id = 2;
   optional bool active_only = 3;        // Только действующие (не истекшие)
   int32 page = 4;                       // Пагинация
-  int32 page_size = 5;
+  int32 count = 5;
 }
 
 message RoleRequest {
@@ -53,7 +53,7 @@ message RoleRequest {
   string client_id = 2;
   optional bool active_only = 3;
   int32 page = 4;
-  int32 page_size = 5;
+  int32 count = 5;
 }
 
 message UserRolesResponse {
@@ -78,5 +78,5 @@ message BulkRevokeRequest {
 
 message BulkResponse {
   int32 success_count = 1;
-  repeated string failed_ids = 2;       // Список ID с ошибками
+  repeated string failed_ids = 2;
 }

@@ -53,7 +53,7 @@ message UpdateRequest {
 message DeleteRequest {
   string id = 1;
   string client_id = 2;
-  bool permanent = 3;
+  bool permanent = 3; // false
 }
 
 message ListRequest {
@@ -62,7 +62,7 @@ message ListRequest {
   optional string phone_filter = 3;
   optional bool active_only = 4;
   int32 page = 5;
-  int32 page_size = 6;
+  int32 count = 6;
 }
 
 message ListResponse {

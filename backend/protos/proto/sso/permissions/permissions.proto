@@ -52,7 +52,7 @@ message ListRequest {
   optional string code_filter = 2;
   optional string category = 3;
   int32 page = 4;
-  int32 page_size = 5;
+  int32 count = 5;
 }
 
 message ListResponse {
