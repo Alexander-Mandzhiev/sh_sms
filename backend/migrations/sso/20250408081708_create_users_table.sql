@@ -8,6 +8,7 @@ CREATE TABLE users (
     password_hash VARCHAR(255) NOT NULL CHECK (LENGTH(password_hash) = 60),
     full_name TEXT,
     phone VARCHAR(20),
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ,
     deleted_at TIMESTAMPTZ
@@ -16,6 +17,7 @@ CREATE TABLE users (
 -- Индексы
 CREATE INDEX idx_users_client_active ON users(client_id) WHERE deleted_at IS NULL;
 CREATE UNIQUE INDEX idx_users_email_client ON users(client_id, email) WHERE deleted_at IS NULL;
+CREATE INDEX idx_users_active ON users(is_active) WHERE is_active = true;
 
 -- +goose StatementEnd
 

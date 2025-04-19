@@ -12,6 +12,7 @@ type User struct {
 	PasswordHash string
 	FullName     string
 	Phone        string
+	IsActive     bool
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 	DeletedAt    *time.Time

@@ -2,10 +2,8 @@ package handle
 
 import (
 	"backend/protos/gen/go/sso/users"
-	"backend/service/constants"
+	"backend/service/utils"
 	"context"
-	"fmt"
-	"github.com/google/uuid"
 	"log/slog"
 )
 
@@ -14,16 +12,16 @@ func (s *serverAPI) Get(ctx context.Context, req *users.GetRequest) (*users.User
 	logger := s.logger.With(slog.String("op", op), slog.String("user_id", req.GetId()), slog.String("client_id", req.GetClientId()))
 	logger.Debug("attempting to get user")
 
-	clientID, err := uuid.Parse(req.GetClientId())
+	clientID, err := utils.ValidateAndReturnUUID(req.GetClientId())
 	if err != nil {
-		logger.Warn("invalid client_id format", slog.Any("error", err))
-		return nil, s.convertError(fmt.Errorf("%w: invalid client_id", constants.ErrInvalidArgument))
+		logger.Warn("invalid client_id", slog.Any("error", err))
+		return nil, s.convertError(err)
 	}
 
-	userID, err := uuid.Parse(req.GetId())
+	userID, err := utils.ValidateAndReturnUUID(req.GetId())
 	if err != nil {
-		logger.Warn("invalid user_id format", slog.Any("error", err))
-		return nil, s.convertError(fmt.Errorf("%w: invalid user_id", constants.ErrInvalidArgument))
+		logger.Warn("invalid user_id", slog.Any("error", err))
+		return nil, s.convertError(err)
 	}
 
 	user, err := s.service.Get(ctx, clientID, userID)

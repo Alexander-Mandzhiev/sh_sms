@@ -25,4 +25,7 @@ var (
 	ErrRotationTooFrequent = errors.New("rotation allowed no more than once per 24 hours")
 	ErrInvalidPassword     = errors.New("invalid password")
 	ErrUnauthenticated     = errors.New("unauthenticated")
+	ErrEmailAlreadyExists  = errors.New("email already exists")
+	ErrConflict            = errors.New("")
+	ErrNoFieldsToUpdate    = errors.New("no fields to update")
 )

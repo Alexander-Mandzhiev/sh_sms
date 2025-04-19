@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"regexp"
+	"strings"
 )
 
 var emailRegex = regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
@@ -73,9 +74,18 @@ func ValidatePasswordPolicy(password string) error {
 }
 
 func ValidatePassword(password string) error {
-	if password == "" {
-		return fmt.Errorf("%w: password is required", constants.ErrInvalidArgument)
+	if len(password) < 8 {
+		return fmt.Errorf("%w: password must be at least 8 characters", constants.ErrInvalidArgument)
 	}
+
+	if !regexp.MustCompile(`[A-Z]`).MatchString(password) {
+		return fmt.Errorf("%w: password must contain uppercase letters", constants.ErrInvalidArgument)
+	}
+
+	if !regexp.MustCompile(`\d`).MatchString(password) {
+		return fmt.Errorf("%w: password must contain digits", constants.ErrInvalidArgument)
+	}
+
 	return nil
 }
 
@@ -87,4 +97,27 @@ func ValidateEmail(email string) error {
 		return fmt.Errorf("%w: invalid email format", constants.ErrInvalidArgument)
 	}
 	return nil
+}
+
+func ValidatePhone(phone string) error {
+	if phone == "" {
+		return nil
+	}
+	if len(phone) < 5 || !strings.HasPrefix(phone, "+") {
+		return errors.New("phone must start with '+' and have at least 5 digits")
+	}
+	return nil
+}
+
+func ValidateAndReturnUUID(input string) (uuid.UUID, error) {
+	if input == "" {
+		return uuid.Nil, fmt.Errorf("%w: empty UUID", constants.ErrInvalidArgument)
+	}
+
+	id, err := uuid.Parse(input)
+	if err != nil {
+		return uuid.Nil, fmt.Errorf("%w: %v", constants.ErrInvalidArgument, err)
+	}
+
+	return id, nil
 }

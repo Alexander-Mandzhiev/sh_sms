@@ -15,7 +15,7 @@ type UserService interface {
 	Update(ctx context.Context, user *models.User) (*models.User, error)
 	Delete(ctx context.Context, clientID, userID uuid.UUID, permanent bool) error
 	List(ctx context.Context, req models.ListRequest) ([]models.User, int, error)
-	SetPassword(ctx context.Context, userID uuid.UUID, passwordHash string) error
+	SetPassword(ctx context.Context, clientID, userID uuid.UUID, password string) error
 }
 
 type serverAPI struct {

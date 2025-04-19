@@ -2,26 +2,20 @@ package handle
 
 import (
 	"backend/protos/gen/go/sso/users"
-	"backend/service/constants"
 	"backend/service/sso/models"
-	"fmt"
-	"github.com/google/uuid"
+	"backend/service/utils"
 )
 
 func (s *serverAPI) convertListRequest(req *users.ListRequest) (*models.ListRequest, error) {
-	var clientID *uuid.UUID
-	if req.ClientId != "" {
-		parsed, err := uuid.Parse(req.ClientId)
-		if err != nil {
-			return nil, fmt.Errorf("%w: invalid client_id", constants.ErrInvalidArgument)
-		}
-		clientID = &parsed
+	clientID, err := utils.ValidateAndReturnUUID(req.GetClientId())
+	if err != nil {
+		return nil, s.convertError(err)
 	}
 
 	listReq := &models.ListRequest{
 		Page:     int(req.Page),
 		Count:    int(req.Count),
-		ClientID: clientID,
+		ClientID: &clientID,
 	}
 
 	if req.GetEmailFilter() != "" {

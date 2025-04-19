@@ -18,6 +18,7 @@ func convertUserToProto(u models.User) *users.User {
 		Email:     u.Email,
 		FullName:  u.FullName,
 		Phone:     u.Phone,
+		IsActive:  u.IsActive,
 		CreatedAt: timestamppb.New(u.CreatedAt),
 		UpdatedAt: timestamppb.New(u.UpdatedAt),
 		DeletedAt: deletedAt,

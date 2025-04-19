@@ -9,8 +9,6 @@ import (
 	"backend/service/constants"
 	"backend/service/sso/models"
 	"backend/service/utils"
-
-	"github.com/google/uuid"
 )
 
 func (s *serverAPI) Create(ctx context.Context, req *users.CreateRequest) (*users.User, error) {
@@ -18,10 +16,10 @@ func (s *serverAPI) Create(ctx context.Context, req *users.CreateRequest) (*user
 	logger := s.logger.With(slog.String("op", op), slog.String("email", req.Email))
 	logger.Debug("attempting to create user")
 
-	clientID, err := uuid.Parse(req.ClientId)
+	clientID, err := utils.ValidateAndReturnUUID(req.GetClientId())
 	if err != nil {
-		logger.Warn("invalid client_id format", slog.String("client_id", req.ClientId))
-		return nil, s.convertError(fmt.Errorf("%w: %v", constants.ErrInvalidArgument, "invalid client_id format"))
+		logger.Warn("invalid client_id", slog.Any("error", err))
+		return nil, s.convertError(err)
 	}
 
 	if err = utils.ValidateEmail(req.GetEmail()); err != nil {
