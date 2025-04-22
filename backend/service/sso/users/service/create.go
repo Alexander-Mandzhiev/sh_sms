@@ -10,6 +10,7 @@ import (
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"log/slog"
+	"time"
 )
 
 func (s *Service) Create(ctx context.Context, user *models.User, password string) error {
@@ -32,6 +33,8 @@ func (s *Service) Create(ctx context.Context, user *models.User, password string
 	if user.ID == uuid.Nil {
 		user.ID = uuid.New()
 	}
+	user.CreatedAt = time.Now().UTC()
+	user.UpdatedAt = user.CreatedAt
 
 	if err = s.provider.Create(ctx, user); err != nil {
 		if errors.Is(err, constants.ErrEmailAlreadyExists) {

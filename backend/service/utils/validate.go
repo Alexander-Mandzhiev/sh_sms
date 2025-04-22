@@ -121,3 +121,17 @@ func ValidateAndReturnUUID(input string) (uuid.UUID, error) {
 
 	return id, nil
 }
+
+func ValidateRoleName(name string) error {
+	if name == "" {
+		return fmt.Errorf("%w: name is required", constants.ErrInvalidArgument)
+	}
+	return nil
+}
+
+func ValidateRoleLevel(level int32) error {
+	if level < 0 {
+		return fmt.Errorf("%w: invalid level", constants.ErrInvalidArgument)
+	}
+	return nil
+}

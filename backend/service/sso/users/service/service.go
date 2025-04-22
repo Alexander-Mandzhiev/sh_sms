@@ -30,7 +30,7 @@ func New(provider UsersProvider, logger *slog.Logger) *Service {
 		logger = slog.Default()
 	}
 
-	logger.Info("initializing client apps service", slog.String("op", op))
+	logger.Info("initializing sso service - handle user", slog.String("op", op))
 	return &Service{
 		provider: provider,
 		logger:   logger,

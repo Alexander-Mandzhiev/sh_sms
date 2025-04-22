@@ -31,6 +31,6 @@ func (r *Repository) Create(ctx context.Context, req *models.CreateApp) (*models
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	logger.Info("Application created", slog.Int("id", app.ID), slog.String("code", app.Code))
+	logger.Info("Application created", slog.Int("id", app.ID))
 	return &app, nil
 }

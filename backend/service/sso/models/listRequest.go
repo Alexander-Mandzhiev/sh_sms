@@ -10,5 +10,7 @@ type ListRequest struct {
 	ClientID    *uuid.UUID
 	EmailFilter *string
 	PhoneFilter *string
+	NameFilter  *string
+	LevelFilter *int
 	ActiveOnly  *bool
 }

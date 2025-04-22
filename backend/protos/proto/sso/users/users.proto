@@ -53,7 +53,7 @@ message UpdateRequest {
 message DeleteRequest {
   string id = 1;
   string client_id = 2;
-  bool permanent = 3; // false
+  bool permanent = 3;
 }
 
 message ListRequest {

@@ -4,7 +4,13 @@ import (
 	config "backend/pkg/config/service"
 	"backend/pkg/dbManager"
 	sl "backend/pkg/logger"
+	"backend/pkg/server/grpc_server"
+	userHandler "backend/service/sso/users/handle"
+	userRepository "backend/service/sso/users/repository"
+	userService "backend/service/sso/users/service"
 	"os"
+	"os/signal"
+	"syscall"
 )
 
 func main() {
@@ -26,4 +32,35 @@ func main() {
 			logger.Error("failed to close database connection", sl.Err(err, false))
 		}
 	}()
+
+	// 4. Инициализация репозитория
+	reposU, err := userRepository.New(dbPool, logger)
+	if err != nil {
+		logger.Error("Failed to create user repository", sl.Err(err, true))
+		return
+	}
+
+	// 5. Инициализация сервиса
+	srvU := userService.New(reposU, logger)
+
+	// 6. Инициализация gRPC сервера
+	app := grpc_server.New()
+
+	// 7. Регистрация сервиса в gRPC сервере
+	userHandler.Register(app.GRPCServer, srvU, logger)
+
+	// 8. Запуск gRPC сервера
+	go func() {
+		app.MustRun(logger, cfg.GRPCServer.Port)
+	}()
+
+	// Ожидание сигнала для graceful shutdown
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM)
+	<-stop
+
+	// Graceful shutdown
+	logger.Info("Shutting down gracefully...")
+	app.Shutdown()
+	logger.Info("Service stopped")
 }
