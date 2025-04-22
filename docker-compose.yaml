@@ -15,11 +15,10 @@ services:
       - sh-sms-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U auth_user -d auth"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d sso"]
       interval: 5s
       timeout: 5s
       retries: 5
-
   apps_database:
     container_name: apps_database
     image: postgres
@@ -36,7 +35,7 @@ services:
       - sh-sms-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U apps_user -d apps"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d apps"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -57,7 +56,7 @@ services:
       - sh-sms-network
     restart: unless-stopped
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U auth_user -d auth" ]
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d clients" ]
       interval: 5s
       timeout: 5s
       retries: 5

@@ -13,7 +13,7 @@ func (r *Repository) List(ctx context.Context, filter models.ListRequest) ([]mod
 	logger := r.logger.With(slog.String("op", op), slog.String("client_id", filter.ClientID.String()), slog.Int("page", filter.Page), slog.Int("count", filter.Count))
 	logger.Debug("starting users listing")
 
-	whereClauses := []string{"client_id = $1", "deleted_at IS NULL"}
+	whereClauses := []string{"client_id = $1"}
 	args := []any{filter.ClientID}
 
 	if filter.EmailFilter != nil && *filter.EmailFilter != "" {
@@ -46,10 +46,14 @@ func (r *Repository) List(ctx context.Context, filter models.ListRequest) ([]mod
 	if filter.Count < 1 || filter.Page < 1 {
 		return []models.User{}, total, nil
 	}
+
 	limit := filter.Count
 	offset := (filter.Page - 1) * filter.Count
-	query := fmt.Sprintf(`SELECT id, client_id, email, full_name, phone, is_active, created_at, updated_at FROM users %s ORDER BY created_at DESC LIMIT $%d OFFSET $%d`, whereStr, len(args)+1, len(args)+2)
+
+	query := fmt.Sprintf(`SELECT id, client_id, email, full_name, phone, is_active, created_at, updated_at, deleted_at 
+        FROM users %s ORDER BY created_at DESC LIMIT $%d OFFSET $%d`, whereStr, len(args)+1, len(args)+2)
 	queryArgs := append(args, limit, offset)
+	logger.Debug("executing query", slog.String("query", query), slog.Any("args", queryArgs))
 
 	rows, err := r.db.Query(ctx, query, queryArgs...)
 	if err != nil {
@@ -57,10 +61,11 @@ func (r *Repository) List(ctx context.Context, filter models.ListRequest) ([]mod
 		return nil, total, fmt.Errorf("%s: %w", op, err)
 	}
 	defer rows.Close()
+
 	var users []models.User
 	for rows.Next() {
 		var user models.User
-		if err = rows.Scan(&user.ID, &user.ClientID, &user.Email, &user.FullName, &user.Phone, &user.IsActive, &user.CreatedAt, &user.UpdatedAt); err != nil {
+		if err = rows.Scan(&user.ID, &user.ClientID, &user.Email, &user.FullName, &user.Phone, &user.IsActive, &user.CreatedAt, &user.UpdatedAt, &user.DeletedAt); err != nil {
 			logger.Error("failed to scan row", slog.Any("error", err))
 			return nil, total, fmt.Errorf("%s: %w", op, err)
 		}

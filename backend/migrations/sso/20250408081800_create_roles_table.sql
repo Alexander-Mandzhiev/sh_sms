@@ -15,10 +15,13 @@ CREATE TABLE roles (
     deleted_at TIMESTAMPTZ
 );
 
--- Индексы для ролей
-CREATE INDEX idx_roles_client ON roles(client_id);
-CREATE INDEX idx_roles_level ON roles(level);
-CREATE UNIQUE INDEX idx_roles_name_client ON roles(client_id, name) WHERE deleted_at IS NULL;
+-- Уникальный составной индекс для ссылок между таблицами
+CREATE UNIQUE INDEX roles_client_id_idx ON roles(client_id, id);
+
+-- Оптимизация частых запросов
+CREATE INDEX roles_client_idx ON roles(client_id);
+CREATE INDEX roles_level_idx ON roles(level);
+CREATE UNIQUE INDEX roles_name_client_unique_idx ON roles(client_id, name) WHERE deleted_at IS NULL;
 -- +goose StatementEnd
 
 -- +goose Down

@@ -43,8 +43,8 @@ func (s *Service) Delete(ctx context.Context, clientID, userID uuid.UUID, perman
 
 	if err != nil {
 		logger.Error("delete operation failed", slog.Any("error", err), slog.Bool("permanent", permanent))
-		if errors.Is(err, constants.ErrNotFound) {
-			return fmt.Errorf("%w: user not found", constants.ErrNotFound)
+		if errors.Is(err, constants.ErrUserNotFound) {
+			return fmt.Errorf("%w: user not found", constants.ErrUserNotFound)
 		}
 		return fmt.Errorf("%w: delete operation failed", constants.ErrInternal)
 	}

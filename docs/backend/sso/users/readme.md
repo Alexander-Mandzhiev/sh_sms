@@ -53,23 +53,33 @@ message CreateRequest {
 
 ```json
 {
-    "client_id": "a3d8f7c2-45b1-4e90-8c6a-12b8e7f4d9c0",
-    "email": "user@example.com",
-    "password": "SecurePass123!",
-    "full_name": "John Doe",
-    "phone": "+1234567890"
+  "client_id": "8268ec76-d6c2-48b5-a0e4-a9c2538b8f48",
+  "email": "user@example.com",
+  "password": "Password123!",
+  "full_name": "John Doe",
+  "phone": "+1234567890"
 }
 ```
 **Пример ответа**
 ```json
 {
-    "id": "550e8400-e29b-41d4-a716-446655440000",
-    "client_id": "a3d8f7c2-45b1-4e90-8c6a-12b8e7f4d9c0",
-    "email": "user@example.com",
-    "full_name": "John Doe",
-    "phone": "+1234567890",
-    "is_active": true,
-    "created_at": "2024-04-05T12:34:56Z"
+  "id": "c70d5691-42c9-4ba9-9ed3-c7482d5b8308",
+  "client_id": "8268ec76-d6c2-48b5-a0e4-a9c2538b8f48",
+  "email": "user@example.com",
+  "full_name": "John Doe",
+  "phone": "+1234567890",
+  "email_verified": false,
+  "phone_verified": false,
+  "is_active": false,
+  "created_at": {
+    "seconds": "1745326559",
+    "nanos": 335298500
+  },
+  "updated_at": {
+    "seconds": "1745326559",
+    "nanos": 335298500
+  },
+  "deleted_at": null
 }
 ```
 **Особенности**
@@ -107,22 +117,31 @@ message GetRequest {
 
 ```json
 {
-    "client_id": "a3d8f7c2-45b1-4e90-8c6a-12b8e7f4d9c0",
-    "id": "550e8400-e29b-41d4-a716-446655440000"
+  "id": "c70d5691-42c9-4ba9-9ed3-c7482d5b8308",
+  "client_id": "8268ec76-d6c2-48b5-a0e4-a9c2538b8f48"
 }
 ```
 **Пример ответа**
 
 ```json
 {
-    "id": "550e8400-e29b-41d4-a716-446655440000",
-    "client_id": "a3d8f7c2-45b1-4e90-8c6a-12b8e7f4d9c0",
-    "email": "user@example.com",
-    "full_name": "John Doe",
-    "phone": "+1234567890",
-    "is_active": true,
-    "created_at": "2024-04-05T12:34:56Z",
-    "updated_at": "2024-04-05T12:34:56Z"
+  "id": "c70d5691-42c9-4ba9-9ed3-c7482d5b8308",
+  "client_id": "8268ec76-d6c2-48b5-a0e4-a9c2538b8f48",
+  "email": "user@example.com",
+  "full_name": "John Doe",
+  "phone": "+1234567890",
+  "email_verified": false,
+  "phone_verified": false,
+  "is_active": false,
+  "created_at": {
+    "seconds": "1745326559",
+    "nanos": 335298000
+  },
+  "updated_at": {
+    "seconds": "1745326559",
+    "nanos": 335298000
+  },
+  "deleted_at": null
 }
 ```
 **Особенности**
@@ -157,24 +176,37 @@ message UpdateRequest {
 
 ```json
 {
-    "id": "550e8400-e29b-41d4-a716-446655440000",
-    "client_id": "a3d8f7c2-45b1-4e90-8c6a-12b8e7f4d9c0",
-    "phone": "+1987654321",
-    "is_active": false
+  "id": "c70d5691-42c9-4ba9-9ed3-c7482d5b8308",
+  "client_id": "8268ec76-d6c2-48b5-a0e4-a9c2538b8f48",
+  "email": "user@example.com",
+  "full_name": "John Doe",
+  "phone": "+1234567891",
+  "email_verified": true,
+  "phone_verified": true,
+  "is_active": true
 }
 ```
 **Пример ответа**
 
 ```json
 {
-    "id": "550e8400-e29b-41d4-a716-446655440000",
-    "client_id": "a3d8f7c2-45b1-4e90-8c6a-12b8e7f4d9c0",
-    "email": "user@example.com",
-    "full_name": "John Doe",
-    "phone": "+1987654321",
-    "is_active": false,
-    "created_at": "2024-04-05T12:34:56Z",
-    "updated_at": "2024-04-05T12:35:07Z"
+  "id": "c70d5691-42c9-4ba9-9ed3-c7482d5b8308",
+  "client_id": "8268ec76-d6c2-48b5-a0e4-a9c2538b8f48",
+  "email": "user@example.com",
+  "full_name": "John Doe",
+  "phone": "+1234567891",
+  "email_verified": false,
+  "phone_verified": false,
+  "is_active": true,
+  "created_at": {
+    "seconds": "1745326559",
+    "nanos": 335298000
+  },
+  "updated_at": {
+    "seconds": "1745326772",
+    "nanos": 254000100
+  },
+  "deleted_at": null
 }
 ```
 **Особенности**
@@ -206,9 +238,9 @@ message DeleteRequest {
 **Пример запроса**
 ```json
 {
-    "id": "550e8400-e29b-41d4-a716-446655440000",
-    "client_id": "a3d8f7c2-45b1-4e90-8c6a-12b8e7f4d9c0",
-    "permanent": false
+  "id": "c70d5691-42c9-4ba9-9ed3-c7482d5b8308",
+  "client_id": "8268ec76-d6c2-48b5-a0e4-a9c2538b8f48",
+  "permanent": false
 }
 ```
 **Пример ответа**
@@ -252,7 +284,7 @@ message ListRequest {
 
 ```json
 {
-    "client_id": "a3d8f7c2-45b1-4e90-8c6a-12b8e7f4d9c0",
+    "client_id": "8268ec76-d6c2-48b5-a0e4-a9c2538b8f48",
     "email_filter": "@example.com",
     "active_only": true,
     "page": 1,
@@ -263,19 +295,32 @@ message ListRequest {
 
 ```json
 {
-    "users": [
-        {
-            "id": "550e8400-e29b-41d4-a716-446655440000",
-            "client_id": "a3d8f7c2-45b1-4e90-8c6a-12b8e7f4d9c0",
-            "email": "user@example.com",
-            "full_name": "John Doe",
-            "phone": "+1987654321",
-            "is_active": true,
-            "created_at": "2024-04-05T12:34:56Z"
-        }
-    ],
-    "total_count": 15,
-    "current_page": 1
+  "users": [
+    {
+      "id": "c70d5691-42c9-4ba9-9ed3-c7482d5b8308",
+      "client_id": "8268ec76-d6c2-48b5-a0e4-a9c2538b8f48",
+      "email": "user@example.com",
+      "full_name": "John Doe",
+      "phone": "+1234567891",
+      "email_verified": false,
+      "phone_verified": false,
+      "is_active": true,
+      "created_at": {
+        "seconds": "1745326559",
+        "nanos": 335298000
+      },
+      "updated_at": {
+        "seconds": "1745327863",
+        "nanos": 554782000
+      },
+      "deleted_at": {
+        "seconds": "1745327852",
+        "nanos": 545089000
+      }
+    }
+  ],
+  "total_count": 1,
+  "current_page": 1
 }
 ```
 **Особенности**
@@ -309,9 +354,9 @@ message SetPasswordRequest {
 
 ```json
 {
-    "id": "550e8400-e29b-41d4-a716-446655440000",
-    "client_id": "a3d8f7c2-45b1-4e90-8c6a-12b8e7f4d9c0",
-    "new_password": "NewSecurePass123!"
+  "id": "c70d5691-42c9-4ba9-9ed3-c7482d5b8308",
+  "client_id": "8268ec76-d6c2-48b5-a0e4-a9c2538b8f48",
+  "new_password": "NewSecurePass123!"
 }
 ```
 **Пример ответа**

@@ -33,4 +33,5 @@ var (
 	ErrInvalidRoleLevel      = errors.New("invalid role level")
 	ErrParentRoleNotFound    = errors.New("parent role not found")
 	ErrPermissionNotFound    = errors.New("permission not found")
+	ErrUserNotFound          = errors.New("user not found")
 )

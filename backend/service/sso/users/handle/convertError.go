@@ -9,7 +9,7 @@ import (
 
 func (s *serverAPI) convertError(err error) error {
 	switch {
-	case errors.Is(err, constants.ErrNotFound):
+	case errors.Is(err, constants.ErrUserNotFound):
 		return status.Error(codes.NotFound, "resource not found")
 	case errors.Is(err, constants.ErrInvalidArgument):
 		return status.Error(codes.InvalidArgument, "invalid request")

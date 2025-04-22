@@ -15,7 +15,7 @@ func (r *Repository) Get(ctx context.Context, clientID, userID uuid.UUID) (*mode
 	const op = "repository.User.Get"
 	logger := r.logger.With(slog.String("op", op), slog.String("user_id", userID.String()), slog.String("client_id", clientID.String()))
 	logger.Debug("attempting to get user")
-	query := `SELECT id, client_id, email, password_hash, full_name, phone, is_active, created_at, updated_at FROM users WHERE id = $1 AND client_id = $2 AND deleted_at IS NULL`
+	query := `SELECT id, client_id, email, password_hash, full_name, phone, is_active, created_at, updated_at FROM users WHERE id = $1 AND client_id = $2`
 
 	var user models.User
 	err := r.db.QueryRow(ctx, query, userID, clientID).Scan(&user.ID, &user.ClientID, &user.Email, &user.PasswordHash, &user.FullName, &user.Phone, &user.IsActive, &user.CreatedAt, &user.UpdatedAt)
