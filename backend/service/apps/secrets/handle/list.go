@@ -39,7 +39,7 @@ func (s *serverAPI) List(ctx context.Context, req *pb.ListRequest) (*pb.ListResp
 	}
 
 	if filter.ClientID != nil {
-		if err := utils.ValidateClientID(*filter.ClientID); err != nil {
+		if err := utils.ValidateUUIDToString(*filter.ClientID); err != nil {
 			logger.Warn("invalid client_id in filter", slog.Any("error", err))
 			return nil, s.convertError(constants.ErrInvalidArgument)
 		}

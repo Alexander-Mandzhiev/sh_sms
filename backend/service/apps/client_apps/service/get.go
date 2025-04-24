@@ -14,7 +14,7 @@ func (s *Service) Get(ctx context.Context, clientID string, appID int) (*models.
 	const op = "service.ClientApp.Get"
 	logger := s.logger.With(slog.String("op", op), slog.String("client_id", clientID), slog.Int("app_id", appID))
 
-	if err := utils.ValidateClientID(clientID); err != nil {
+	if err := utils.ValidateUUIDToString(clientID); err != nil {
 		logger.Warn("client ID validation failed", sl.Err(err, false))
 		return nil, fmt.Errorf("%w: %v", constants.ErrInvalidArgument, err)
 	}

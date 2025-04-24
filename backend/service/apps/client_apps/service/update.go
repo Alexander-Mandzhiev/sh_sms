@@ -14,7 +14,7 @@ func (s *Service) Update(ctx context.Context, clientID string, appID int, isActi
 	const op = "service.ClientApp.Update"
 	logger := s.logger.With(slog.String("op", op), slog.String("client_id", clientID), slog.Int("app_id", appID))
 
-	if err := utils.ValidateClientID(clientID); err != nil {
+	if err := utils.ValidateUUIDToString(clientID); err != nil {
 		logger.Warn("client ID validation failed", slog.Any("error", err))
 		return nil, fmt.Errorf("%w: %v", constants.ErrInvalidArgument, err)
 	}

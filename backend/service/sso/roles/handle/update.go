@@ -7,7 +7,6 @@ import (
 	"backend/service/utils"
 	"context"
 	"fmt"
-	"github.com/google/uuid"
 	"log/slog"
 )
 
@@ -53,15 +52,7 @@ func (s *serverAPI) Update(ctx context.Context, req *roles.UpdateRequest) (*role
 
 	if req.IsActive != nil {
 		updateData.DeletedAt = nil
-	}
-
-	if req.ParentRoleId != nil {
-		var parentID uuid.UUID
-		parentID, err = utils.ValidateAndReturnUUID(*req.ParentRoleId)
-		if err != nil {
-			return nil, s.convertError(fmt.Errorf("%w: parent_role_id", constants.ErrInvalidArgument))
-		}
-		updateData.ParentRoleID = &parentID
+		updateData.IsActive = *req.IsActive
 	}
 
 	if req.IsCustom != nil {

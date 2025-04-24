@@ -13,7 +13,7 @@ func (s *Service) Delete(ctx context.Context, clientID string, appID int, secret
 	logger := s.logger.With(slog.String("op", op), slog.String("client_id", clientID), slog.Int("app_id", appID), slog.String("secret_type", secretType))
 	logger.Debug("starting secret deletion")
 
-	if err := utils.ValidateClientID(clientID); err != nil {
+	if err := utils.ValidateUUIDToString(clientID); err != nil {
 		logger.Warn("invalid client ID", slog.Any("error", err))
 		return fmt.Errorf("%w: %v", constants.ErrInvalidArgument, err)
 	}

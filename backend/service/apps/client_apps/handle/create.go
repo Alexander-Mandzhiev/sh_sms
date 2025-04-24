@@ -13,7 +13,7 @@ func (s *serverAPI) Create(ctx context.Context, req *pb.CreateRequest) (*pb.Clie
 	logger := s.logger.With(slog.String("op", op))
 	logger.Debug("Create request received", slog.String("client_id", req.GetClientId()), slog.Int("app_id", int(req.GetAppId())))
 
-	if err := utils.ValidateClientID(req.GetClientId()); err != nil {
+	if err := utils.ValidateUUIDToString(req.GetClientId()); err != nil {
 		logger.Warn("client_id validation failed", slog.Any("error", err))
 		return nil, s.convertError(err)
 	}

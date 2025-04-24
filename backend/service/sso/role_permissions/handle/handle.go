@@ -15,6 +15,9 @@ type RoleService interface {
 	Update(ctx context.Context, role *models.Role) (*models.Role, error)
 	Delete(ctx context.Context, clientID, roleID uuid.UUID, permanent bool) error
 	List(ctx context.Context, req models.ListRequest) ([]models.Role, int, error)
+	AddPermission(ctx context.Context, clientID, roleID, permissionID uuid.UUID) (*models.Role, error)
+	RemovePermission(ctx context.Context, clientID, roleID, permissionID uuid.UUID) (*models.Role, error)
+	HasPermission(ctx context.Context, clientID, roleID, permissionID uuid.UUID) (bool, error)
 }
 
 type serverAPI struct {

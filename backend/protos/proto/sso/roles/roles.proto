@@ -10,8 +10,6 @@ service RoleService {
   rpc Update(UpdateRequest) returns (Role);
   rpc Delete(DeleteRequest) returns (DeleteResponse);
   rpc List(ListRequest) returns (ListResponse);
-  rpc AddPermission(PermissionRequest) returns (Role);
-  rpc RemovePermission(PermissionRequest) returns (Role);
 }
 
 message Role {
@@ -22,12 +20,11 @@ message Role {
   int32 level = 5;
   bool is_active = 6;
   bool is_custom = 7;
-  optional string parent_role_id = 8;
-  optional string created_by = 9;
-  repeated string permission_ids = 10;
-  google.protobuf.Timestamp created_at = 11;
-  google.protobuf.Timestamp updated_at = 12;
-  optional google.protobuf.Timestamp deleted_at = 13;
+  optional string created_by = 8;
+  repeated string permission_ids = 9;
+  google.protobuf.Timestamp created_at = 10;
+  google.protobuf.Timestamp updated_at = 11;
+  optional google.protobuf.Timestamp deleted_at = 12;
 }
 
 message CreateRequest {
@@ -35,9 +32,8 @@ message CreateRequest {
   string name = 2;
   string description = 3;
   int32 level = 4;
-  optional string parent_role_id = 5;
-  optional bool is_custom = 6;
-  optional string created_by = 7;
+  optional bool is_custom = 5;
+  optional string created_by = 6;
 }
 
 message GetRequest {
@@ -52,8 +48,7 @@ message UpdateRequest {
   optional string description = 4;
   optional int32 level = 5;
   optional bool is_active = 6;
-  optional string parent_role_id = 7;
-  optional bool is_custom = 8;
+  optional bool is_custom = 7;
 }
 
 message DeleteRequest {
@@ -62,11 +57,6 @@ message DeleteRequest {
   optional bool permanent = 3;
 }
 
-message PermissionRequest {
-  string role_id = 1;
-  string client_id = 2;
-  string permission_id = 3;
-}
 
 message ListRequest {
   string client_id = 1;

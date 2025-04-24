@@ -13,7 +13,7 @@ func (s *Service) Create(ctx context.Context, params models.CreateClientApp) (*m
 	const op = "service.ClientApp.Create"
 	logger := s.logger.With(slog.String("op", op), slog.String("client_id", params.ClientID), slog.Int("app_id", params.AppID))
 
-	if err := utils.ValidateClientID(params.ClientID); err != nil {
+	if err := utils.ValidateUUIDToString(params.ClientID); err != nil {
 		logger.Warn("client ID validation failed", slog.Any("error", err))
 		return nil, fmt.Errorf("%w: %v", constants.ErrInvalidArgument, err)
 	}

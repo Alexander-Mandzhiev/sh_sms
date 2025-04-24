@@ -12,11 +12,16 @@ import (
 
 var emailRegex = regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
 
-func ValidateClientID(clientID string) error {
-	if clientID == "" {
+func ValidateUUID(id uuid.UUID) error {
+	if id == uuid.Nil {
 		return constants.ErrInvalidArgument
 	}
-	if _, err := uuid.Parse(clientID); err != nil {
+	return nil
+}
+
+func ValidateUUIDToString(id string) error {
+	parsedUUID, err := uuid.Parse(id)
+	if err != nil || parsedUUID == uuid.Nil {
 		return constants.ErrInvalidArgument
 	}
 	return nil
@@ -48,7 +53,7 @@ func ValidateRotationHistory(h *models.RotationHistory) error {
 		return errors.New("nil rotation history")
 	}
 
-	if err := ValidateClientID(h.ClientID); err != nil {
+	if _, err := ValidateAndReturnUUID(h.ClientID); err != nil {
 		return fmt.Errorf("invalid client_id: %w", err)
 	}
 
@@ -68,7 +73,7 @@ func ValidateRotationHistory(h *models.RotationHistory) error {
 }
 func ValidatePasswordPolicy(password string) error {
 	if len(password) < 8 {
-		return errors.New("password must be at least 8 characters")
+		return fmt.Errorf("%w: password must be at least 8 characters", constants.ErrInvalidPassword)
 	}
 	return nil
 }

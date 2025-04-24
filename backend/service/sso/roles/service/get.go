@@ -1,1 +1,46 @@
 package service
+
+import (
+	"backend/service/constants"
+	"backend/service/sso/models"
+	"backend/service/utils"
+	"context"
+	"errors"
+	"fmt"
+	"github.com/google/uuid"
+	"log/slog"
+)
+
+func (s *Service) Get(ctx context.Context, clientID, roleID uuid.UUID) (*models.Role, error) {
+	const op = "service.Roles.Get"
+	logger := s.logger.With(slog.String("op", op), slog.String("client_id", clientID.String()), slog.String("role_id", roleID.String()))
+	logger.Debug("attempting to get role")
+
+	if err := utils.ValidateUUID(clientID); err != nil {
+		logger.Warn("invalid client_id", slog.Any("error", err))
+		return nil, fmt.Errorf("%w: client_id", constants.ErrInvalidArgument)
+	}
+
+	if err := utils.ValidateUUID(roleID); err != nil {
+		logger.Warn("invalid role_id", slog.Any("error", err))
+		return nil, fmt.Errorf("%w: role_id", constants.ErrInvalidArgument)
+	}
+
+	role, err := s.provider.GetByID(ctx, clientID, roleID)
+	if err != nil {
+		if errors.Is(err, constants.ErrNotFound) {
+			logger.Warn("role not found")
+			return nil, fmt.Errorf("%w: %s", constants.ErrNotFound, "role")
+		}
+		logger.Error("database error", slog.Any("error", err))
+		return nil, fmt.Errorf("%w: %v", constants.ErrInternal, err)
+	}
+
+	if role.ClientID != clientID {
+		logger.Warn("client ID mismatch", slog.String("expected", clientID.String()), slog.String("actual", role.ClientID.String()))
+		return nil, fmt.Errorf("%w: role access denied", constants.ErrPermissionDenied)
+	}
+
+	logger.Debug("successfully retrieved role", slog.String("role_name", role.Name))
+	return role, nil
+}

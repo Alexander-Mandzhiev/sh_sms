@@ -26,7 +26,7 @@ func (s *serverAPI) ListRotations(ctx context.Context, req *pb.ListRequest) (*pb
 
 	if f := req.Filter; f != nil {
 		if f.ClientId != nil {
-			if err := utils.ValidateClientID(*f.ClientId); err != nil {
+			if err := utils.ValidateUUIDToString(*f.ClientId); err != nil {
 				logger.Warn("invalid client_id in filter", slog.Any("error", err))
 				return nil, s.convertError(constants.ErrInvalidArgument)
 			}
@@ -51,7 +51,7 @@ func (s *serverAPI) ListRotations(ctx context.Context, req *pb.ListRequest) (*pb
 		}
 
 		if f.RotatedBy != nil {
-			if err := utils.ValidateClientID(*f.RotatedBy); err != nil {
+			if err := utils.ValidateUUIDToString(*f.RotatedBy); err != nil {
 				logger.Warn("invalid rotated_by in filter", slog.Any("error", err))
 				return nil, s.convertError(constants.ErrInvalidArgument)
 			}

@@ -20,7 +20,7 @@ func (s *Service) List(ctx context.Context, filter models.ListFilter) ([]*models
 	}
 
 	if filter.ClientID != nil {
-		if err := utils.ValidateClientID(*filter.ClientID); err != nil {
+		if err := utils.ValidateUUIDToString(*filter.ClientID); err != nil {
 			logger.Warn("invalid client_id filter", slog.String("client_id", *filter.ClientID), sl.Err(err, false))
 			return nil, 0, fmt.Errorf("%w: %v", constants.ErrInvalidArgument, err)
 		}

@@ -15,7 +15,7 @@ func (s *serverAPI) Generate(ctx context.Context, req *pb.CreateRequest) (*pb.Se
 		slog.Int("app_id", int(req.GetAppId())), slog.String("type", req.SecretType))
 	logger.Debug("Generate secret request received")
 
-	if err := utils.ValidateClientID(req.GetClientId()); err != nil {
+	if err := utils.ValidateUUIDToString(req.GetClientId()); err != nil {
 		logger.Warn("client_id validation failed", slog.Any("error", err))
 		return nil, s.convertError(constants.ErrInvalidArgument)
 	}

@@ -14,7 +14,7 @@ func (s *serverAPI) Revoke(ctx context.Context, req *pb.RevokeRequest) (*pb.Secr
 		slog.Int("app_id", int(req.GetAppId())), slog.String("secret_type", req.GetSecretType()))
 	logger.Debug("Revoke secret request received")
 
-	if err := utils.ValidateClientID(req.GetClientId()); err != nil {
+	if err := utils.ValidateUUIDToString(req.GetClientId()); err != nil {
 		logger.Warn("client_id validation failed", slog.Any("error", err))
 		return nil, s.convertError(constants.ErrInvalidArgument)
 	}

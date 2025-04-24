@@ -14,7 +14,7 @@ func (s *Service) Rotate(ctx context.Context, params models.RotateSecretParams) 
 	logger := s.logger.With(slog.String("op", op), slog.String("client_id", params.ClientID), slog.Int("app_id", params.AppID), slog.String("secret_type", params.SecretType), slog.String("rotated_by", params.RotatedBy))
 	logger.Debug("starting secret rotation")
 
-	if err := utils.ValidateClientID(params.ClientID); err != nil {
+	if err := utils.ValidateUUIDToString(params.ClientID); err != nil {
 		logger.Warn("invalid client ID", slog.Any("error", err))
 		return nil, fmt.Errorf("%w: %v", constants.ErrInvalidArgument, err)
 	}
@@ -30,7 +30,7 @@ func (s *Service) Rotate(ctx context.Context, params models.RotateSecretParams) 
 	}
 
 	if params.RotatedBy != "" {
-		if err := utils.ValidateClientID(params.RotatedBy); err != nil {
+		if err := utils.ValidateUUIDToString(params.RotatedBy); err != nil {
 			logger.Warn("invalid rotated_by", slog.Any("error", err))
 			return nil, fmt.Errorf("%w: %v", constants.ErrInvalidArgument, err)
 		}

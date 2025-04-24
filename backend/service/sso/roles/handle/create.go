@@ -40,16 +40,6 @@ func (s *serverAPI) Create(ctx context.Context, req *roles.CreateRequest) (*role
 		IsCustom:    req.GetIsCustom(),
 	}
 
-	if req.GetParentRoleId() != "" {
-		var parentID uuid.UUID
-		parentID, err = utils.ValidateAndReturnUUID(req.GetParentRoleId())
-		if err != nil {
-			logger.Warn("invalid parent_role_id", slog.Any("error", err))
-			return nil, s.convertError(fmt.Errorf("%w: parent_role_id", constants.ErrInvalidArgument))
-		}
-		role.ParentRoleID = &parentID
-	}
-
 	if req.GetCreatedBy() != "" {
 		var createdBy uuid.UUID
 		createdBy, err = utils.ValidateAndReturnUUID(req.GetCreatedBy())

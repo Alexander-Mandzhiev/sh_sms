@@ -14,15 +14,10 @@ func convertRoleToProto(role *models.Role) *roles.Role {
 		Description:   role.Description,
 		Level:         int32(role.Level),
 		IsCustom:      role.IsCustom,
-		IsActive:      role.DeletedAt == nil,
+		IsActive:      role.IsActive,
 		CreatedAt:     timestamppb.New(role.CreatedAt),
-		DeletedAt:     nil,
-		PermissionIds: extractPermissionIDs(role.Permissions),
-	}
-
-	if role.ParentRoleID != nil {
-		parentID := role.ParentRoleID.String()
-		protoRole.ParentRoleId = &parentID
+		UpdatedAt:     timestamppb.New(role.UpdatedAt),
+		PermissionIds: make([]string, 0, len(role.Permissions)),
 	}
 
 	if role.CreatedBy != nil {
@@ -34,13 +29,9 @@ func convertRoleToProto(role *models.Role) *roles.Role {
 		protoRole.DeletedAt = timestamppb.New(*role.DeletedAt)
 	}
 
-	return protoRole
-}
-
-func extractPermissionIDs(perms []models.Permission) []string {
-	ids := make([]string, 0, len(perms))
-	for _, p := range perms {
-		ids = append(ids, p.ID.String())
+	for _, p := range role.Permissions {
+		protoRole.PermissionIds = append(protoRole.PermissionIds, p.ID.String())
 	}
-	return ids
+
+	return protoRole
 }

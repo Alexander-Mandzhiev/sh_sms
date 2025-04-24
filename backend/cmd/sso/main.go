@@ -8,6 +8,10 @@ import (
 	userHandler "backend/service/sso/users/handle"
 	userRepository "backend/service/sso/users/repository"
 	userService "backend/service/sso/users/service"
+
+	roleHandler "backend/service/sso/roles/handle"
+	roleRepository "backend/service/sso/roles/repository"
+	roleService "backend/service/sso/roles/service"
 	"os"
 	"os/signal"
 	"syscall"
@@ -39,16 +43,22 @@ func main() {
 		logger.Error("Failed to create user repository", sl.Err(err, true))
 		return
 	}
+	reposR, err := roleRepository.New(dbPool, logger)
+	if err != nil {
+		logger.Error("Failed to create user repository", sl.Err(err, true))
+		return
+	}
 
 	// 5. Инициализация сервиса
 	srvU := userService.New(reposU, logger)
+	srvR := roleService.New(reposR, logger)
 
 	// 6. Инициализация gRPC сервера
 	app := grpc_server.New()
 
 	// 7. Регистрация сервиса в gRPC сервере
 	userHandler.Register(app.GRPCServer, srvU, logger)
-
+	roleHandler.Register(app.GRPCServer, srvR, logger)
 	// 8. Запуск gRPC сервера
 	go func() {
 		app.MustRun(logger, cfg.GRPCServer.Port)

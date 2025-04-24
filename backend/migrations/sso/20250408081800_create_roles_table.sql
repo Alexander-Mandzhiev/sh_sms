@@ -7,10 +7,10 @@ CREATE TABLE roles (
     name VARCHAR(150) NOT NULL,
     description TEXT,
     level INT DEFAULT 0 CHECK (level >= 0),
-    parent_role_id UUID REFERENCES roles(id),
     is_custom BOOLEAN DEFAULT FALSE,
     is_active BOOLEAN NOT NULL DEFAULT TRUE,
     created_by UUID REFERENCES users(id) ON DELETE SET NULL,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMPTZ
 );

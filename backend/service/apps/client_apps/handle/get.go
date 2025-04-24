@@ -12,7 +12,7 @@ func (s *serverAPI) Get(ctx context.Context, req *pb.IdentifierRequest) (*pb.Cli
 	logger := s.logger.With(slog.String("op", op), slog.String("client_id", req.GetClientId()), slog.Int("app_id", int(req.GetAppId())))
 	logger.Debug("starting operation")
 
-	if err := utils.ValidateClientID(req.GetClientId()); err != nil {
+	if err := utils.ValidateUUIDToString(req.GetClientId()); err != nil {
 		logger.Warn("validation failed", slog.Any("error", err))
 		return nil, s.convertError(err)
 	}

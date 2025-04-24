@@ -24,7 +24,7 @@ func (s *serverAPI) List(ctx context.Context, req *users.ListRequest) (*users.Li
 	}
 
 	if listReq.ClientID != nil {
-		if err = utils.ValidateClientID(listReq.ClientID.String()); err != nil {
+		if err = utils.ValidateUUID(*listReq.ClientID); err != nil {
 			logger.Warn("invalid client ID", slog.Any("error", err))
 			return nil, s.convertError(err)
 		}

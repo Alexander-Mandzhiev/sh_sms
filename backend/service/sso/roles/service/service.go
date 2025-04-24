@@ -1,8 +1,20 @@
 package service
 
-import "log/slog"
+import (
+	"backend/service/sso/models"
+	"context"
+	"github.com/google/uuid"
+	"log/slog"
+)
 
 type RolesProvider interface {
+	Create(ctx context.Context, role *models.Role) error
+	GetByID(ctx context.Context, clientID, roleID uuid.UUID) (*models.Role, error)
+	HasDependencies(ctx context.Context, roleID uuid.UUID) (bool, error)
+	HardDelete(ctx context.Context, clientID, roleID uuid.UUID) error
+	Update(ctx context.Context, role *models.Role) (*models.Role, error)
+	List(ctx context.Context, req models.ListRequest) ([]models.Role, int, error)
+	RoleExists(ctx context.Context, clientID uuid.UUID, name string) (bool, error)
 }
 
 type Service struct {

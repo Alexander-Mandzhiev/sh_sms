@@ -20,7 +20,7 @@ func (s *Service) List(ctx context.Context, filter models.ListFilter) ([]*models
 	}
 
 	if filter.ClientID != nil {
-		if err := utils.ValidateClientID(*filter.ClientID); err != nil {
+		if err := utils.ValidateUUIDToString(*filter.ClientID); err != nil {
 			logger.Warn("invalid client ID in filter", slog.Any("error", err))
 			return nil, 0, fmt.Errorf("%w: %v", constants.ErrInvalidArgument, err)
 		}
@@ -32,7 +32,7 @@ func (s *Service) List(ctx context.Context, filter models.ListFilter) ([]*models
 	}
 
 	if filter.RotatedBy != nil {
-		if err := utils.ValidateClientID(*filter.RotatedBy); err != nil {
+		if err := utils.ValidateUUIDToString(*filter.RotatedBy); err != nil {
 			logger.Warn("invalid rotated_by in filter", slog.Any("error", err))
 			return nil, 0, fmt.Errorf("%w: %v", constants.ErrInvalidArgument, err)
 		}

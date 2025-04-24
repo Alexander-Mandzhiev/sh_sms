@@ -16,7 +16,7 @@ func (s *serverAPI) Rotate(ctx context.Context, req *pb.RotateRequest) (*pb.Secr
 		slog.String("secret_type", req.GetSecretType()), slog.String("rotated_by", req.GetRotatedBy()))
 	logger.Debug("Rotate secret request received")
 
-	if err := utils.ValidateClientID(req.GetClientId()); err != nil {
+	if err := utils.ValidateUUIDToString(req.GetClientId()); err != nil {
 		logger.Warn("client_id validation failed", slog.Any("error", err))
 		return nil, s.convertError(constants.ErrInvalidArgument)
 	}
@@ -32,7 +32,7 @@ func (s *serverAPI) Rotate(ctx context.Context, req *pb.RotateRequest) (*pb.Secr
 	}
 
 	if req.GetRotatedBy() != "" {
-		if err := utils.ValidateClientID(req.GetRotatedBy()); err != nil {
+		if err := utils.ValidateUUIDToString(req.GetRotatedBy()); err != nil {
 			logger.Warn("rotated_by validation failed", slog.Any("error", err))
 			return nil, s.convertError(constants.ErrInvalidArgument)
 		}

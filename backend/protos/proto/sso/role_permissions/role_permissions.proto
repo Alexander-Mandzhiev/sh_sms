@@ -1,0 +1,66 @@
+syntax = "proto3";
+package sso.role_permissions;
+option go_package = "sso.role_permissions.v1;role_permissions";
+
+import "google/protobuf/timestamp.proto";
+
+service RolePermissionService {
+  rpc AddPermissionsToRole(AddPermissionsRequest) returns (RoleWithPermissions);
+  rpc RemovePermissionsFromRole(RemovePermissionsRequest) returns (RoleWithPermissions);
+  rpc ListPermissionsForRole(ListPermissionsRequest) returns (ListPermissionsResponse);
+  rpc ListRolesForPermission(ListRolesRequest) returns (ListRolesResponse);
+  rpc HasPermission(HasPermissionRequest) returns (HasPermissionResponse);
+}
+
+message AddPermissionsRequest {
+  string role_id = 1;
+  string client_id = 2;
+  repeated string permission_ids = 3;
+}
+
+message RemovePermissionsRequest {
+  string role_id = 1;
+  string client_id = 2;
+  repeated string permission_ids = 3;
+}
+
+message ListPermissionsRequest {
+  string role_id = 1;
+  string client_id = 2;
+  int32 page = 3;
+  int32 count = 4;
+}
+
+message HasPermissionRequest {
+  string role_id = 1;
+  string client_id = 2;
+  string permission_id = 3;
+}
+
+message ListRolesRequest {
+  string permission_id = 1;
+  int32 page = 2;
+  int32 count = 3;
+}
+
+message RoleWithPermissions {
+  string role_id = 1;
+  repeated string permission_ids = 2;
+  google.protobuf.Timestamp updated_at = 3;
+}
+
+message ListPermissionsResponse {
+  repeated string permission_ids = 1;
+  int32 total_count = 2;
+  int32 current_page = 3;
+}
+
+message HasPermissionResponse {
+  bool has_permission = 1;
+}
+
+message ListRolesResponse {
+  repeated string role_ids = 1;
+  int32 total_count = 2;
+  int32 current_page = 3;
+}

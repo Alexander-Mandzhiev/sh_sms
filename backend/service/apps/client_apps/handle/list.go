@@ -24,7 +24,7 @@ func (s *serverAPI) List(ctx context.Context, req *pb.ListRequest) (*pb.ListResp
 	}
 
 	if req.ClientId != nil {
-		if err := utils.ValidateClientID(*req.ClientId); err != nil {
+		if err := utils.ValidateUUIDToString(*req.ClientId); err != nil {
 			logger.Warn("client_id validation failed", slog.Any("error", err))
 			return nil, s.convertError(err)
 		}

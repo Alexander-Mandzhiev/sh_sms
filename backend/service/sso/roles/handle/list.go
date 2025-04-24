@@ -20,19 +20,28 @@ func (s *serverAPI) List(ctx context.Context, req *roles.ListRequest) (*roles.Li
 		logger.Warn("invalid client_id", slog.Any("error", err))
 		return nil, s.convertError(fmt.Errorf("%w: client_id", constants.ErrInvalidArgument))
 	}
-
-	listReq := models.ListRequest{
-		ClientID:    &clientID,
-		NameFilter:  req.NameFilter,
-		LevelFilter: utils.GetIntPointer(int(req.GetLevelFilter())),
-		ActiveOnly:  req.ActiveOnly,
-		Page:        int(req.GetPage()),
-		Count:       int(req.GetCount()),
+	if err = utils.ValidatePagination(int(req.GetPage()), int(req.GetCount())); err != nil {
+		logger.Warn("invalid pagination", slog.Int("page", int(req.GetPage())), slog.Int("count", int(req.GetCount())), slog.Any("error", err))
+		return nil, s.convertError(err)
 	}
 
-	if err = utils.ValidatePagination(listReq.Page, listReq.Count); err != nil {
-		logger.Warn("invalid pagination", slog.Int("page", listReq.Page), slog.Int("count", listReq.Count), slog.Any("error", err))
-		return nil, s.convertError(err)
+	listReq := models.ListRequest{
+		ClientID: &clientID,
+		Page:     int(req.GetPage()),
+		Count:    int(req.GetCount()),
+	}
+
+	if req.LevelFilter != nil {
+		listReq.LevelFilter = utils.GetIntPointer(int(req.GetLevelFilter()))
+	}
+
+	if req.GetNameFilter() != "" {
+		nameFilter := req.GetNameFilter()
+		listReq.NameFilter = &nameFilter
+	}
+
+	if req.ActiveOnly != nil {
+		listReq.ActiveOnly = req.ActiveOnly
 	}
 
 	rolesList, total, err := s.service.List(ctx, listReq)
