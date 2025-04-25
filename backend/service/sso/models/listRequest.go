@@ -5,12 +5,15 @@ import (
 )
 
 type ListRequest struct {
-	Page        int
-	Count       int
-	ClientID    *uuid.UUID
-	EmailFilter *string
-	PhoneFilter *string
-	NameFilter  *string
-	LevelFilter *int
-	ActiveOnly  *bool
+	Page           int
+	Count          int
+	ClientID       *uuid.UUID
+	AppID          *int
+	EmailFilter    *string
+	PhoneFilter    *string
+	NameFilter     *string
+	LevelFilter    *int
+	ActiveOnly     *bool
+	CodeFilter     *string
+	CategoryFilter *string
 }

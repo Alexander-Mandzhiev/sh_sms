@@ -10,6 +10,7 @@ service PermissionService {
   rpc Update(UpdateRequest) returns (Permission);
   rpc Delete(DeleteRequest) returns (SuccessResponse);
   rpc List(ListRequest) returns (ListResponse);
+  rpc Restore(RestoreRequest) returns (Permission);
 }
 
 message Permission {
@@ -18,8 +19,10 @@ message Permission {
   string description = 3;
   string category = 4;
   int32 app_id = 5;
-  google.protobuf.Timestamp created_at = 6;
-  google.protobuf.Timestamp updated_at = 7;
+  bool is_active = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+  optional google.protobuf.Timestamp deleted_at = 9;
 }
 
 message CreateRequest {
@@ -31,28 +34,31 @@ message CreateRequest {
 
 message GetRequest {
   string id = 1;
-  int32 app_id = 2;
+  int32 app_id = 4;
 }
 
 message UpdateRequest {
   string id = 1;
-  int32 app_id = 2;
-  optional string code = 3;
-  optional string description = 4;
-  optional string category = 5;
+  optional string code = 2;
+  optional string description = 3;
+  optional string category = 4;
+  optional bool is_active = 5;
+  int32 app_id = 6;
 }
 
 message DeleteRequest {
   string id = 1;
   int32 app_id = 2;
+  optional bool permanent = 3;
 }
 
 message ListRequest {
   int32 app_id = 1;
   optional string code_filter = 2;
   optional string category = 3;
-  int32 page = 4;
-  int32 count = 5;
+  optional bool active_only = 4;
+  int32 page = 5;
+  int32 count = 6;
 }
 
 message ListResponse {
@@ -63,4 +69,9 @@ message ListResponse {
 
 message SuccessResponse {
   bool success = 1;
+}
+
+message RestoreRequest {
+  string id = 1;
+  int32 app_id = 2;
 }

@@ -19,11 +19,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	PermissionService_Create_FullMethodName = "/sso.permissions.PermissionService/Create"
-	PermissionService_Get_FullMethodName    = "/sso.permissions.PermissionService/Get"
-	PermissionService_Update_FullMethodName = "/sso.permissions.PermissionService/Update"
-	PermissionService_Delete_FullMethodName = "/sso.permissions.PermissionService/Delete"
-	PermissionService_List_FullMethodName   = "/sso.permissions.PermissionService/List"
+	PermissionService_Create_FullMethodName  = "/sso.permissions.PermissionService/Create"
+	PermissionService_Get_FullMethodName     = "/sso.permissions.PermissionService/Get"
+	PermissionService_Update_FullMethodName  = "/sso.permissions.PermissionService/Update"
+	PermissionService_Delete_FullMethodName  = "/sso.permissions.PermissionService/Delete"
+	PermissionService_List_FullMethodName    = "/sso.permissions.PermissionService/List"
+	PermissionService_Restore_FullMethodName = "/sso.permissions.PermissionService/Restore"
 )
 
 // PermissionServiceClient is the client API for PermissionService service.
@@ -35,6 +36,7 @@ type PermissionServiceClient interface {
 	Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*Permission, error)
 	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*SuccessResponse, error)
 	List(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*ListResponse, error)
+	Restore(ctx context.Context, in *RestoreRequest, opts ...grpc.CallOption) (*Permission, error)
 }
 
 type permissionServiceClient struct {
@@ -95,6 +97,16 @@ func (c *permissionServiceClient) List(ctx context.Context, in *ListRequest, opt
 	return out, nil
 }
 
+func (c *permissionServiceClient) Restore(ctx context.Context, in *RestoreRequest, opts ...grpc.CallOption) (*Permission, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Permission)
+	err := c.cc.Invoke(ctx, PermissionService_Restore_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PermissionServiceServer is the server API for PermissionService service.
 // All implementations must embed UnimplementedPermissionServiceServer
 // for forward compatibility.
@@ -104,6 +116,7 @@ type PermissionServiceServer interface {
 	Update(context.Context, *UpdateRequest) (*Permission, error)
 	Delete(context.Context, *DeleteRequest) (*SuccessResponse, error)
 	List(context.Context, *ListRequest) (*ListResponse, error)
+	Restore(context.Context, *RestoreRequest) (*Permission, error)
 	mustEmbedUnimplementedPermissionServiceServer()
 }
 
@@ -128,6 +141,9 @@ func (UnimplementedPermissionServiceServer) Delete(context.Context, *DeleteReque
 }
 func (UnimplementedPermissionServiceServer) List(context.Context, *ListRequest) (*ListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method List not implemented")
+}
+func (UnimplementedPermissionServiceServer) Restore(context.Context, *RestoreRequest) (*Permission, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Restore not implemented")
 }
 func (UnimplementedPermissionServiceServer) mustEmbedUnimplementedPermissionServiceServer() {}
 func (UnimplementedPermissionServiceServer) testEmbeddedByValue()                           {}
@@ -240,6 +256,24 @@ func _PermissionService_List_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PermissionService_Restore_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RestoreRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PermissionServiceServer).Restore(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PermissionService_Restore_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PermissionServiceServer).Restore(ctx, req.(*RestoreRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PermissionService_ServiceDesc is the grpc.ServiceDesc for PermissionService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -266,6 +300,10 @@ var PermissionService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "List",
 			Handler:    _PermissionService_List_Handler,
+		},
+		{
+			MethodName: "Restore",
+			Handler:    _PermissionService_Restore_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

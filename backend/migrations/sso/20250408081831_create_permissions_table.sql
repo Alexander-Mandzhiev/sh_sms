@@ -7,7 +7,9 @@ CREATE TABLE permissions (
     description TEXT NOT NULL,
     category VARCHAR(50),
     app_id INT NOT NULL,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMPTZ
 );
 -- Индексы для прав
