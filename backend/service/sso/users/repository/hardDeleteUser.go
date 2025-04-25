@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"backend/service/constants"
 	"context"
 	"fmt"
 	"github.com/google/uuid"
@@ -20,7 +19,7 @@ func (r *Repository) HardDeleteUser(ctx context.Context, clientID, userID uuid.U
 	if err != nil {
 		if err == pgx.ErrNoRows {
 			logger.Warn("user not found for deletion")
-			return fmt.Errorf("%s: %w", op, constants.ErrNotFound)
+			return fmt.Errorf("%s: %w", op, ErrNotFound)
 		}
 		logger.Error("database operation failed", slog.Any("error", err))
 		return fmt.Errorf("%s: %w", op, err)

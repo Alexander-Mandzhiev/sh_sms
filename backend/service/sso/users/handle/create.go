@@ -6,7 +6,6 @@ import (
 	"log/slog"
 
 	"backend/protos/gen/go/sso/users"
-	"backend/service/constants"
 	"backend/service/sso/models"
 	"backend/service/utils"
 )
@@ -24,12 +23,12 @@ func (s *serverAPI) Create(ctx context.Context, req *users.CreateRequest) (*user
 
 	if err = utils.ValidateEmail(req.GetEmail()); err != nil {
 		logger.Warn("email validation failed", slog.Any("error", err))
-		return nil, s.convertError(fmt.Errorf("%w: %v", constants.ErrInvalidArgument, err))
+		return nil, s.convertError(fmt.Errorf("%w: %v", ErrInvalidArgument, err))
 	}
 
 	if err = utils.ValidatePassword(req.GetPassword()); err != nil {
 		logger.Warn("password validation failed", slog.Any("error", err))
-		return nil, s.convertError(fmt.Errorf("%w: %v", constants.ErrInvalidArgument, err))
+		return nil, s.convertError(fmt.Errorf("%w: %v", ErrInvalidArgument, err))
 	}
 
 	user := &models.User{

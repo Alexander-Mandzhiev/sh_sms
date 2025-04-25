@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"backend/service/constants"
 	"backend/service/sso/models"
 	"context"
 	"fmt"
@@ -24,7 +23,7 @@ func (r *Repository) Create(ctx context.Context, user *models.User) error {
 		logger.Error("failed to create user", slog.Any("error", err))
 		if pgErr, ok := err.(*pgconn.PgError); ok {
 			if pgErr.Code == "23505" && pgErr.ConstraintName == "idx_users_email_client" {
-				return fmt.Errorf("%s: %w", op, constants.ErrEmailAlreadyExists)
+				return fmt.Errorf("%s: %w", op, ErrEmailAlreadyExists)
 			}
 		}
 		return fmt.Errorf("%s: %w", op, err)

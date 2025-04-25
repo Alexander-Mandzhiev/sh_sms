@@ -1,9 +1,16 @@
 package repository
 
 import (
+	"errors"
 	"fmt"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"log/slog"
+)
+
+var (
+	ErrInternal           = errors.New("internal server error")
+	ErrNotFound           = errors.New("user not found")
+	ErrEmailAlreadyExists = errors.New("email already exists")
 )
 
 type Repository struct {

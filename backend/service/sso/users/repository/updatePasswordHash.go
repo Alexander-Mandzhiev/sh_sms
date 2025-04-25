@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"backend/service/constants"
 	"context"
 	"fmt"
 	"github.com/google/uuid"
@@ -23,7 +22,7 @@ func (r *Repository) UpdatePasswordHash(ctx context.Context, userID uuid.UUID, p
 	rowsAffected := result.RowsAffected()
 	if rowsAffected == 0 {
 		logger.Warn("no rows affected - user not found")
-		return fmt.Errorf("%s: %w", op, constants.ErrNotFound)
+		return fmt.Errorf("%s: %w", op, ErrNotFound)
 	}
 
 	logger.Info("password hash updated successfully", slog.Int64("rows_affected", rowsAffected))

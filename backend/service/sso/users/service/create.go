@@ -1,7 +1,6 @@
 package service
 
 import (
-	"backend/service/constants"
 	"backend/service/sso/models"
 	"backend/service/utils"
 	"context"
@@ -20,13 +19,13 @@ func (s *Service) Create(ctx context.Context, user *models.User, password string
 
 	if err := utils.ValidatePasswordPolicy(password); err != nil {
 		logger.Warn("password policy validation failed", slog.Any("error", err), slog.Int("password_length", len(password)))
-		return fmt.Errorf("%w: %v", constants.ErrInvalidArgument, err)
+		return fmt.Errorf("%w: %v", ErrInvalidArgument, err)
 	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		logger.Error("password hashing failed", slog.Any("error", err))
-		return fmt.Errorf("%w: failed to hash password", constants.ErrInternal)
+		return fmt.Errorf("%w: failed to hash password", ErrInternal)
 	}
 
 	user.PasswordHash = string(hashedPassword)
@@ -37,12 +36,12 @@ func (s *Service) Create(ctx context.Context, user *models.User, password string
 	user.UpdatedAt = user.CreatedAt
 
 	if err = s.provider.Create(ctx, user); err != nil {
-		if errors.Is(err, constants.ErrEmailAlreadyExists) {
+		if errors.Is(err, ErrEmailAlreadyExists) {
 			logger.Warn("duplicate email", slog.String("email", user.Email))
-			return fmt.Errorf("%w: %v", constants.ErrEmailAlreadyExists, user.Email)
+			return fmt.Errorf("%w: %v", ErrEmailAlreadyExists, user.Email)
 		}
 		logger.Error("database operation failed", slog.Any("error", err))
-		return fmt.Errorf("%w: %v", constants.ErrInternal, err)
+		return fmt.Errorf("%w: %v", ErrInternal, err)
 	}
 
 	logger.Info("user created successfully", slog.String("user_id", user.ID.String()), slog.String("email", user.Email))

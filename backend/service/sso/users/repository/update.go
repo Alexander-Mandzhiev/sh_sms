@@ -1,72 +1,32 @@
 package repository
 
 import (
-	"backend/service/constants"
 	"backend/service/sso/models"
 	"context"
+	"database/sql"
+	"errors"
 	"fmt"
-	"github.com/google/uuid"
 	"log/slog"
-	"strings"
 	"time"
 )
 
-func (r *Repository) Update(ctx context.Context, userID, clientID uuid.UUID, update models.UserUpdate) error {
+func (r *Repository) Update(ctx context.Context, user *models.User) error {
 	const op = "repository.User.Update"
-	logger := r.logger.With(slog.String("op", op), slog.String("user_id", userID.String()), slog.String("client_id", clientID.String()))
-	logger.Debug("attempting partial user update")
+	logger := r.logger.With(slog.String("op", op), slog.String("user_id", user.ID.String()), slog.String("client_id", user.ClientID.String()))
+	query := `UPDATE users SET email = $1, full_name = $2, phone = $3, updated_at = NOW() WHERE id = $4 AND client_id = $5 RETURNING updated_at`
+	logger.Debug("executing update query", slog.String("query", query))
 
-	query := "UPDATE users SET"
-	args := make([]interface{}, 0)
-	params := make([]string, 0)
-	fields := make([]string, 0)
-
-	if update.Email != nil {
-		params = append(params, fmt.Sprintf("email = $%d", len(args)+1))
-		args = append(args, *update.Email)
-		fields = append(fields, "email")
-	}
-	if update.FullName != nil {
-		params = append(params, fmt.Sprintf("full_name = $%d", len(args)+1))
-		args = append(args, *update.FullName)
-		fields = append(fields, "full_name")
-	}
-	if update.Phone != nil {
-		params = append(params, fmt.Sprintf("phone = $%d", len(args)+1))
-		args = append(args, *update.Phone)
-		fields = append(fields, "phone")
-	}
-	if update.IsActive != nil {
-		params = append(params, fmt.Sprintf("is_active = $%d", len(args)+1))
-		args = append(args, *update.IsActive)
-		fields = append(fields, "is_active")
+	var updatedAt time.Time
+	if err := r.db.QueryRow(ctx, query, user.Email, user.FullName, user.Phone, user.ID, user.ClientID).Scan(&updatedAt); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			logger.Warn("user not found or no changes")
+			return fmt.Errorf("%w: %v", ErrNotFound, err)
+		}
+		logger.Error("database operation failed", slog.Any("error", err))
+		return fmt.Errorf("%w: %v", ErrInternal, err)
 	}
 
-	if len(params) == 0 {
-		logger.Warn("no fields to update")
-		return fmt.Errorf("%s: %w", op, constants.ErrNoFieldsToUpdate)
-	}
-
-	params = append(params, fmt.Sprintf("updated_at = $%d", len(args)+1))
-	args = append(args, time.Now().UTC())
-	fields = append(fields, "updated_at")
-
-	query += " " + strings.Join(params, ", ") + fmt.Sprintf(" WHERE id = $%d AND client_id = $%d", len(args)+1, len(args)+2)
-	args = append(args, userID, clientID)
-
-	logger = logger.With(slog.String("query", query), slog.Any("fields", fields))
-
-	result, err := r.db.Exec(ctx, query, args...)
-	if err != nil {
-		logger.Error("database operation failed", slog.Any("error", err), slog.Any("args", args))
-		return fmt.Errorf("%s: %w", op, err)
-	}
-
-	if rows := result.RowsAffected(); rows == 0 {
-		logger.Warn("no rows affected - user not found or data not changed")
-		return fmt.Errorf("%s: %w", op, constants.ErrNotFound)
-	}
-
-	logger.Info("user successfully updated", slog.Int64("rows_affected", result.RowsAffected()))
+	user.UpdatedAt = updatedAt
+	logger.Info("user updated successfully", slog.Time("new_updated_at", updatedAt))
 	return nil
 }

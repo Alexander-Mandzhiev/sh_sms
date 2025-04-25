@@ -2,7 +2,6 @@ package service
 
 import (
 	sl "backend/pkg/logger"
-	"backend/service/constants"
 	"backend/service/sso/models"
 	"backend/service/utils"
 	"context"
@@ -23,7 +22,7 @@ func (s *Service) List(ctx context.Context, req models.ListRequest) ([]models.Us
 	users, total, err := s.provider.List(ctx, req)
 	if err != nil {
 		logger.Error("failed to list users", slog.Any("error", err))
-		return nil, 0, fmt.Errorf("%w: database error", constants.ErrInternal)
+		return nil, 0, fmt.Errorf("%w: database error", ErrInternal)
 	}
 
 	if len(users) == 0 {

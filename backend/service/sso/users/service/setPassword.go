@@ -1,7 +1,6 @@
 package service
 
 import (
-	"backend/service/constants"
 	"backend/service/utils"
 	"context"
 	"errors"
@@ -18,39 +17,31 @@ func (s *Service) SetPassword(ctx context.Context, clientID, userID uuid.UUID, p
 
 	if err := utils.ValidatePasswordPolicy(password); err != nil {
 		logger.Warn("invalid password format", slog.Any("error", err))
-		return fmt.Errorf("%w: %v", constants.ErrInvalidArgument, err)
+		return fmt.Errorf("%w: %v", ErrInvalidArgument, err)
 	}
 
-	user, err := s.provider.Get(ctx, clientID, userID)
+	exist, err := s.provider.Exists(ctx, clientID, userID)
 	if err != nil {
-		if errors.Is(err, constants.ErrNotFound) {
-			logger.Warn("user not found")
-			return fmt.Errorf("%w: user not found", constants.ErrNotFound)
-		}
-		logger.Error("failed to fetch user", slog.Any("error", err))
-		return fmt.Errorf("%w: database error", constants.ErrInternal)
+		logger.Error("existence check failed", slog.Any("error", err))
+		return fmt.Errorf("%w: %v", ErrInternal, err)
 	}
-
-	if user.ClientID != clientID {
-		logger.Warn("client ID mismatch", slog.String("expected", clientID.String()), slog.String("actual", user.ClientID.String()))
-		return fmt.Errorf("%w: access denied", constants.ErrPermissionDenied)
+	if !exist {
+		logger.Warn("user not found")
+		return fmt.Errorf("%w: user not found", ErrNotFound)
 	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		logger.Error("password hashing failed", slog.Any("error", err))
-		return fmt.Errorf("%w: failed to hash password", constants.ErrInternal)
+		return fmt.Errorf("%w: failed to hash password", ErrInternal)
 	}
-
-	user.PasswordHash = string(hashedPassword)
 
 	if err = s.provider.UpdatePasswordHash(ctx, userID, string(hashedPassword)); err != nil {
 		logger.Error("failed to update password", slog.Any("error", err))
-		if errors.Is(err, constants.ErrNotFound) {
-			return fmt.Errorf("%w: user not found", constants.ErrNotFound)
+		if errors.Is(err, ErrNotFound) {
+			return fmt.Errorf("%w: user not found", ErrNotFound)
 		}
-
-		return fmt.Errorf("%w: failed to update password", constants.ErrInternal)
+		return fmt.Errorf("%w: failed to update password", ErrInternal)
 	}
 
 	logger.Info("password updated successfully")

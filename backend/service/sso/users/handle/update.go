@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"backend/protos/gen/go/sso/users"
-	"backend/service/constants"
 	"backend/service/sso/models"
 	"backend/service/utils"
 )
@@ -32,13 +31,12 @@ func (s *serverAPI) Update(ctx context.Context, req *users.UpdateRequest) (*user
 	updateData := &models.User{
 		ID:       userID,
 		ClientID: clientID,
-		IsActive: true,
 	}
 
 	if req.Email != nil {
 		if err = utils.ValidateEmail(req.GetEmail()); err != nil {
 			logger.Warn("invalid email format", slog.Any("error", err))
-			return nil, s.convertError(fmt.Errorf("%w: %v", constants.ErrInvalidArgument, err))
+			return nil, s.convertError(fmt.Errorf("%w: %v", ErrInvalidArgument, err))
 		}
 		updateData.Email = req.GetEmail()
 	}
@@ -46,7 +44,7 @@ func (s *serverAPI) Update(ctx context.Context, req *users.UpdateRequest) (*user
 	if req.FullName != nil {
 		if strings.TrimSpace(req.GetFullName()) == "" {
 			logger.Warn("empty full name")
-			return nil, s.convertError(fmt.Errorf("%w: full_name cannot be empty", constants.ErrInvalidArgument))
+			return nil, s.convertError(fmt.Errorf("%w: full_name cannot be empty", ErrInvalidArgument))
 		}
 		updateData.FullName = req.GetFullName()
 	}
@@ -54,17 +52,9 @@ func (s *serverAPI) Update(ctx context.Context, req *users.UpdateRequest) (*user
 	if req.Phone != nil {
 		if err = utils.ValidatePhone(req.GetPhone()); err != nil {
 			logger.Warn("invalid phone format", slog.Any("error", err))
-			return nil, s.convertError(fmt.Errorf("%w: %v", constants.ErrInvalidArgument, err))
+			return nil, s.convertError(fmt.Errorf("%w: %v", ErrInvalidArgument, err))
 		}
 		updateData.Phone = req.GetPhone()
-	}
-
-	if req.IsActive != nil {
-		updateData.IsActive = req.GetIsActive()
-		if !updateData.IsActive {
-			logger = logger.With(slog.Bool("is_active", false))
-			logger.Info("user deactivation requested")
-		}
 	}
 
 	updatedUser, err := s.service.Update(ctx, updateData)
