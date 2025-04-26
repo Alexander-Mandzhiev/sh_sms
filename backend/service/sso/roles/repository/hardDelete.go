@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"backend/service/constants"
 	"context"
 	"fmt"
 	"github.com/google/uuid"
@@ -17,12 +16,12 @@ func (r *Repository) HardDelete(ctx context.Context, clientID, roleID uuid.UUID)
 	result, err := r.db.Exec(ctx, query, roleID, clientID)
 	if err != nil {
 		logger.Error("database error", slog.Any("error", err), slog.String("query", query))
-		return fmt.Errorf("%s: %w", op, constants.ErrInternal)
+		return fmt.Errorf("%s: %w", op, ErrInternal)
 	}
 
 	if rowsAffected := result.RowsAffected(); rowsAffected == 0 {
 		logger.Warn("role not found for deletion")
-		return fmt.Errorf("%w: role", constants.ErrNotFound)
+		return fmt.Errorf("%w: role", ErrNotFound)
 	}
 
 	logger.Info("role hard-deleted successfully")

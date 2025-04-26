@@ -8,10 +8,10 @@ import (
 	"log/slog"
 )
 
-func (s *serverAPI) Delete(ctx context.Context, req *roles.DeleteRequest) (*roles.DeleteResponse, error) {
-	const op = "grpc.roles.Delete"
+func (s *serverAPI) Restore(ctx context.Context, req *roles.RestoreRequest) (*roles.Role, error) {
+	const op = "grpc.roles.Restore"
 	logger := s.logger.With(slog.String("op", op), slog.String("role_id", req.GetId()), slog.String("client_id", req.GetClientId()))
-	logger.Debug("attempting to delete role")
+	logger.Debug("attempting to restore role")
 
 	clientID, err := utils.ValidateAndReturnUUID(req.GetClientId())
 	if err != nil {
@@ -25,12 +25,17 @@ func (s *serverAPI) Delete(ctx context.Context, req *roles.DeleteRequest) (*role
 		return nil, s.convertError(fmt.Errorf("%w: role_id", ErrInvalidArgument))
 	}
 
-	err = s.service.Delete(ctx, clientID, roleID, req.GetPermanent())
+	role, err := s.service.Restore(ctx, clientID, roleID)
 	if err != nil {
-		logger.Error("delete role failed", slog.Any("error", err), slog.Bool("permanent", req.GetPermanent()))
+		logger.Error("get role failed", slog.Any("error", err))
 		return nil, s.convertError(err)
 	}
 
-	logger.Info("role deleted successfully", slog.Bool("permanent", req.GetPermanent()))
-	return &roles.DeleteResponse{Success: true}, nil
+	if role.DeletedAt != nil {
+		logger.Warn("role is deleted", slog.Time("deleted_at", *role.DeletedAt))
+		return nil, s.convertError(ErrNotFound)
+	}
+
+	logger.Debug("role retrieved successfully")
+	return convertRoleToProto(role), nil
 }

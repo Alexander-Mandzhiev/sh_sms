@@ -12,6 +12,7 @@ var (
 	ErrNotFound        = errors.New("permission not found")
 	ErrInvalidArgument = errors.New("invalid argument")
 	ErrDatabase        = errors.New("database error")
+	ErrConflict        = errors.New("database conflict")
 )
 
 type Repository struct {

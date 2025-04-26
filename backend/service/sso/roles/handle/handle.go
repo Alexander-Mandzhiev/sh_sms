@@ -15,6 +15,7 @@ type RoleService interface {
 	Update(ctx context.Context, role *models.Role) (*models.Role, error)
 	Delete(ctx context.Context, clientID, roleID uuid.UUID, permanent bool) error
 	List(ctx context.Context, req models.ListRequest) ([]models.Role, int, error)
+	Restore(ctx context.Context, clientID, roleID uuid.UUID) (*models.Role, error)
 }
 
 type serverAPI struct {

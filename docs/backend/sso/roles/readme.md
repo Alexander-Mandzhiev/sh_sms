@@ -156,7 +156,6 @@ message UpdateRequest {
   "name": "admin",
   "description": "Admin role",
   "level": 1,
-  "is_active": true,
   "is_custom": true
 }
 ```

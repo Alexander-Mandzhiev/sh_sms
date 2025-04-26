@@ -25,17 +25,13 @@ func (s *Service) Restore(ctx context.Context, id uuid.UUID, appID int) (*models
 		return nil, fmt.Errorf("%w: permission not deleted", ErrInvalidState)
 	}
 
-	if err = s.provider.Restore(ctx, id, appID); err != nil {
+	var perm *models.Permission
+	perm, err = s.provider.Restore(ctx, id, appID)
+	if err != nil {
 		logger.Error("provider restore failed", slog.Any("error", err))
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	restoredPerm, err := s.provider.GetByID(ctx, id, appID)
-	if err != nil {
-		logger.Error("failed to fetch restored permission", slog.Any("error", err))
-		return nil, fmt.Errorf("%s: %w", op, err)
-	}
-
-	logger.Info("successfully restored permission", slog.String("code", restoredPerm.Code), slog.Time("restored_at", time.Now()))
-	return restoredPerm, nil
+	logger.Info("successfully restored permission", slog.String("code", perm.Code), slog.Time("restored_at", time.Now()))
+	return perm, nil
 }

@@ -1,9 +1,16 @@
 package repository
 
 import (
+	"errors"
 	"fmt"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"log/slog"
+)
+
+var (
+	ErrInternal = errors.New("internal server error")
+	ErrNotFound = errors.New("role not found")
+	ErrConflict = errors.New("conflict fields")
 )
 
 type Repository struct {

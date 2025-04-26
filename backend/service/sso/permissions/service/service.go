@@ -22,7 +22,7 @@ type PermissionProvider interface {
 	List(ctx context.Context, filter models.ListRequest) ([]models.Permission, int, error)
 	SoftDelete(ctx context.Context, id uuid.UUID, appID int) error
 	HardDelete(ctx context.Context, id uuid.UUID, appID int) error
-	Restore(ctx context.Context, id uuid.UUID, appID int) error
+	Restore(ctx context.Context, id uuid.UUID, appID int) (*models.Permission, error)
 	ExistByCode(ctx context.Context, code string, appID int) (bool, error)
 	ExistByID(ctx context.Context, id uuid.UUID, appID int) (bool, error)
 }

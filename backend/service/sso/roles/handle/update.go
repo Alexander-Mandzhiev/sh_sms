@@ -2,7 +2,6 @@ package handle
 
 import (
 	"backend/protos/gen/go/sso/roles"
-	"backend/service/constants"
 	"backend/service/sso/models"
 	"backend/service/utils"
 	"context"
@@ -18,13 +17,13 @@ func (s *serverAPI) Update(ctx context.Context, req *roles.UpdateRequest) (*role
 	clientID, err := utils.ValidateAndReturnUUID(req.GetClientId())
 	if err != nil {
 		logger.Warn("invalid client_id", slog.Any("error", err))
-		return nil, s.convertError(fmt.Errorf("%w: client_id", constants.ErrInvalidArgument))
+		return nil, s.convertError(fmt.Errorf("%w: client_id", ErrInvalidArgument))
 	}
 
 	roleID, err := utils.ValidateAndReturnUUID(req.GetId())
 	if err != nil {
 		logger.Warn("invalid role_id", slog.Any("error", err))
-		return nil, s.convertError(fmt.Errorf("%w: role_id", constants.ErrInvalidArgument))
+		return nil, s.convertError(fmt.Errorf("%w: role_id", ErrInvalidArgument))
 	}
 
 	updateData := models.Role{
@@ -34,7 +33,7 @@ func (s *serverAPI) Update(ctx context.Context, req *roles.UpdateRequest) (*role
 
 	if req.Name != nil {
 		if req.GetName() == "" {
-			return nil, s.convertError(fmt.Errorf("%w: name cannot be empty", constants.ErrInvalidArgument))
+			return nil, s.convertError(fmt.Errorf("%w: name cannot be empty", ErrInvalidArgument))
 		}
 		updateData.Name = *req.Name
 	}
@@ -45,14 +44,9 @@ func (s *serverAPI) Update(ctx context.Context, req *roles.UpdateRequest) (*role
 
 	if req.Level != nil {
 		if req.GetLevel() < 0 {
-			return nil, s.convertError(fmt.Errorf("%w: invalid level", constants.ErrInvalidArgument))
+			return nil, s.convertError(fmt.Errorf("%w: invalid level", ErrInvalidArgument))
 		}
 		updateData.Level = int(*req.Level)
-	}
-
-	if req.IsActive != nil {
-		updateData.DeletedAt = nil
-		updateData.IsActive = *req.IsActive
 	}
 
 	if req.IsCustom != nil {

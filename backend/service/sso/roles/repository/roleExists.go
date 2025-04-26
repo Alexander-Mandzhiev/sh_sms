@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"backend/service/constants"
 	"context"
 	"errors"
 	"fmt"
@@ -23,7 +22,7 @@ func (r *Repository) RoleExists(ctx context.Context, clientID uuid.UUID, name st
 			return false, nil
 		}
 		logger.Error("database error", slog.String("query", query), slog.Any("error", err))
-		return false, fmt.Errorf("%s: %w", op, constants.ErrInternal)
+		return false, fmt.Errorf("%s: %w", op, ErrInternal)
 	}
 
 	logger.Debug("role exists")

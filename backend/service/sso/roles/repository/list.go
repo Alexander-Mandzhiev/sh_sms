@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"backend/service/constants"
 	"backend/service/sso/models"
 	"context"
 	"fmt"
@@ -88,7 +87,7 @@ func (r *Repository) executeDataQuery(ctx context.Context, query string, args []
 	rows, err := r.db.Query(ctx, query, args...)
 	if err != nil {
 		logger.Error("data query failed", slog.String("query", query), slog.Any("args", args), slog.Any("error", err))
-		return nil, fmt.Errorf("%s: %w", "repository.Roles.List", constants.ErrInternal)
+		return nil, fmt.Errorf("%s: %w", "repository.Roles.List", ErrInternal)
 	}
 	defer rows.Close()
 
@@ -97,14 +96,14 @@ func (r *Repository) executeDataQuery(ctx context.Context, query string, args []
 		var role models.Role
 		if err = rows.Scan(&role.ID, &role.ClientID, &role.Name, &role.Description, &role.Level, &role.IsCustom, &role.IsActive, &role.CreatedBy, &role.CreatedAt, &role.UpdatedAt, &role.DeletedAt); err != nil {
 			logger.Error("scan failed", slog.Any("error", err))
-			return nil, fmt.Errorf("%s: %w", "repository.Roles.List", constants.ErrInternal)
+			return nil, fmt.Errorf("%s: %w", "repository.Roles.List", ErrInternal)
 		}
 		roles = append(roles, role)
 	}
 
 	if err = rows.Err(); err != nil {
 		logger.Error("rows iteration error", slog.Any("error", err))
-		return nil, fmt.Errorf("%s: %w", "repository.Roles.List", constants.ErrInternal)
+		return nil, fmt.Errorf("%s: %w", "repository.Roles.List", ErrInternal)
 	}
 
 	return roles, nil
@@ -114,7 +113,7 @@ func (r *Repository) executeCountQuery(ctx context.Context, query string, args [
 	var total int
 	if err := r.db.QueryRow(ctx, query, args...).Scan(&total); err != nil {
 		logger.Error("count query failed", slog.String("query", query), slog.Any("args", args), slog.Any("error", err))
-		return 0, fmt.Errorf("%s: %w", "repository.Roles.List", constants.ErrInternal)
+		return 0, fmt.Errorf("%s: %w", "repository.Roles.List", ErrInternal)
 	}
 	return total, nil
 }

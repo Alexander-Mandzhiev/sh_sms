@@ -10,6 +10,7 @@ service RoleService {
   rpc Update(UpdateRequest) returns (Role);
   rpc Delete(DeleteRequest) returns (DeleteResponse);
   rpc List(ListRequest) returns (ListResponse);
+  rpc Restore(RestoreRequest) returns (Role);
 }
 
 message Role {
@@ -47,8 +48,7 @@ message UpdateRequest {
   optional string name = 3;
   optional string description = 4;
   optional int32 level = 5;
-  optional bool is_active = 6;
-  optional bool is_custom = 7;
+  optional bool is_custom = 6;
 }
 
 message DeleteRequest {
@@ -75,4 +75,9 @@ message ListResponse {
 
 message DeleteResponse {
   bool success = 1;
+}
+
+message RestoreRequest {
+  string id = 1;
+  string client_id = 2;
 }

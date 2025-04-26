@@ -1,7 +1,6 @@
 package service
 
 import (
-	"backend/service/constants"
 	"backend/service/sso/models"
 	"backend/service/utils"
 	"context"
@@ -19,22 +18,22 @@ func (s *Service) Create(ctx context.Context, role *models.Role) error {
 
 	if err := utils.ValidateRoleName(role.Name); err != nil {
 		logger.Warn("invalid role name", slog.Any("error", err))
-		return fmt.Errorf("%w: %v", constants.ErrInvalidArgument, err)
+		return fmt.Errorf("%w: %v", ErrInvalidArgument, err)
 	}
 
 	if role.Level < 0 {
 		logger.Warn("invalid role level", slog.Int("level", role.Level))
-		return fmt.Errorf("%w: level cannot be negative", constants.ErrInvalidArgument)
+		return fmt.Errorf("%w: level cannot be negative", ErrInvalidArgument)
 	}
 
 	roleExists, err := s.provider.RoleExists(ctx, role.ClientID, role.Name)
 	if err != nil {
 		logger.Error("role existence check failed", slog.Any("error", err))
-		return fmt.Errorf("%w: %v", constants.ErrInternal, err)
+		return fmt.Errorf("%w: %v", ErrInternal, err)
 	}
 	if roleExists {
 		logger.Warn("role name conflict", slog.String("name", role.Name))
-		return fmt.Errorf("%w: role '%s'", constants.ErrConflict, role.Name)
+		return fmt.Errorf("%w: role '%s'", ErrConflict, role.Name)
 	}
 
 	if role.ID == uuid.Nil {
@@ -48,12 +47,12 @@ func (s *Service) Create(ctx context.Context, role *models.Role) error {
 	}
 
 	if err = s.provider.Create(ctx, role); err != nil {
-		if errors.Is(err, constants.ErrConflict) {
+		if errors.Is(err, ErrConflict) {
 			logger.Warn("database conflict", slog.Any("role", role))
-			return fmt.Errorf("%w: %v", constants.ErrAlreadyExists, role.Name)
+			return fmt.Errorf("%w: %v", ErrAlreadyExists, role.Name)
 		}
 		logger.Error("database operation failed", slog.Any("error", err))
-		return fmt.Errorf("%w: %v", constants.ErrInternal, err)
+		return fmt.Errorf("%w: %v", ErrInternal, err)
 	}
 
 	logger.Info("role created successfully", slog.String("role_id", role.ID.String()), slog.Int("level", role.Level))

@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"backend/service/constants"
 	"backend/service/sso/models"
 	"context"
 	"errors"
@@ -19,10 +18,10 @@ func (r *Repository) Create(ctx context.Context, role *models.Role) error {
 	if err != nil {
 		if isUniqueViolation(err) {
 			logger.Warn("role name conflict", slog.String("name", role.Name))
-			return fmt.Errorf("%w: %s", constants.ErrConflict, "role name already exists")
+			return fmt.Errorf("%w: %s", ErrConflict, "role name already exists")
 		}
 		logger.Error("database error", slog.Any("error", err))
-		return fmt.Errorf("%s: %w", op, constants.ErrInternal)
+		return fmt.Errorf("%s: %w", op, ErrInternal)
 	}
 
 	logger.Info("role created", slog.String("name", role.Name))

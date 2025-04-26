@@ -13,7 +13,7 @@ import (
 func (r *Repository) Update(ctx context.Context, user *models.User) error {
 	const op = "repository.User.Update"
 	logger := r.logger.With(slog.String("op", op), slog.String("user_id", user.ID.String()), slog.String("client_id", user.ClientID.String()))
-	query := `UPDATE users SET email = $1, full_name = $2, phone = $3, updated_at = NOW() WHERE id = $4 AND client_id = $5 RETURNING updated_at`
+	query := `UPDATE users SET email = $1, full_name = $2, phone = $3, updated_at = NOW() WHERE id = $4 AND client_id = $5 AND deleted_at IS NULL RETURNING updated_at`
 	logger.Debug("executing update query", slog.String("query", query))
 
 	var updatedAt time.Time

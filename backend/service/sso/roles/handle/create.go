@@ -2,7 +2,6 @@ package handle
 
 import (
 	"backend/protos/gen/go/sso/roles"
-	"backend/service/constants"
 	"backend/service/sso/models"
 	"backend/service/utils"
 	"context"
@@ -19,7 +18,7 @@ func (s *serverAPI) Create(ctx context.Context, req *roles.CreateRequest) (*role
 	clientID, err := utils.ValidateAndReturnUUID(req.GetClientId())
 	if err != nil {
 		logger.Warn("invalid client_id", slog.Any("error", err))
-		return nil, s.convertError(fmt.Errorf("%w: client_id", constants.ErrInvalidArgument))
+		return nil, s.convertError(fmt.Errorf("%w: client_id", ErrInvalidArgument))
 	}
 
 	if err = utils.ValidateRoleName(req.GetName()); err != nil {
@@ -45,7 +44,7 @@ func (s *serverAPI) Create(ctx context.Context, req *roles.CreateRequest) (*role
 		createdBy, err = utils.ValidateAndReturnUUID(req.GetCreatedBy())
 		if err != nil {
 			logger.Warn("invalid created_by", slog.Any("error", err))
-			return nil, s.convertError(fmt.Errorf("%w: created_by", constants.ErrInvalidArgument))
+			return nil, s.convertError(fmt.Errorf("%w: created_by", ErrInvalidArgument))
 		}
 		role.CreatedBy = &createdBy
 	}
