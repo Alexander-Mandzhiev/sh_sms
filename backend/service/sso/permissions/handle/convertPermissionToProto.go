@@ -20,6 +20,8 @@ func convertPermissionToProto(perm *models.Permission) *permissions.Permission {
 
 	if perm.DeletedAt != nil {
 		protoPerm.DeletedAt = timestamppb.New(*perm.DeletedAt)
+	} else {
+		protoPerm.DeletedAt = nil
 	}
 
 	return protoPerm

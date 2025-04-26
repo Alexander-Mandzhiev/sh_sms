@@ -66,11 +66,6 @@ func (s *Service) Update(ctx context.Context, updatedPerm models.Permission) (*m
 		logger.Debug("description changed", slog.String("old", current.Description), slog.String("new", updatedPerm.Description))
 	}
 
-	if updatedPerm.IsActive != current.IsActive {
-		changes = true
-		logger.Debug("active status changed", slog.Bool("old", current.IsActive), slog.Bool("new", updatedPerm.IsActive))
-	}
-
 	if !changes {
 		logger.Info("no changes detected")
 		return current, nil

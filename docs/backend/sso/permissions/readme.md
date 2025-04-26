@@ -148,8 +148,7 @@ message UpdateRequest {
   "code": "user.create",
   "description": "Create new users - permissions",
   "category": "users",
-  "app_id": 1,
-  "is_active": true
+  "app_id": 1
 }
 ```
 **Пример ответа**

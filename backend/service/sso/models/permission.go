@@ -6,13 +6,13 @@ import (
 )
 
 type Permission struct {
-	ID          uuid.UUID  `db:"id"`
-	Code        string     `db:"code"`
-	Description string     `db:"description"`
-	Category    string     `db:"category"`
-	AppID       int        `db:"app_id"`
-	IsActive    bool       `db:"is_active"`
-	CreatedAt   time.Time  `db:"created_at"`
-	UpdatedAt   time.Time  `db:"updated_at"`
-	DeletedAt   *time.Time `db:"deleted_at"`
+	ID          uuid.UUID  `json:"id" db:"id"`
+	Code        string     `json:"code" db:"code"`
+	Description string     `json:"description" db:"description"`
+	Category    string     `json:"category" db:"category"`
+	AppID       int        `json:"app_id" db:"app_id"`
+	IsActive    bool       `json:"is_active" db:"is_active"`
+	CreatedAt   time.Time  `json:"created_at" db:"created_at"`
+	UpdatedAt   time.Time  `json:"updated_at" db:"updated_at"`
+	DeletedAt   *time.Time `protobuf:"deleted_at" json:"deleted_at,omitempty" db:"deleted_at"`
 }

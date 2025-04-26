@@ -12,7 +12,7 @@ import (
 func (r *Repository) List(ctx context.Context, filter models.ListRequest) ([]models.Permission, int, error) {
 	const op = "repository.Permission.List"
 	logger := r.logger.With(slog.String("op", op), slog.Int("app_id", *filter.AppID))
-	baseQuery := `SELECT id, code, description, category, app_id, is_active, created_at, updated_at,	deleted_at FROM permissions`
+	baseQuery := `SELECT id, code, description, category, app_id, is_active, created_at, updated_at, deleted_at FROM permissions`
 	tail := " WHERE app_id = $1"
 	args := []any{*filter.AppID}
 	paramCounter := 2
@@ -29,8 +29,16 @@ func (r *Repository) List(ctx context.Context, filter models.ListRequest) ([]mod
 		paramCounter++
 	}
 
-	if filter.ActiveOnly != nil && *filter.ActiveOnly {
-		tail += " AND is_active = true"
+	if filter.ActiveOnly != nil {
+		if *filter.ActiveOnly {
+			tail += fmt.Sprintf(" AND is_active = $%d", paramCounter)
+			args = append(args, true)
+			paramCounter++
+		} else {
+			tail += fmt.Sprintf(" AND is_active = $%d", paramCounter)
+			args = append(args, false)
+			paramCounter++
+		}
 	}
 
 	fullQuery := baseQuery + tail

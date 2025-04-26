@@ -36,11 +36,6 @@ func (s *Service) Get(ctx context.Context, id uuid.UUID, appID int) (*models.Per
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	if perm.DeletedAt != nil {
-		logger.Warn("permission is soft deleted", slog.Time("deleted_at", *perm.DeletedAt))
-		return nil, fmt.Errorf("%w: permission deleted", ErrInvalidState)
-	}
-
 	logger.Info("permission retrieved successfully", slog.String("code", perm.Code), slog.Bool("is_active", perm.IsActive))
 	return perm, nil
 }

@@ -15,7 +15,6 @@ var (
 	ErrPermissionDenied    = errors.New("permission denied")
 	ErrForeignKeyViolation = errors.New("foreign key violation")
 	ErrInvalidUUID         = errors.New("invalid uuid")
-	ErrInvalidState        = errors.New("invalid object state")
 )
 
 func (s *serverAPI) convertError(err error) error {

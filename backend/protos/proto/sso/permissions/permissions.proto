@@ -22,7 +22,7 @@ message Permission {
   bool is_active = 6;
   google.protobuf.Timestamp created_at = 7;
   google.protobuf.Timestamp updated_at = 8;
-  optional google.protobuf.Timestamp deleted_at = 9;
+  optional google.protobuf.Timestamp deleted_at = 9 [json_name = "deleted_at"];
 }
 
 message CreateRequest {

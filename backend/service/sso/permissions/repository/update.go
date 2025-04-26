@@ -20,12 +20,11 @@ func (r *Repository) Update(ctx context.Context, perm models.Permission) (*model
 	logger.Debug("starting database update operation")
 
 	query := `UPDATE permissions 
-        SET code = $1, description = $2, category = $3, is_active = $4, updated_at = NOW()
-        WHERE id = $5 AND app_id = $6
+        SET code = $1, description = $2, category = $3, updated_at = NOW() WHERE id = $4 AND app_id = $5
         RETURNING id, code, description, category, app_id, is_active, created_at, updated_at, deleted_at`
 
 	logger.Debug("executing SQL query", slog.String("query", query))
-	row := r.db.QueryRow(ctx, query, perm.Code, perm.Description, perm.Category, perm.IsActive, perm.ID, perm.AppID)
+	row := r.db.QueryRow(ctx, query, perm.Code, perm.Description, perm.Category, perm.ID, perm.AppID)
 
 	var updated models.Permission
 	start := time.Now()

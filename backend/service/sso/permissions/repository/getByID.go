@@ -15,7 +15,7 @@ import (
 func (r *Repository) GetByID(ctx context.Context, id uuid.UUID, appID int) (*models.Permission, error) {
 	const op = "repository.Permission.GetByID"
 	logger := r.logger.With(slog.String("op", op), slog.String("permission_id", id.String()), slog.Int("app_id", appID))
-	query := `SELECT id, code, description, category, app_id, is_active, created_at, updated_at, deleted_at FROM permissions WHERE id = $1 AND app_id = $2 AND deleted_at IS NULL`
+	query := `SELECT id, code, description, category, app_id, is_active, created_at, updated_at, deleted_at FROM permissions WHERE id = $1 AND app_id = $2`
 	logger.Debug("executing query", slog.String("query", query), slog.Any("id", id), slog.Int("app_id", appID))
 	row := r.db.QueryRow(ctx, query, id, appID)
 	var perm models.Permission

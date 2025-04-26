@@ -12,7 +12,7 @@ import (
 func (r *Repository) SoftDelete(ctx context.Context, id uuid.UUID, appID int) error {
 	const op = "repository.Permission.SoftDelete"
 	logger := r.logger.With(slog.String("op", op), slog.String("permission_id", id.String()), slog.Int("app_id", appID))
-	query := `UPDATE permissions SET deleted_at = NOW() WHERE id = $1 AND app_id = $2 AND deleted_at IS NULL`
+	query := `UPDATE permissions SET deleted_at = NOW(), is_active = false WHERE id = $1 AND app_id = $2 AND deleted_at IS NULL`
 	logger.Debug("executing soft delete", slog.String("query", query), slog.String("id", id.String()), slog.Int("app_id", appID))
 	result, err := r.db.Exec(ctx, query, id, appID)
 	if err != nil {
