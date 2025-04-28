@@ -8,6 +8,7 @@ import (
 type Role struct {
 	ID          uuid.UUID
 	ClientID    uuid.UUID
+	AppID       int
 	Name        string
 	Description string
 	Level       int

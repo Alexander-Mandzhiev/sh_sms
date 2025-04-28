@@ -10,7 +10,7 @@ import (
 	"log/slog"
 )
 
-func (s *Service) Get(ctx context.Context, clientID, roleID uuid.UUID) (*models.Role, error) {
+func (s *Service) Get(ctx context.Context, clientID, roleID uuid.UUID, appID int) (*models.Role, error) {
 	const op = "service.Roles.Get"
 	logger := s.logger.With(slog.String("op", op), slog.String("client_id", clientID.String()), slog.String("role_id", roleID.String()))
 	logger.Debug("attempting to get role")
@@ -25,7 +25,7 @@ func (s *Service) Get(ctx context.Context, clientID, roleID uuid.UUID) (*models.
 		return nil, fmt.Errorf("%w: role_id", ErrInvalidArgument)
 	}
 
-	role, err := s.provider.GetByID(ctx, clientID, roleID)
+	role, err := s.provider.GetByID(ctx, clientID, roleID, appID)
 	if err != nil {
 		if errors.Is(err, ErrNotFound) {
 			logger.Warn("role not found")
@@ -33,11 +33,6 @@ func (s *Service) Get(ctx context.Context, clientID, roleID uuid.UUID) (*models.
 		}
 		logger.Error("database error", slog.Any("error", err))
 		return nil, fmt.Errorf("%w: %v", ErrInternal, err)
-	}
-
-	if role.ClientID != clientID {
-		logger.Warn("client ID mismatch", slog.String("expected", clientID.String()), slog.String("actual", role.ClientID.String()))
-		return nil, fmt.Errorf("%w: role access denied", ErrPermissionDenied)
 	}
 
 	logger.Debug("successfully retrieved role", slog.String("role_name", role.Name))

@@ -25,7 +25,12 @@ func (s *serverAPI) Delete(ctx context.Context, req *roles.DeleteRequest) (*role
 		return nil, s.convertError(fmt.Errorf("%w: role_id", ErrInvalidArgument))
 	}
 
-	err = s.service.Delete(ctx, clientID, roleID, req.GetPermanent())
+	if err = utils.ValidateAppID(int(req.GetAppId())); err != nil {
+		logger.Warn("invalid app ID", slog.Any("error", err))
+		return nil, s.convertError(ErrInvalidArgument)
+	}
+
+	err = s.service.Delete(ctx, clientID, roleID, int(req.GetAppId()), req.GetPermanent())
 	if err != nil {
 		logger.Error("delete role failed", slog.Any("error", err), slog.Bool("permanent", req.GetPermanent()))
 		return nil, s.convertError(err)

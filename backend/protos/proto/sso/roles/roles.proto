@@ -16,13 +16,13 @@ service RoleService {
 message Role {
   string id = 1;
   string client_id = 2;
-  string name = 3;
-  string description = 4;
-  int32 level = 5;
-  bool is_active = 6;
-  bool is_custom = 7;
-  optional string created_by = 8;
-  repeated string permission_ids = 9;
+  int32 app_id = 3;
+  string name = 4;
+  optional string description = 5;
+  int32 level = 6;
+  bool is_active = 7;
+  bool is_custom = 8;
+  optional string created_by = 9;
   google.protobuf.Timestamp created_at = 10;
   google.protobuf.Timestamp updated_at = 11;
   optional google.protobuf.Timestamp deleted_at = 12;
@@ -30,41 +30,45 @@ message Role {
 
 message CreateRequest {
   string client_id = 1;
-  string name = 2;
-  string description = 3;
-  int32 level = 4;
-  optional bool is_custom = 5;
-  optional string created_by = 6;
+  int32 app_id = 2;
+  string name = 3;
+  string description = 4;
+  int32 level = 5;
+  optional bool is_custom =6;
+  optional string created_by = 7;
 }
 
 message GetRequest {
   string id = 1;
   string client_id = 2;
+  int32 app_id = 3;
 }
 
 message UpdateRequest {
   string id = 1;
   string client_id = 2;
-  optional string name = 3;
-  optional string description = 4;
-  optional int32 level = 5;
-  optional bool is_custom = 6;
+  int32 app_id = 3;
+  optional string name = 4;
+  optional string description = 5;
+  optional int32 level = 6;
 }
 
 message DeleteRequest {
   string id = 1;
   string client_id = 2;
-  optional bool permanent = 3;
+  int32 app_id = 3;
+  optional bool permanent = 4;
 }
 
 
 message ListRequest {
   string client_id = 1;
-  optional string name_filter = 2;
-  optional int32 level_filter = 3;
-  optional bool active_only = 4;
-  int32 page = 5;
-  int32 count = 6;
+  int32 app_id = 2;
+  optional string name_filter = 3;
+  optional int32 level_filter = 4;
+  optional bool active_only = 5;
+  int32 page = 6;
+  int32 count = 7;
 }
 
 message ListResponse {
@@ -80,4 +84,5 @@ message DeleteResponse {
 message RestoreRequest {
   string id = 1;
   string client_id = 2;
+  int32 app_id = 3;
 }

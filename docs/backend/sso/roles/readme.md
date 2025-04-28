@@ -41,18 +41,20 @@ deleted_at | TIMESTAMPTZ |  | Мягкое удаление
 rpc Create(CreateRequest) returns (Role);
 
 message CreateRequest {
-    string client_id = 1;
-    string name = 2;
-    string description = 3;
-    int32 level = 4;
-    bool is_custom = 5;
-    optional string created_by = 6;
+  string client_id = 1;
+  int32 app_id = 2;
+  string name = 3;
+  string description = 4;
+  int32 level = 5;
+  optional bool is_custom =6;
+  optional string created_by = 7;
 }
 ```
 **Пример запроса**
 ```json
 {
   "client_id": "8268ec76-d6c2-48b5-a0e4-a9c2538b8f48",
+  "app_id": 1,
   "name": "super admin",
   "description": "Super admin role",
   "level": 0,
@@ -62,22 +64,23 @@ message CreateRequest {
 **Пример ответа**
 ```json
 {
-	"permission_ids": [],
-	"id": "6d08281f-7ee6-4019-a9f3-f6004a5d6acd",
-	"client_id": "8268ec76-d6c2-48b5-a0e4-a9c2538b8f48",
-	"name": "super admin",
-	"description": "Super admin role",
-	"level": 0,
-	"is_active": true,
-	"is_custom": true,
-	"created_at": {
-		"seconds": "1745473148",
-		"nanos": 32631200
-	},
-	"updated_at": {
-		"seconds": "1745473148",
-		"nanos": 32631200
-	}
+  "id": "bc870624-ea19-4cc9-951e-9cb19b740812",
+  "client_id": "8268ec76-d6c2-48b5-a0e4-a9c2538b8f48",
+  "app_id": 1,
+  "name": "super admin",
+  "level": 0,
+  "is_active": true,
+  "is_custom": true,
+  "created_at": {
+    "seconds": "1745829837",
+    "nanos": 490219000
+  },
+  "updated_at": {
+    "seconds": "1745830788",
+    "nanos": 765930000
+  },
+  "description": "Super admin",
+  "_description": "description"
 }
 ```
 **Особенности**
@@ -101,34 +104,38 @@ rpc Get(GetRequest) returns (Role);
 message GetRequest {
     string client_id = 1;
     string id = 2;
+    int32 app_id = 3;
 }
 ```
 **Пример запроса**
 ```json
 {
-	"id": "6d08281f-7ee6-4019-a9f3-f6004a5d6acd",
-	"client_id": "8268ec76-d6c2-48b5-a0e4-a9c2538b8f48"
+  "id": "bc870624-ea19-4cc9-951e-9cb19b740812", 
+  "client_id": "8268ec76-d6c2-48b5-a0e4-a9c2538b8f48", 
+  "app_id": 1
 }
+
 ```
 **Пример ответа**
 ```json
 {
-  "permission_ids": [],
-  "id": "6d08281f-7ee6-4019-a9f3-f6004a5d6acd",
+  "id": "bc870624-ea19-4cc9-951e-9cb19b740812",
   "client_id": "8268ec76-d6c2-48b5-a0e4-a9c2538b8f48",
+  "app_id": 1,
   "name": "super admin",
-  "description": "Super admin role",
   "level": 0,
   "is_active": true,
   "is_custom": true,
   "created_at": {
-    "seconds": "1745473148",
-    "nanos": 32631000
+    "seconds": "1745829837",
+    "nanos": 490219000
   },
   "updated_at": {
-    "seconds": "1745473148",
-    "nanos": 32631000
-  }
+    "seconds": "1745830788",
+    "nanos": 765930000
+  },
+  "description": "Super admin",
+  "_description": "description"
 }
 ```
 **Особенности**
@@ -140,44 +147,44 @@ message GetRequest {
 rpc Update(UpdateRequest) returns (Role);
 
 message UpdateRequest {
-    string id = 1;
-    string client_id = 2;
-    optional string name = 3;
-    optional string description = 4;
-    optional int32 level = 5;
-    optional bool is_active = 6;
+  string id = 1;
+  string client_id = 2;
+  int32 app_id = 3;
+  optional string name = 4;
+  optional string description = 5;
+  optional int32 level = 6;
 }
 ```
 **Пример запроса**
 ```json
 {
-  "id": "6d08281f-7ee6-4019-a9f3-f6004a5d6acd",
+  "id": "bc870624-ea19-4cc9-951e-9cb19b740812",
   "client_id": "8268ec76-d6c2-48b5-a0e4-a9c2538b8f48",
-  "name": "admin",
-  "description": "Admin role",
-  "level": 1,
-  "is_custom": true
+  "app_id": 1,
+  "name": "super admin - role",
+  "level": 0
 }
 ```
 **Пример ответа**
 ```json
 {
-  "permission_ids": [],
-  "id": "6d08281f-7ee6-4019-a9f3-f6004a5d6acd",
+  "id": "bc870624-ea19-4cc9-951e-9cb19b740812",
   "client_id": "8268ec76-d6c2-48b5-a0e4-a9c2538b8f48",
-  "name": "admin",
-  "description": "Admin role",
-  "level": 1,
+  "app_id": 0,
+  "name": "super admin - role",
+  "level": 0,
   "is_active": true,
   "is_custom": true,
   "created_at": {
-    "seconds": "1745473148",
-    "nanos": 32631000
+    "seconds": "1745829837",
+    "nanos": 490219000
   },
   "updated_at": {
-    "seconds": "1745476512",
-    "nanos": 246523000
-  }
+    "seconds": "1745835216",
+    "nanos": 903339000
+  },
+  "description": "Super admin",
+  "_description": "description"
 }
 ```
 
@@ -200,19 +207,29 @@ rpc Delete(DeleteRequest) returns (DeleteResponse);
 message DeleteRequest {
     string id = 1;
     string client_id = 2;
-    bool permanent = 3;
+    int32  app_id = 3,
+    bool permanent = 4;
+}
+```
+```json
+{
+  "id": "bc870624-ea19-4cc9-951e-9cb19b740812",
+  "client_id": "8268ec76-d6c2-48b5-a0e4-a9c2538b8f48",
+  "app_id": 1,
+  "permanent": false
+}
+```
+**Ответ**
+```json
+{
+    "success": true
 }
 ```
 **Особенности**
 - Мягкое удаление по умолчанию (is_active=false + deleted_at)
 - Запрет удаления системных ролей
 - Каскадное удаление зависимостей при permanent=true
-  **Ответ**
-```json
-{
-    "success": true
-}
-```
+
 ### 5. Список ролей (List)
 ```protobuf
 rpc List(ListRequest) returns (ListResponse);
@@ -230,6 +247,7 @@ message ListRequest {
 ```json
 {
 	"client_id": "8268ec76-d6c2-48b5-a0e4-a9c2538b8f48",
+    "app_id": 1,
 	"page":1,
     "count":20,
 	"active_only": true,
@@ -242,28 +260,77 @@ message ListRequest {
 {
   "roles": [
     {
-      "permission_ids": [],
-      "id": "6d08281f-7ee6-4019-a9f3-f6004a5d6acd",
+      "id": "bc870624-ea19-4cc9-951e-9cb19b740812",
       "client_id": "8268ec76-d6c2-48b5-a0e4-a9c2538b8f48",
-      "name": "admin",
-      "description": "Admin role",
-      "level": 1,
+      "app_id": 1,
+      "name": "super admin",
+      "level": 0,
       "is_active": true,
       "is_custom": true,
       "created_at": {
-        "seconds": "1745473148",
-        "nanos": 32631000
+        "seconds": "1745829837",
+        "nanos": 490219000
       },
       "updated_at": {
-        "seconds": "1745476512",
-        "nanos": 246523000
-      }
+        "seconds": "1745830788",
+        "nanos": 765930000
+      },
+      "description": "Super admin",
+      "_description": "description"
     }
   ],
   "total_count": 1,
   "current_page": 1
 }
 ```
+
+### 6. Восстановление роли (Restore)
+```protobuf
+rpc Restore(RestoreRequest) returns (Role);
+
+message RestoreRequest {
+    string id = 1;
+    string client_id = 2;
+    int32 app_id = 3;
+}
+```
+**Пример запроса**
+
+```json
+{
+  "id": "bc870624-ea19-4cc9-951e-9cb19b740812",
+  "client_id": "8268ec76-d6c2-48b5-a0e4-a9c2538b8f48",
+  "app_id": 1
+}
+```
+**Пример ответа**
+```json
+{
+  "id": "bc870624-ea19-4cc9-951e-9cb19b740812",
+  "client_id": "8268ec76-d6c2-48b5-a0e4-a9c2538b8f48",
+  "app_id": 1,
+  "name": "super admin",
+  "level": 0,
+  "is_active": true,
+  "is_custom": true,
+  "created_at": "2024-05-10T15:23:57Z",
+  "updated_at": "2024-05-10T15:39:48Z",
+  "description": "Super admin role"
+}
+```
+**Особенности**
+- Восстанавливает мягко удаленные роли
+- Проверяет уникальность имени после восстановления
+- Обновляет поля deleted_at и is_active
+
+**Ошибки**
+```json
+{
+    "code": 5,
+    "message": "Role name 'super admin' already exists"
+}
+```
+
 **Особенности**
 - Поиск по частичному совпадению имени
 - Фильтрация по уровню и активности

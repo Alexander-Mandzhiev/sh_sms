@@ -18,8 +18,8 @@ func (s *Service) Delete(ctx context.Context, id uuid.UUID, appID int, permanent
 		return fmt.Errorf("%w: invalid permission id", ErrInvalidArgument)
 	}
 
-	if err := utils.ValidateAppID(appID); err != nil {
-		logger.Warn("invalid app_id", slog.Any("error", err))
+	if appID <= 0 {
+		logger.Warn("invalid app_id", slog.Int("app_id", appID))
 		return fmt.Errorf("%w: invalid app_id", ErrInvalidArgument)
 	}
 
@@ -31,6 +31,19 @@ func (s *Service) Delete(ctx context.Context, id uuid.UUID, appID int, permanent
 	if !exists {
 		logger.Warn("permission not found")
 		return fmt.Errorf("%w", ErrNotFound)
+	}
+
+	if permanent {
+		var hasDeps bool
+		hasDeps, err = s.provider.HasDependencies(ctx, id)
+		if err != nil {
+			logger.Error("dependency check failed", slog.Any("error", err))
+			return fmt.Errorf("%s: %w", op, err)
+		}
+		if hasDeps {
+			logger.Warn("delete forbidden - existing dependencies")
+			return fmt.Errorf("%w: cannot delete permission with dependencies", ErrDependenciesExist)
+		}
 	}
 
 	var deleteErr error

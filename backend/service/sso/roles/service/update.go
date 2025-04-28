@@ -24,7 +24,12 @@ func (s *Service) Update(ctx context.Context, updateData *models.Role) (*models.
 		return nil, fmt.Errorf("%w: role_id", ErrInvalidArgument)
 	}
 
-	currentRole, err := s.provider.GetByID(ctx, updateData.ClientID, updateData.ID)
+	if updateData.AppID <= 0 {
+		logger.Warn("invalid app_id")
+		return nil, fmt.Errorf("%w: invalid app_id", ErrInvalidArgument)
+	}
+
+	currentRole, err := s.provider.GetByID(ctx, updateData.ClientID, updateData.ID, updateData.AppID)
 	if err != nil {
 		if errors.Is(err, ErrNotFound) {
 			logger.Warn("role not found")
@@ -43,13 +48,13 @@ func (s *Service) Update(ctx context.Context, updateData *models.Role) (*models.
 	needUpdate := false
 
 	if updateData.Name != "" {
-		if err = utils.ValidateRoleName(updateData.Name); err != nil {
+		if err = utils.ValidateRoleName(updateData.Name, 150); err != nil {
 			logger.Warn("invalid name", slog.Any("error", err))
 			return nil, fmt.Errorf("%w: %v", ErrInvalidArgument, err)
 		}
 		if updatedRole.Name != updateData.Name {
 			var exists bool
-			exists, err = s.provider.RoleExists(ctx, updateData.ClientID, updateData.Name)
+			exists, err = s.provider.RoleExists(ctx, updateData.ClientID, updateData.AppID, updateData.Name)
 			if err != nil {
 				logger.Error("name check failed", slog.Any("error", err))
 				return nil, fmt.Errorf("%w: %v", ErrInternal, err)
@@ -69,7 +74,7 @@ func (s *Service) Update(ctx context.Context, updateData *models.Role) (*models.
 	}
 
 	if updateData.Level >= 0 && updateData.Level != currentRole.Level {
-		if err = utils.ValidateRoleLevel(int32(updateData.Level)); err != nil {
+		if err = utils.ValidateRoleLevel(updateData.Level); err != nil {
 			logger.Warn("invalid level", slog.Int("level", updateData.Level), slog.Any("error", err))
 			return nil, fmt.Errorf("%w: %v", ErrInvalidArgument, err)
 		}
@@ -77,7 +82,7 @@ func (s *Service) Update(ctx context.Context, updateData *models.Role) (*models.
 		needUpdate = true
 	}
 
-	if updateData.IsCustom != currentRole.IsCustom {
+	if !currentRole.IsCustom {
 		logger.Warn("attempt to change system role flag")
 		return nil, fmt.Errorf("%w: is_custom cannot be changed", ErrPermissionDenied)
 	}

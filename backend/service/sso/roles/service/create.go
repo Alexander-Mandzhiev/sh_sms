@@ -16,17 +16,17 @@ func (s *Service) Create(ctx context.Context, role *models.Role) error {
 	logger := s.logger.With(slog.String("op", op), slog.String("client_id", role.ClientID.String()), slog.String("role_name", role.Name))
 	logger.Debug("attempting to create role")
 
-	if err := utils.ValidateRoleName(role.Name); err != nil {
+	if err := utils.ValidateRoleName(role.Name, 150); err != nil {
 		logger.Warn("invalid role name", slog.Any("error", err))
 		return fmt.Errorf("%w: %v", ErrInvalidArgument, err)
 	}
 
-	if role.Level < 0 {
-		logger.Warn("invalid role level", slog.Int("level", role.Level))
+	if err := utils.ValidateRoleLevel(role.Level); err != nil {
+		logger.Warn("invalid role level", slog.Int("level", int(role.Level)))
 		return fmt.Errorf("%w: level cannot be negative", ErrInvalidArgument)
 	}
 
-	roleExists, err := s.provider.RoleExists(ctx, role.ClientID, role.Name)
+	roleExists, err := s.provider.RoleExists(ctx, role.ClientID, role.AppID, role.Name)
 	if err != nil {
 		logger.Error("role existence check failed", slog.Any("error", err))
 		return fmt.Errorf("%w: %v", ErrInternal, err)
@@ -38,13 +38,15 @@ func (s *Service) Create(ctx context.Context, role *models.Role) error {
 
 	if role.ID == uuid.Nil {
 		role.ID = uuid.New()
+		logger.Debug("generated new role ID", slog.String("id", role.ID.String()))
 	}
-	role.CreatedAt = time.Now().UTC()
-	role.UpdatedAt = role.CreatedAt
 
-	if !role.IsActive {
-		role.IsActive = true
+	if role.CreatedAt.IsZero() {
+		role.CreatedAt = time.Now().UTC()
+		role.UpdatedAt = role.CreatedAt
 	}
+
+	role.IsActive = true
 
 	if err = s.provider.Create(ctx, role); err != nil {
 		if errors.Is(err, ErrConflict) {
@@ -55,6 +57,6 @@ func (s *Service) Create(ctx context.Context, role *models.Role) error {
 		return fmt.Errorf("%w: %v", ErrInternal, err)
 	}
 
-	logger.Info("role created successfully", slog.String("role_id", role.ID.String()), slog.Int("level", role.Level))
+	logger.Info("role created successfully", slog.String("role_id", role.ID.String()), slog.Int("level", int(role.Level)))
 	return nil
 }

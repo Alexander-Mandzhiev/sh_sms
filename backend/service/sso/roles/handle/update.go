@@ -26,13 +26,20 @@ func (s *serverAPI) Update(ctx context.Context, req *roles.UpdateRequest) (*role
 		return nil, s.convertError(fmt.Errorf("%w: role_id", ErrInvalidArgument))
 	}
 
+	if err = utils.ValidateAppID(int(req.GetAppId())); err != nil {
+		logger.Warn("invalid app ID", slog.Any("error", err))
+		return nil, s.convertError(ErrInvalidArgument)
+	}
+
 	updateData := models.Role{
 		ID:       roleID,
 		ClientID: clientID,
+		AppID:    int(req.GetAppId()),
 	}
 
 	if req.Name != nil {
-		if req.GetName() == "" {
+		if err = utils.ValidateRoleName(req.GetName(), 150); err != nil {
+			logger.Warn("invalid role name", slog.Any("error", err))
 			return nil, s.convertError(fmt.Errorf("%w: name cannot be empty", ErrInvalidArgument))
 		}
 		updateData.Name = *req.Name
@@ -43,14 +50,10 @@ func (s *serverAPI) Update(ctx context.Context, req *roles.UpdateRequest) (*role
 	}
 
 	if req.Level != nil {
-		if req.GetLevel() < 0 {
+		if err = utils.ValidateRoleLevel(int(req.GetLevel())); err != nil {
 			return nil, s.convertError(fmt.Errorf("%w: invalid level", ErrInvalidArgument))
 		}
 		updateData.Level = int(*req.Level)
-	}
-
-	if req.IsCustom != nil {
-		updateData.IsCustom = *req.IsCustom
 	}
 
 	updatedRole, err := s.service.Update(ctx, &updateData)

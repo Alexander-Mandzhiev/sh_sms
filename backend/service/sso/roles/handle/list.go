@@ -25,8 +25,14 @@ func (s *serverAPI) List(ctx context.Context, req *roles.ListRequest) (*roles.Li
 		return nil, s.convertError(err)
 	}
 
+	if err = utils.ValidateAppID(int(req.GetAppId())); err != nil {
+		logger.Warn("invalid app_id", slog.Any("error", err))
+		return nil, s.convertError(fmt.Errorf("%w: app_id", constants.ErrInvalidArgument))
+	}
+
 	listReq := models.ListRequest{
 		ClientID: &clientID,
+		AppID:    utils.GetIntPointer(int(req.GetAppId())),
 		Page:     int(req.GetPage()),
 		Count:    int(req.GetCount()),
 	}

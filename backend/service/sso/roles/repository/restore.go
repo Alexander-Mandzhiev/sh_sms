@@ -11,28 +11,16 @@ import (
 	"log/slog"
 )
 
-func (r *Repository) Restore(ctx context.Context, clientID, roleID uuid.UUID) (*models.Role, error) {
+func (r *Repository) Restore(ctx context.Context, clientID, roleID uuid.UUID, appID int) (*models.Role, error) {
 	const op = "repository.Roles.Restore"
 	logger := r.logger.With(slog.String("op", op), slog.String("role_id", roleID.String()), slog.String("client_id", clientID.String()))
-
-	query := `
-		UPDATE roles 
-		SET 
-			deleted_at = NULL,
-			is_active = TRUE 
-		WHERE id = $1 AND client_id = $2 AND deleted_at IS NOT NULL 
-		RETURNING 
-			id, client_id, name, description, level, 
-			is_custom, is_active, created_by, 
-			created_at, updated_at, deleted_at`
+	query := `UPDATE roles SET deleted_at = NULL, is_active = TRUE WHERE id = $1 AND client_id = $2 AND app_id = $3 AND deleted_at IS NOT NULL 
+		RETURNING id, client_id, app_id, name, description, level, is_custom, is_active, created_by, created_at, updated_at, deleted_at`
 
 	var restored models.Role
-	err := r.db.QueryRow(ctx, query, roleID, clientID).Scan(
-		&restored.ID, &restored.ClientID, &restored.Name, &restored.Description,
-		&restored.Level, &restored.IsCustom, &restored.IsActive, &restored.CreatedBy,
-		&restored.CreatedAt, &restored.UpdatedAt, &restored.DeletedAt,
-	)
-
+	err := r.db.QueryRow(ctx, query, roleID, clientID, appID).Scan(
+		&restored.ID, &restored.ClientID, &restored.AppID, &restored.Name, &restored.Description, &restored.Level, &restored.IsCustom,
+		&restored.IsActive, &restored.CreatedBy, &restored.CreatedAt, &restored.UpdatedAt, &restored.DeletedAt)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			logger.Debug("role not found or not deleted", slog.String("query", query))
@@ -46,7 +34,6 @@ func (r *Repository) Restore(ctx context.Context, clientID, roleID uuid.UUID) (*
 				return nil, fmt.Errorf("%w: %s", ErrConflict, pgErr.Detail)
 			}
 		}
-
 		logger.Error("database operation failed", slog.String("query", query), slog.Any("error", err))
 		return nil, fmt.Errorf("%s: %w", op, ErrInternal)
 	}

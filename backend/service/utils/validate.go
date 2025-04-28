@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/google/uuid"
+	"math"
 	"regexp"
 	"strings"
 )
@@ -28,7 +29,7 @@ func ValidateUUIDToString(id string) error {
 }
 
 func ValidateAppID(appID int) error {
-	if appID <= 0 {
+	if appID <= 0 || appID > math.MaxInt32 {
 		return constants.ErrInvalidAppId
 	}
 	return nil
@@ -127,14 +128,14 @@ func ValidateAndReturnUUID(input string) (uuid.UUID, error) {
 	return id, nil
 }
 
-func ValidateRoleName(name string) error {
-	if name == "" {
+func ValidateRoleName(name string, length int) error {
+	if name == "" || len(name) > length {
 		return fmt.Errorf("%w: name is required", constants.ErrInvalidArgument)
 	}
 	return nil
 }
 
-func ValidateRoleLevel(level int32) error {
+func ValidateRoleLevel(level int) error {
 	if level < 0 {
 		return fmt.Errorf("%w: invalid level", constants.ErrInvalidArgument)
 	}

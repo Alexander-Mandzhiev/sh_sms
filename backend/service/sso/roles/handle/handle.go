@@ -11,11 +11,11 @@ import (
 
 type RoleService interface {
 	Create(ctx context.Context, role *models.Role) error
-	Get(ctx context.Context, clientID, roleID uuid.UUID) (*models.Role, error)
+	Get(ctx context.Context, clientID, roleID uuid.UUID, appID int) (*models.Role, error)
 	Update(ctx context.Context, role *models.Role) (*models.Role, error)
-	Delete(ctx context.Context, clientID, roleID uuid.UUID, permanent bool) error
+	Delete(ctx context.Context, clientID, roleID uuid.UUID, appID int, permanent bool) error
 	List(ctx context.Context, req models.ListRequest) ([]models.Role, int, error)
-	Restore(ctx context.Context, clientID, roleID uuid.UUID) (*models.Role, error)
+	Restore(ctx context.Context, clientID, roleID uuid.UUID, appID int) (*models.Role, error)
 }
 
 type serverAPI struct {

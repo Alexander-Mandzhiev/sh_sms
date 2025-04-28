@@ -26,15 +26,15 @@ func (s *serverAPI) Get(ctx context.Context, req *roles.GetRequest) (*roles.Role
 		return nil, s.convertError(fmt.Errorf("%w: role_id", constants.ErrInvalidArgument))
 	}
 
-	role, err := s.service.Get(ctx, clientID, roleID)
+	if err = utils.ValidateAppID(int(req.GetAppId())); err != nil {
+		logger.Warn("invalid app ID", slog.Any("error", err))
+		return nil, s.convertError(ErrInvalidArgument)
+	}
+
+	role, err := s.service.Get(ctx, clientID, roleID, int(req.GetAppId()))
 	if err != nil {
 		logger.Error("get role failed", slog.Any("error", err))
 		return nil, s.convertError(err)
-	}
-
-	if role.DeletedAt != nil {
-		logger.Warn("role is deleted", slog.Time("deleted_at", *role.DeletedAt))
-		return nil, s.convertError(constants.ErrNotFound)
 	}
 
 	logger.Debug("role retrieved successfully")

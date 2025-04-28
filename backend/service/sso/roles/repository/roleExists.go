@@ -9,13 +9,13 @@ import (
 	"log/slog"
 )
 
-func (r *Repository) RoleExists(ctx context.Context, clientID uuid.UUID, name string) (bool, error) {
+func (r *Repository) RoleExists(ctx context.Context, clientID uuid.UUID, appID int, name string) (bool, error) {
 	const op = "repository.Roles.RoleExists"
 	logger := r.logger.With(slog.String("op", op), slog.String("client_id", clientID.String()), slog.String("name", name))
-	query := `SELECT 1 FROM roles WHERE client_id = $1 AND name = $2 AND deleted_at IS NULL LIMIT 1`
+	query := `SELECT 1 FROM roles WHERE client_id = $1 AND app_id = $2 AND name = $3 AND deleted_at IS NULL LIMIT 1`
 
 	var exists int
-	err := r.db.QueryRow(ctx, query, clientID, name).Scan(&exists)
+	err := r.db.QueryRow(ctx, query, clientID, appID, name).Scan(&exists)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			logger.Warn("role not found")

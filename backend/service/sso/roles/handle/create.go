@@ -12,27 +12,33 @@ import (
 
 func (s *serverAPI) Create(ctx context.Context, req *roles.CreateRequest) (*roles.Role, error) {
 	const op = "grpc.role.Create"
-	logger := s.logger.With(slog.String("op", op), slog.String("role_name", req.GetName()), slog.String("client_id", req.GetClientId()))
-	logger.Debug("attempting to create role")
-
+	logger := s.logger.With(slog.String("op", op), slog.String("client_id", req.GetClientId()), slog.Int("app_id", int(req.GetAppId())), slog.String("role_name", req.GetName()))
+	logger.Info("role creation initiated")
 	clientID, err := utils.ValidateAndReturnUUID(req.GetClientId())
 	if err != nil {
 		logger.Warn("invalid client_id", slog.Any("error", err))
 		return nil, s.convertError(fmt.Errorf("%w: client_id", ErrInvalidArgument))
 	}
 
-	if err = utils.ValidateRoleName(req.GetName()); err != nil {
+	if err = utils.ValidateAppID(int(req.GetAppId())); err != nil {
+		logger.Warn("invalid app ID", slog.Any("error", err))
+		return nil, s.convertError(ErrInvalidArgument)
+	}
+
+	if err = utils.ValidateRoleName(req.GetName(), 150); err != nil {
 		logger.Warn("invalid role name", slog.Any("error", err))
 		return nil, s.convertError(err)
 	}
 
-	if err = utils.ValidateRoleLevel(req.GetLevel()); err != nil {
+	if err = utils.ValidateRoleLevel(int(req.GetLevel())); err != nil {
 		logger.Warn("invalid role level", slog.Int("level", int(req.GetLevel())), slog.Any("error", err))
 		return nil, s.convertError(err)
 	}
 
 	role := &models.Role{
+		ID:          uuid.New(),
 		ClientID:    clientID,
+		AppID:       int(req.GetAppId()),
 		Name:        req.GetName(),
 		Description: req.GetDescription(),
 		Level:       int(req.GetLevel()),
@@ -48,6 +54,14 @@ func (s *serverAPI) Create(ctx context.Context, req *roles.CreateRequest) (*role
 		}
 		role.CreatedBy = &createdBy
 	}
+
+	if req.IsCustom != nil {
+		role.IsCustom = req.GetIsCustom()
+	} else {
+		role.IsCustom = true
+	}
+
+	logger.Debug("calling service layer", slog.Any("role", role))
 
 	if err = s.service.Create(ctx, role); err != nil {
 		logger.Error("create role failed", slog.Any("error", err), slog.Any("role", role))

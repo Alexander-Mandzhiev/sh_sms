@@ -20,16 +20,13 @@ var (
 type RolesProvider interface {
 	Create(ctx context.Context, role *models.Role) error
 	Update(ctx context.Context, role *models.Role) (*models.Role, error)
+	Delete(ctx context.Context, clientID, roleID uuid.UUID, appID int, permanent bool) error
+	Restore(ctx context.Context, clientID, roleID uuid.UUID, appID int) (*models.Role, error)
 
-	GetByID(ctx context.Context, clientID, roleID uuid.UUID) (*models.Role, error)
+	GetByID(ctx context.Context, clientID, roleID uuid.UUID, appID int) (*models.Role, error)
+	RoleExists(ctx context.Context, clientID uuid.UUID, appID int, name string) (bool, error)
+
 	List(ctx context.Context, req models.ListRequest) ([]models.Role, int, error)
-
-	HardDelete(ctx context.Context, clientID, roleID uuid.UUID) error
-	SoftDelete(ctx context.Context, clientID, roleID uuid.UUID) error
-	Restore(ctx context.Context, clientID, roleID uuid.UUID) (*models.Role, error)
-
-	HasDependencies(ctx context.Context, roleID uuid.UUID) (bool, error)
-	RoleExists(ctx context.Context, clientID uuid.UUID, name string) (bool, error)
 }
 
 type Service struct {

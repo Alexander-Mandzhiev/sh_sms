@@ -25,7 +25,7 @@ func (s *Service) List(ctx context.Context, req models.ListRequest) ([]models.Ro
 	}
 
 	if req.NameFilter != nil && *req.NameFilter != "" {
-		if err := utils.ValidateRoleName(*req.NameFilter); err != nil {
+		if err := utils.ValidateRoleName(*req.NameFilter, 150); err != nil {
 			logger.Warn("invalid name filter", slog.String("filter", *req.NameFilter), slog.Any("error", err))
 			return nil, 0, fmt.Errorf("%w: name_filter", ErrInvalidArgument)
 		}
@@ -40,16 +40,6 @@ func (s *Service) List(ctx context.Context, req models.ListRequest) ([]models.Ro
 	if err != nil {
 		logger.Error("database error", slog.Any("error", err))
 		return nil, 0, fmt.Errorf("%w: %v", ErrInternal, err)
-	}
-
-	if req.ActiveOnly != nil && *req.ActiveOnly {
-		filtered := make([]models.Role, 0, len(rolesList))
-		for _, role := range rolesList {
-			if role.DeletedAt == nil {
-				filtered = append(filtered, role)
-			}
-		}
-		rolesList = filtered
 	}
 
 	logger.Debug("successfully listed roles", slog.Int("count", len(rolesList)), slog.Int("total", total))

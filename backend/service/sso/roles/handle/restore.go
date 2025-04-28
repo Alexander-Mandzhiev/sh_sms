@@ -25,15 +25,15 @@ func (s *serverAPI) Restore(ctx context.Context, req *roles.RestoreRequest) (*ro
 		return nil, s.convertError(fmt.Errorf("%w: role_id", ErrInvalidArgument))
 	}
 
-	role, err := s.service.Restore(ctx, clientID, roleID)
+	if err = utils.ValidateAppID(int(req.GetAppId())); err != nil {
+		logger.Warn("invalid app ID", slog.Any("error", err))
+		return nil, s.convertError(ErrInvalidArgument)
+	}
+
+	role, err := s.service.Restore(ctx, clientID, roleID, int(req.GetAppId()))
 	if err != nil {
 		logger.Error("get role failed", slog.Any("error", err))
 		return nil, s.convertError(err)
-	}
-
-	if role.DeletedAt != nil {
-		logger.Warn("role is deleted", slog.Time("deleted_at", *role.DeletedAt))
-		return nil, s.convertError(ErrNotFound)
 	}
 
 	logger.Debug("role retrieved successfully")

@@ -1,7 +1,7 @@
 package handle
 
 import (
-	"backend/protos/gen/go/sso/roles"
+	"backend/protos/gen/go/sso/role_permissions"
 	"backend/service/sso/models"
 	"context"
 	"github.com/google/uuid"
@@ -9,26 +9,30 @@ import (
 	"log/slog"
 )
 
-type RoleService interface {
-	Create(ctx context.Context, role *models.Role) error
-	Get(ctx context.Context, clientID, roleID uuid.UUID) (*models.Role, error)
-	Update(ctx context.Context, role *models.Role) (*models.Role, error)
-	Delete(ctx context.Context, clientID, roleID uuid.UUID, permanent bool) error
-	List(ctx context.Context, req models.ListRequest) ([]models.Role, int, error)
-	AddPermission(ctx context.Context, clientID, roleID, permissionID uuid.UUID) (*models.Role, error)
-	RemovePermission(ctx context.Context, clientID, roleID, permissionID uuid.UUID) (*models.Role, error)
-	HasPermission(ctx context.Context, clientID, roleID, permissionID uuid.UUID) (bool, error)
+type RolePermissionService interface {
+	AddPermissionsToRole(ctx context.Context, clientID, roleID uuid.UUID, appID int, permissionIDs []uuid.UUID) (*models.OperationStatus, error)
+	RemovePermissionsFromRole(ctx context.Context, clientID, roleID uuid.UUID, appID int, permissionIDs []uuid.UUID) (*models.OperationStatus, error)
+	ListPermissionsForRole(ctx context.Context, clientID, roleID uuid.UUID, appID int) ([]uuid.UUID, error)
+	ListRolesForPermission(ctx context.Context, clientID, permissionID uuid.UUID, appID int) ([]uuid.UUID, error)
+	HasPermission(ctx context.Context, clientID, roleID, permissionID uuid.UUID, appID int) (bool, error)
 }
 
 type serverAPI struct {
-	roles.UnimplementedRoleServiceServer
-	service RoleService
+	role_permissions.UnimplementedRolePermissionServiceServer
+	service RolePermissionService
 	logger  *slog.Logger
 }
 
-func Register(gRPCServer *grpc.Server, service RoleService, logger *slog.Logger) {
-	roles.RegisterRoleServiceServer(gRPCServer, &serverAPI{
+func Register(gRPCServer *grpc.Server, service RolePermissionService, logger *slog.Logger) {
+	role_permissions.RegisterRolePermissionServiceServer(gRPCServer, &serverAPI{
 		service: service,
 		logger:  logger,
 	})
+}
+func convertUUIDsToStrings(ids []uuid.UUID) []string {
+	result := make([]string, 0, len(ids))
+	for _, id := range ids {
+		result = append(result, id.String())
+	}
+	return result
 }
