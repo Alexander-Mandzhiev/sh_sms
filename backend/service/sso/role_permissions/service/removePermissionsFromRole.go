@@ -70,13 +70,13 @@ func (s *Service) RemovePermissionsFromRole(ctx context.Context, clientID uuid.U
 		}
 	}
 
-	removedCount, err := s.relProvider.RemoveRolePermissions(ctx, roleID, clientID, permissionIDs)
+	err := s.relProvider.RemoveRolePermissions(ctx, roleID, clientID, appID, permissionIDs)
 	if err != nil {
 		logger.Error("failed to remove permissions", slog.Any("error", err), slog.Int("attempted_count", len(permissionIDs)))
 		return nil, ErrInternal
 	}
 
-	logger.Info("permissions removed", slog.Int("removed_count", removedCount), slog.Int("requested_count", len(permissionIDs)))
+	logger.Info("permissions removed", slog.Int("requested_count", len(permissionIDs)))
 	return &models.OperationStatus{
 		Success:       true,
 		Message:       fmt.Sprintf("Removed %d/%d permissions", removedCount, len(permissionIDs)),

@@ -33,7 +33,7 @@ func (s *Service) AddPermissionsToRole(ctx context.Context, clientID uuid.UUID, 
 		return nil, fmt.Errorf("%w: app_id", ErrInvalidArgument)
 	}
 
-	role, err := s.roleProvider.GetByID(ctx, clientID, roleID)
+	role, err := s.roleProvider.GetByID(ctx, clientID, roleID, appID)
 	if err != nil {
 		if errors.Is(err, serviceRole.ErrNotFound) {
 			return nil, ErrRoleNotFound

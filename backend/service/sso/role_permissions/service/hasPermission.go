@@ -36,7 +36,7 @@ func (s *Service) HasPermission(ctx context.Context, clientID uuid.UUID, roleID 
 		return false, fmt.Errorf("%w: app_id", ErrInvalidArgument)
 	}
 
-	role, err := s.roleProvider.GetByID(ctx, clientID, roleID)
+	role, err := s.roleProvider.GetByID(ctx, clientID, roleID, appID)
 	if err != nil {
 		if errors.Is(err, serviceRole.ErrNotFound) {
 			logger.Warn("role not found")
@@ -66,7 +66,7 @@ func (s *Service) HasPermission(ctx context.Context, clientID uuid.UUID, roleID 
 		return false, nil
 	}
 
-	hasRelation, err := s.relProvider.HasRelation(ctx, roleID, permissionID)
+	hasRelation, err := s.relProvider.HasRelation(ctx, roleID, permissionID, clientID, appID)
 	if err != nil {
 		logger.Error("failed to check permission relation", slog.Any("error", err), slog.String("relation_check", "role_permission"))
 		return false, ErrInternal

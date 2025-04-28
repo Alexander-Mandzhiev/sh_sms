@@ -40,7 +40,7 @@ func (s *Service) ListPermissionsForRole(ctx context.Context, clientID uuid.UUID
 		return nil, fmt.Errorf("%w: role is inactive", ErrInactiveEntity)
 	}
 
-	permissionIDs, err := s.relProvider.ListPermissionsForRole(ctx, roleID)
+	permissionIDs, err := s.relProvider.ListPermissionsForRole(ctx, roleID, clientID, appID)
 	if err != nil {
 		logger.Error("failed to list permissions", slog.Any("error", err))
 		return nil, ErrInternal
