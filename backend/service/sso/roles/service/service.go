@@ -25,7 +25,6 @@ type RolesProvider interface {
 
 	GetByID(ctx context.Context, clientID, roleID uuid.UUID, appID int) (*models.Role, error)
 	RoleExists(ctx context.Context, clientID uuid.UUID, appID int, name string) (bool, error)
-
 	List(ctx context.Context, req models.ListRequest) ([]models.Role, int, error)
 }
 

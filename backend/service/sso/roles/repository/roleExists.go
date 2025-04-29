@@ -12,7 +12,7 @@ import (
 func (r *Repository) RoleExists(ctx context.Context, clientID uuid.UUID, appID int, name string) (bool, error) {
 	const op = "repository.Roles.RoleExists"
 	logger := r.logger.With(slog.String("op", op), slog.String("client_id", clientID.String()), slog.String("name", name))
-	query := `SELECT 1 FROM roles WHERE client_id = $1 AND app_id = $2 AND name = $3 AND deleted_at IS NULL LIMIT 1`
+	query := `SELECT 1 FROM roles WHERE client_id = $1 AND app_id = $2 AND name = $3 LIMIT 1`
 
 	var exists int
 	err := r.db.QueryRow(ctx, query, clientID, appID, name).Scan(&exists)

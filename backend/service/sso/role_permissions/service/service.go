@@ -20,7 +20,7 @@ var (
 
 type RolePermissionProvider interface {
 	AddRolePermissions(ctx context.Context, roleID uuid.UUID, clientID uuid.UUID, appID int, permissionIDs []uuid.UUID) error
-	RemoveRolePermissions(ctx context.Context, roleID uuid.UUID, clientID uuid.UUID, appID int, permissionIDs []uuid.UUID) error
+	RemoveRolePermissions(ctx context.Context, roleID uuid.UUID, clientID uuid.UUID, appID int, permissionIDs []uuid.UUID) (int, error)
 	ListPermissionsForRole(ctx context.Context, roleID uuid.UUID, clientID uuid.UUID, appID int) ([]uuid.UUID, error)
 	ListRolesForPermission(ctx context.Context, permissionID uuid.UUID, clientID uuid.UUID, appID int) ([]uuid.UUID, error)
 	HasRelation(ctx context.Context, roleID, permissionID uuid.UUID, clientID uuid.UUID, appID int) (bool, error)
