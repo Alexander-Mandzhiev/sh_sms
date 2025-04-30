@@ -23,8 +23,6 @@ const (
 	UserRoleService_Revoke_FullMethodName      = "/sso.user_roles.UserRoleService/Revoke"
 	UserRoleService_ListForUser_FullMethodName = "/sso.user_roles.UserRoleService/ListForUser"
 	UserRoleService_ListForRole_FullMethodName = "/sso.user_roles.UserRoleService/ListForRole"
-	UserRoleService_BulkAssign_FullMethodName  = "/sso.user_roles.UserRoleService/BulkAssign"
-	UserRoleService_BulkRevoke_FullMethodName  = "/sso.user_roles.UserRoleService/BulkRevoke"
 )
 
 // UserRoleServiceClient is the client API for UserRoleService service.
@@ -35,9 +33,6 @@ type UserRoleServiceClient interface {
 	Revoke(ctx context.Context, in *RevokeRequest, opts ...grpc.CallOption) (*RevokeResponse, error)
 	ListForUser(ctx context.Context, in *UserRequest, opts ...grpc.CallOption) (*UserRolesResponse, error)
 	ListForRole(ctx context.Context, in *RoleRequest, opts ...grpc.CallOption) (*UserRolesResponse, error)
-	// Массовое назначение/отзыв (опционально)
-	BulkAssign(ctx context.Context, in *BulkAssignRequest, opts ...grpc.CallOption) (*BulkResponse, error)
-	BulkRevoke(ctx context.Context, in *BulkRevokeRequest, opts ...grpc.CallOption) (*BulkResponse, error)
 }
 
 type userRoleServiceClient struct {
@@ -88,26 +83,6 @@ func (c *userRoleServiceClient) ListForRole(ctx context.Context, in *RoleRequest
 	return out, nil
 }
 
-func (c *userRoleServiceClient) BulkAssign(ctx context.Context, in *BulkAssignRequest, opts ...grpc.CallOption) (*BulkResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(BulkResponse)
-	err := c.cc.Invoke(ctx, UserRoleService_BulkAssign_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *userRoleServiceClient) BulkRevoke(ctx context.Context, in *BulkRevokeRequest, opts ...grpc.CallOption) (*BulkResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(BulkResponse)
-	err := c.cc.Invoke(ctx, UserRoleService_BulkRevoke_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // UserRoleServiceServer is the server API for UserRoleService service.
 // All implementations must embed UnimplementedUserRoleServiceServer
 // for forward compatibility.
@@ -116,9 +91,6 @@ type UserRoleServiceServer interface {
 	Revoke(context.Context, *RevokeRequest) (*RevokeResponse, error)
 	ListForUser(context.Context, *UserRequest) (*UserRolesResponse, error)
 	ListForRole(context.Context, *RoleRequest) (*UserRolesResponse, error)
-	// Массовое назначение/отзыв (опционально)
-	BulkAssign(context.Context, *BulkAssignRequest) (*BulkResponse, error)
-	BulkRevoke(context.Context, *BulkRevokeRequest) (*BulkResponse, error)
 	mustEmbedUnimplementedUserRoleServiceServer()
 }
 
@@ -140,12 +112,6 @@ func (UnimplementedUserRoleServiceServer) ListForUser(context.Context, *UserRequ
 }
 func (UnimplementedUserRoleServiceServer) ListForRole(context.Context, *RoleRequest) (*UserRolesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListForRole not implemented")
-}
-func (UnimplementedUserRoleServiceServer) BulkAssign(context.Context, *BulkAssignRequest) (*BulkResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method BulkAssign not implemented")
-}
-func (UnimplementedUserRoleServiceServer) BulkRevoke(context.Context, *BulkRevokeRequest) (*BulkResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method BulkRevoke not implemented")
 }
 func (UnimplementedUserRoleServiceServer) mustEmbedUnimplementedUserRoleServiceServer() {}
 func (UnimplementedUserRoleServiceServer) testEmbeddedByValue()                         {}
@@ -240,42 +206,6 @@ func _UserRoleService_ListForRole_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserRoleService_BulkAssign_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BulkAssignRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserRoleServiceServer).BulkAssign(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: UserRoleService_BulkAssign_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserRoleServiceServer).BulkAssign(ctx, req.(*BulkAssignRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _UserRoleService_BulkRevoke_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BulkRevokeRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserRoleServiceServer).BulkRevoke(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: UserRoleService_BulkRevoke_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserRoleServiceServer).BulkRevoke(ctx, req.(*BulkRevokeRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // UserRoleService_ServiceDesc is the grpc.ServiceDesc for UserRoleService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -298,14 +228,6 @@ var UserRoleService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListForRole",
 			Handler:    _UserRoleService_ListForRole_Handler,
-		},
-		{
-			MethodName: "BulkAssign",
-			Handler:    _UserRoleService_BulkAssign_Handler,
-		},
-		{
-			MethodName: "BulkRevoke",
-			Handler:    _UserRoleService_BulkRevoke_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -8,6 +8,8 @@ type ListRequest struct {
 	Page           int
 	Count          int
 	ClientID       *uuid.UUID
+	UserID         *uuid.UUID
+	RoleID         *uuid.UUID
 	AppID          *int
 	EmailFilter    *string
 	PhoneFilter    *string

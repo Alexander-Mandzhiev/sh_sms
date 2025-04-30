@@ -9,49 +9,46 @@ service UserRoleService {
   rpc Revoke(RevokeRequest) returns (RevokeResponse);
   rpc ListForUser(UserRequest) returns (UserRolesResponse);
   rpc ListForRole(RoleRequest) returns (UserRolesResponse);
-
-  // Массовое назначение/отзыв (опционально)
-  rpc BulkAssign(BulkAssignRequest) returns (BulkResponse);
-  rpc BulkRevoke(BulkRevokeRequest) returns (BulkResponse);
 }
 
-// Основные сообщения
 message UserRole {
-  string user_id = 1;                   // ID пользователя
-  string role_id = 2;                   // ID роли
-  string client_id = 3;                 // Контекст клиента
-  string assigned_by = 4;               // ID администратора, назначившего роль
-  google.protobuf.Timestamp expires_at = 5; // Срок действия (null - бессрочно)
-  google.protobuf.Timestamp assigned_at = 6; // Дата назначения
+  string user_id = 1;
+  string role_id = 2;
+  string client_id = 3;
+  int32 app_id = 4;
+  string assigned_by = 5;
+  google.protobuf.Timestamp expires_at = 6;
+  google.protobuf.Timestamp assigned_at = 7;
 }
 
-// Запросы и ответы
 message AssignRequest {
   string user_id = 1;
   string role_id = 2;
   string client_id = 3;
-  optional google.protobuf.Timestamp expires_at = 4;
-  string assigned_by = 5;               // Обязательное поле для аудита
+  int32 app_id = 4;
+  optional google.protobuf.Timestamp expires_at = 5;
+  string assigned_by = 6;
 }
 
 message RevokeRequest {
   string user_id = 1;
   string role_id = 2;
-  string client_id = 3;                 // Для проверки контекста
+  string client_id = 3;
+  int32 app_id = 4;
 }
 
 message UserRequest {
   string user_id = 1;
   string client_id = 2;
-  optional bool active_only = 3;        // Только действующие (не истекшие)
-  int32 page = 4;                       // Пагинация
+  int32 app_id = 3;
+  int32 page = 4;
   int32 count = 5;
 }
 
 message RoleRequest {
   string role_id = 1;
   string client_id = 2;
-  optional bool active_only = 3;
+  int32 app_id = 3;
   int32 page = 4;
   int32 count = 5;
 }
@@ -60,23 +57,10 @@ message UserRolesResponse {
   repeated UserRole assignments = 1;
   int32 total_count = 2;
   int32 current_page = 3;
+  int32 app_id = 4;
 }
 
 message RevokeResponse {
   bool success = 1;
   google.protobuf.Timestamp revoked_at = 2;
-}
-
-// Массовые операции
-message BulkAssignRequest {
-  repeated AssignRequest assignments = 1;
-}
-
-message BulkRevokeRequest {
-  repeated RevokeRequest revocations = 1;
-}
-
-message BulkResponse {
-  int32 success_count = 1;
-  repeated string failed_ids = 2;
 }

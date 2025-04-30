@@ -20,6 +20,10 @@ import (
 	rolePermissionsHandler "backend/service/sso/role_permissions/handle"
 	rolePermissionsRepository "backend/service/sso/role_permissions/repository"
 	rolePermissionsService "backend/service/sso/role_permissions/service"
+
+	userRolesHandler "backend/service/sso/user_roles/handle"
+	userRolesRepository "backend/service/sso/user_roles/repository"
+	userRolesService "backend/service/sso/user_roles/service"
 	"os"
 	"os/signal"
 	"syscall"
@@ -69,12 +73,18 @@ func main() {
 		return
 	}
 
+	reposUR, err := userRolesRepository.New(dbPool, logger)
+	if err != nil {
+		logger.Error("Failed to create role repository", sl.Err(err, true))
+		return
+	}
+
 	// 5. Инициализация сервиса
 	srvU := userService.New(reposU, logger)
 	srvR := roleService.New(reposR, logger)
 	srvP := permissionsService.New(reposP, logger)
 	srvRP := rolePermissionsService.New(reposRP, reposR, reposP, logger)
-
+	srvUR := userRolesService.New(reposUR, reposR, reposU, logger)
 	// 6. Инициализация gRPC сервера
 	app := grpc_server.New()
 
@@ -83,6 +93,8 @@ func main() {
 	roleHandler.Register(app.GRPCServer, srvR, logger)
 	permissionsHandler.Register(app.GRPCServer, srvP, logger)
 	rolePermissionsHandler.Register(app.GRPCServer, srvRP, logger)
+	userRolesHandler.Register(app.GRPCServer, srvUR, logger)
+
 	// 8. Запуск gRPC сервера
 	go func() {
 		app.MustRun(logger, cfg.GRPCServer.Port)

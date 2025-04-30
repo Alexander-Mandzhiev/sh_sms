@@ -22,7 +22,7 @@ CREATE INDEX roles_level_idx ON roles(level);
 CREATE UNIQUE INDEX idx_roles_client_id ON roles(client_id, id);
 CREATE UNIQUE INDEX roles_client_app_name_unique_idx ON roles(client_id, app_id, name) WHERE deleted_at IS NULL;
 CREATE INDEX roles_client_app_id_idx ON roles(client_id, app_id, id);
-
+CREATE UNIQUE INDEX roles_client_app_id_unique ON roles(client_id, app_id, id);
 -- +goose StatementEnd
 
 -- +goose Down
