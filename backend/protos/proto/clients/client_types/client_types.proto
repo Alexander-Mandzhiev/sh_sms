@@ -1,16 +1,18 @@
 syntax = "proto3";
-package clients.client_types;
+
+package clients.client_types.v1;
 option go_package = "clients.client_types.v1;client_types";
 
 import "google/protobuf/timestamp.proto";
-import "google/protobuf/field_mask.proto";
+import "google/protobuf/empty.proto";
 
 service ClientTypeService {
   rpc Create(CreateRequest) returns (ClientType);
   rpc Get(GetRequest) returns (ClientType);
   rpc Update(UpdateRequest) returns (ClientType);
-  rpc Delete(DeleteRequest) returns (DeleteResponse);
   rpc List(ListRequest) returns (ListResponse);
+  rpc Delete(DeleteRequest) returns (google.protobuf.Empty);
+  rpc Restore(RestoreRequest) returns (ClientType);
 }
 
 message ClientType {
@@ -18,47 +20,47 @@ message ClientType {
   string code = 2;
   string name = 3;
   string description = 4;
-  google.protobuf.Timestamp created_at = 5;
-  google.protobuf.Timestamp updated_at = 6;
-  optional google.protobuf.Timestamp deleted_at = 7; // optional для nullable поля
+  bool is_active = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
 }
 
-// Create
 message CreateRequest {
-  string code = 1;  // required
-  string name = 2;  // required
-  string description = 3; // optional
+  string code = 1;
+  string name = 2;
+  optional string description = 3;
+  optional bool is_active = 4;
 }
 
-// Get
 message GetRequest {
-  int32 id = 1; // required
-}
-
-// Update
-message UpdateRequest {
-  ClientType client_type = 1;
-  google.protobuf.FieldMask update_mask = 2; // для частичных обновлений
-}
-
-// Delete
-message DeleteRequest {
   int32 id = 1;
 }
 
-message DeleteResponse {
-  bool success = 1;
+message DeleteRequest {
+  int32 id = 1;
+  optional bool permanent = 2;
 }
 
-// List
+message RestoreRequest {
+  int32 id = 1;
+}
+
+message UpdateRequest {
+  int32 id = 1;
+  string code = 2;
+  string name = 3;
+  string description = 4;
+}
+
 message ListRequest {
-  int32 page = 1;       // номер страницы
-  int32 page_size = 2;  // размер страницы
-  string search = 3;    // опциональный поиск по name/code
-  bool with_deleted = 4; // включать удаленные
+  int32 page = 1;
+  int32 count = 2;
+  optional string search = 3;
+  optional bool active_only = 4;
 }
 
 message ListResponse {
   repeated ClientType client_types = 1;
   int32 total_count = 2;
+  int32 current_page = 3;
 }

@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -19,11 +20,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ClientTypeService_Create_FullMethodName = "/clients.client_types.ClientTypeService/Create"
-	ClientTypeService_Get_FullMethodName    = "/clients.client_types.ClientTypeService/Get"
-	ClientTypeService_Update_FullMethodName = "/clients.client_types.ClientTypeService/Update"
-	ClientTypeService_Delete_FullMethodName = "/clients.client_types.ClientTypeService/Delete"
-	ClientTypeService_List_FullMethodName   = "/clients.client_types.ClientTypeService/List"
+	ClientTypeService_Create_FullMethodName  = "/clients.client_types.v1.ClientTypeService/Create"
+	ClientTypeService_Get_FullMethodName     = "/clients.client_types.v1.ClientTypeService/Get"
+	ClientTypeService_Update_FullMethodName  = "/clients.client_types.v1.ClientTypeService/Update"
+	ClientTypeService_List_FullMethodName    = "/clients.client_types.v1.ClientTypeService/List"
+	ClientTypeService_Delete_FullMethodName  = "/clients.client_types.v1.ClientTypeService/Delete"
+	ClientTypeService_Restore_FullMethodName = "/clients.client_types.v1.ClientTypeService/Restore"
 )
 
 // ClientTypeServiceClient is the client API for ClientTypeService service.
@@ -33,8 +35,9 @@ type ClientTypeServiceClient interface {
 	Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*ClientType, error)
 	Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*ClientType, error)
 	Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*ClientType, error)
-	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
 	List(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*ListResponse, error)
+	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Restore(ctx context.Context, in *RestoreRequest, opts ...grpc.CallOption) (*ClientType, error)
 }
 
 type clientTypeServiceClient struct {
@@ -75,9 +78,19 @@ func (c *clientTypeServiceClient) Update(ctx context.Context, in *UpdateRequest,
 	return out, nil
 }
 
-func (c *clientTypeServiceClient) Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error) {
+func (c *clientTypeServiceClient) List(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*ListResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DeleteResponse)
+	out := new(ListResponse)
+	err := c.cc.Invoke(ctx, ClientTypeService_List_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *clientTypeServiceClient) Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, ClientTypeService_Delete_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -85,10 +98,10 @@ func (c *clientTypeServiceClient) Delete(ctx context.Context, in *DeleteRequest,
 	return out, nil
 }
 
-func (c *clientTypeServiceClient) List(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*ListResponse, error) {
+func (c *clientTypeServiceClient) Restore(ctx context.Context, in *RestoreRequest, opts ...grpc.CallOption) (*ClientType, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListResponse)
-	err := c.cc.Invoke(ctx, ClientTypeService_List_FullMethodName, in, out, cOpts...)
+	out := new(ClientType)
+	err := c.cc.Invoke(ctx, ClientTypeService_Restore_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -102,8 +115,9 @@ type ClientTypeServiceServer interface {
 	Create(context.Context, *CreateRequest) (*ClientType, error)
 	Get(context.Context, *GetRequest) (*ClientType, error)
 	Update(context.Context, *UpdateRequest) (*ClientType, error)
-	Delete(context.Context, *DeleteRequest) (*DeleteResponse, error)
 	List(context.Context, *ListRequest) (*ListResponse, error)
+	Delete(context.Context, *DeleteRequest) (*emptypb.Empty, error)
+	Restore(context.Context, *RestoreRequest) (*ClientType, error)
 	mustEmbedUnimplementedClientTypeServiceServer()
 }
 
@@ -123,11 +137,14 @@ func (UnimplementedClientTypeServiceServer) Get(context.Context, *GetRequest) (*
 func (UnimplementedClientTypeServiceServer) Update(context.Context, *UpdateRequest) (*ClientType, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
-func (UnimplementedClientTypeServiceServer) Delete(context.Context, *DeleteRequest) (*DeleteResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
-}
 func (UnimplementedClientTypeServiceServer) List(context.Context, *ListRequest) (*ListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method List not implemented")
+}
+func (UnimplementedClientTypeServiceServer) Delete(context.Context, *DeleteRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedClientTypeServiceServer) Restore(context.Context, *RestoreRequest) (*ClientType, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Restore not implemented")
 }
 func (UnimplementedClientTypeServiceServer) mustEmbedUnimplementedClientTypeServiceServer() {}
 func (UnimplementedClientTypeServiceServer) testEmbeddedByValue()                           {}
@@ -204,24 +221,6 @@ func _ClientTypeService_Update_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ClientTypeService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ClientTypeServiceServer).Delete(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ClientTypeService_Delete_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ClientTypeServiceServer).Delete(ctx, req.(*DeleteRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _ClientTypeService_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListRequest)
 	if err := dec(in); err != nil {
@@ -240,11 +239,47 @@ func _ClientTypeService_List_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ClientTypeService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ClientTypeServiceServer).Delete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ClientTypeService_Delete_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ClientTypeServiceServer).Delete(ctx, req.(*DeleteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ClientTypeService_Restore_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RestoreRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ClientTypeServiceServer).Restore(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ClientTypeService_Restore_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ClientTypeServiceServer).Restore(ctx, req.(*RestoreRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ClientTypeService_ServiceDesc is the grpc.ServiceDesc for ClientTypeService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var ClientTypeService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "clients.client_types.ClientTypeService",
+	ServiceName: "clients.client_types.v1.ClientTypeService",
 	HandlerType: (*ClientTypeServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -260,12 +295,16 @@ var ClientTypeService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ClientTypeService_Update_Handler,
 		},
 		{
+			MethodName: "List",
+			Handler:    _ClientTypeService_List_Handler,
+		},
+		{
 			MethodName: "Delete",
 			Handler:    _ClientTypeService_Delete_Handler,
 		},
 		{
-			MethodName: "List",
-			Handler:    _ClientTypeService_List_Handler,
+			MethodName: "Restore",
+			Handler:    _ClientTypeService_Restore_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

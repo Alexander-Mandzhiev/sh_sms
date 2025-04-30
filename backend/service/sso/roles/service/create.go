@@ -22,7 +22,7 @@ func (s *Service) Create(ctx context.Context, role *models.Role) error {
 	}
 
 	if err := utils.ValidateRoleLevel(role.Level); err != nil {
-		logger.Warn("invalid role level", slog.Int("level", int(role.Level)))
+		logger.Warn("invalid role level", slog.Int("level", role.Level))
 		return fmt.Errorf("%w: level cannot be negative", ErrInvalidArgument)
 	}
 
