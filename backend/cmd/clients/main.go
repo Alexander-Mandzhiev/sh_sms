@@ -5,6 +5,9 @@ import (
 	"backend/pkg/dbManager"
 	sl "backend/pkg/logger"
 	"backend/pkg/server/grpc_server"
+	handleClientTypes "backend/service/clients/client_types/handle"
+	repoClientTypes "backend/service/clients/client_types/repository"
+	srvClientTypes "backend/service/clients/client_types/service"
 	"os"
 	"os/signal"
 	"syscall"
@@ -30,13 +33,20 @@ func main() {
 	}()
 
 	// 4. Инициализация репозитория
+	repoCT, err := repoClientTypes.New(dbPool, logger)
+	if err != nil {
+		logger.Error("Failed to create repository", sl.Err(err, true))
+		return
+	}
 
 	// 5. Инициализация сервиса
+	srvS := srvClientTypes.New(repoCT, logger)
 
 	// 6. Инициализация gRPC сервера
 	app := grpc_server.New()
 
 	// 7. Регистрация сервиса в gRPC сервере
+	handleClientTypes.Register(app.GRPCServer, srvS, logger)
 
 	// 8. Запуск gRPC сервера
 	go func() {

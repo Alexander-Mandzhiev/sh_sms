@@ -36,7 +36,7 @@ type Service struct {
 }
 
 func New(provider UserRoleProvider, roleProvider serviceRole.RolesProvider, userProvider serviceUser.UsersProvider, logger *slog.Logger) *Service {
-	const op = "service.New"
+	const op = "service.New.UserRole"
 
 	if logger == nil {
 		logger = slog.Default()

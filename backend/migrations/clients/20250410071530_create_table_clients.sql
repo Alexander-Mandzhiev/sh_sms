@@ -7,8 +7,6 @@ CREATE TABLE clients (
     description TEXT,
     address JSONB,
     type_id INT NOT NULL REFERENCES client_types(id) ON DELETE CASCADE,
-    email VARCHAR(320),
-    phone VARCHAR(20),
     website VARCHAR(255),
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,

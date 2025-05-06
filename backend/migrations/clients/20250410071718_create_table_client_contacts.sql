@@ -7,7 +7,7 @@ CREATE TABLE client_contacts (
     full_name VARCHAR(255) NOT NULL,
     position VARCHAR(255),
     email VARCHAR(320),
-    phone VARCHAR(20),
+    phone VARCHAR(30),
     is_primary BOOLEAN DEFAULT FALSE,
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,

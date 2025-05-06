@@ -19,10 +19,12 @@ type Repository struct {
 }
 
 func New(db *pgxpool.Pool, logger *slog.Logger) (*Repository, error) {
+	const op = "repository.New.Users"
+
 	if db == nil {
-		logger.Error("Database connection is nil", slog.String("op", "repository.New"))
+		logger.Error("Database connection is nil", slog.String("op", op))
 		return nil, fmt.Errorf("database connection is nil")
 	}
-	logger.Info("Repository initialized", slog.String("op", "repository.New"))
+	logger.Info("Repository initialized", slog.String("op", op))
 	return &Repository{db: db, logger: logger}, nil
 }

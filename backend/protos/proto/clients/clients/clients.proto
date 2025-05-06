@@ -19,13 +19,11 @@ message Client {
   string description = 3;
   Address address = 4;
   int32 type_id = 5;
-  string email = 6;
-  string phone = 7;
-  string website = 8;
-  bool is_active = 9;
-  google.protobuf.Timestamp created_at = 10;
-  google.protobuf.Timestamp updated_at = 11;
-  google.protobuf.Timestamp deleted_at = 12;
+  string website = 6;
+  bool is_active = 7;
+  google.protobuf.Timestamp created_at = 8;
+  google.protobuf.Timestamp updated_at = 9;
+  google.protobuf.Timestamp deleted_at = 10;
 }
 
 message Address {
@@ -45,10 +43,8 @@ message CreateRequest {
   string description = 2;
   Address address = 3;
   int32 type_id = 4;
-  string email = 5;
-  string phone = 6;
-  string website = 7;
-  bool is_active = 8;
+  string website = 5;
+  bool is_active = 6;
 }
 
 message GetRequest {
@@ -70,7 +66,7 @@ message DeleteResponse {
 
 message ListRequest {
   int32 page = 1;
-  int32 page_size = 2;
+  int32 count = 2;
   string search = 3;
   int32 type_id = 4;
   bool is_active = 5;

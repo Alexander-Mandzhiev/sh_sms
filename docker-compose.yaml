@@ -19,6 +19,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+
   apps_database:
     container_name: apps_database
     image: postgres
