@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"math"
+	"net/url"
 	"regexp"
 	"strings"
 )
@@ -39,7 +40,7 @@ func ValidatePagination(page, count int) error {
 	if page <= 0 || count <= 0 {
 		return constants.ErrInvalidArgument
 	}
-	if count > 1000 {
+	if count > 10000 {
 		return constants.ErrInvalidArgument
 	}
 	return nil
@@ -148,6 +149,21 @@ func ValidateString(code string, length int) error {
 	}
 	if len(code) > length {
 		return fmt.Errorf("%w: code too long", constants.ErrInvalidArgument)
+	}
+	return nil
+}
+
+func ValidateWebsite(website string, length int) error {
+	if err := ValidateString(website, length); err != nil {
+		return err
+	}
+
+	u, err := url.Parse(website)
+	if err != nil {
+		return fmt.Errorf("invalid URL format")
+	}
+	if u.Scheme == "" || u.Host == "" {
+		return fmt.Errorf("URL must contain scheme and host")
 	}
 	return nil
 }

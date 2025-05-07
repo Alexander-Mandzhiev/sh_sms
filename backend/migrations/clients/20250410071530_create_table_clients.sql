@@ -4,10 +4,9 @@
 CREATE TABLE clients (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(255) NOT NULL,
-    description TEXT,
-    address JSONB,
+    description TEXT NOT NULL,
     type_id INT NOT NULL REFERENCES client_types(id) ON DELETE CASCADE,
-    website VARCHAR(255),
+    website VARCHAR(255) NOT NULL,
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP

@@ -43,17 +43,6 @@ func (s *Service) Update(ctx context.Context, params *models.UpdateParams) (*mod
 		return nil, fmt.Errorf("%w: %d", ErrNotFound, params.ID)
 	}
 
-	codeExists, err := s.provider.CodeExists(ctx, params.Code)
-	if err != nil {
-		logger.Error("code existence check failed", slog.String("code", params.Code), slog.Any("error", err))
-		return nil, fmt.Errorf("%w: code check failed", ErrInternal)
-	}
-
-	if codeExists {
-		logger.Warn("code conflict detected", slog.String("code", params.Code), slog.Int("id", int(params.ID)))
-		return nil, fmt.Errorf("%w: code %s", ErrCodeConflict, params.Code)
-	}
-
 	updated, err := s.provider.Update(ctx, params)
 	if err != nil {
 		logger.Error("update operation failed", slog.Any("error", err), slog.Any("params", params))

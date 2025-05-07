@@ -19,22 +19,24 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ClientService_CreateClient_FullMethodName = "/clients.ClientService/CreateClient"
-	ClientService_GetClient_FullMethodName    = "/clients.ClientService/GetClient"
-	ClientService_UpdateClient_FullMethodName = "/clients.ClientService/UpdateClient"
-	ClientService_DeleteClient_FullMethodName = "/clients.ClientService/DeleteClient"
-	ClientService_ListClients_FullMethodName  = "/clients.ClientService/ListClients"
+	ClientService_Create_FullMethodName  = "/clients.ClientService/Create"
+	ClientService_Get_FullMethodName     = "/clients.ClientService/Get"
+	ClientService_Update_FullMethodName  = "/clients.ClientService/Update"
+	ClientService_Delete_FullMethodName  = "/clients.ClientService/Delete"
+	ClientService_List_FullMethodName    = "/clients.ClientService/List"
+	ClientService_Restore_FullMethodName = "/clients.ClientService/Restore"
 )
 
 // ClientServiceClient is the client API for ClientService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ClientServiceClient interface {
-	CreateClient(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*Client, error)
-	GetClient(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*Client, error)
-	UpdateClient(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*Client, error)
-	DeleteClient(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
-	ListClients(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*ListResponse, error)
+	Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*Client, error)
+	Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*Client, error)
+	Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*Client, error)
+	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
+	List(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*ListResponse, error)
+	Restore(ctx context.Context, in *RestoreRequest, opts ...grpc.CallOption) (*Client, error)
 }
 
 type clientServiceClient struct {
@@ -45,50 +47,60 @@ func NewClientServiceClient(cc grpc.ClientConnInterface) ClientServiceClient {
 	return &clientServiceClient{cc}
 }
 
-func (c *clientServiceClient) CreateClient(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*Client, error) {
+func (c *clientServiceClient) Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*Client, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(Client)
-	err := c.cc.Invoke(ctx, ClientService_CreateClient_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, ClientService_Create_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *clientServiceClient) GetClient(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*Client, error) {
+func (c *clientServiceClient) Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*Client, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(Client)
-	err := c.cc.Invoke(ctx, ClientService_GetClient_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, ClientService_Get_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *clientServiceClient) UpdateClient(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*Client, error) {
+func (c *clientServiceClient) Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*Client, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(Client)
-	err := c.cc.Invoke(ctx, ClientService_UpdateClient_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, ClientService_Update_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *clientServiceClient) DeleteClient(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error) {
+func (c *clientServiceClient) Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(DeleteResponse)
-	err := c.cc.Invoke(ctx, ClientService_DeleteClient_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, ClientService_Delete_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *clientServiceClient) ListClients(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*ListResponse, error) {
+func (c *clientServiceClient) List(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*ListResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListResponse)
-	err := c.cc.Invoke(ctx, ClientService_ListClients_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, ClientService_List_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *clientServiceClient) Restore(ctx context.Context, in *RestoreRequest, opts ...grpc.CallOption) (*Client, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Client)
+	err := c.cc.Invoke(ctx, ClientService_Restore_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -99,11 +111,12 @@ func (c *clientServiceClient) ListClients(ctx context.Context, in *ListRequest, 
 // All implementations must embed UnimplementedClientServiceServer
 // for forward compatibility.
 type ClientServiceServer interface {
-	CreateClient(context.Context, *CreateRequest) (*Client, error)
-	GetClient(context.Context, *GetRequest) (*Client, error)
-	UpdateClient(context.Context, *UpdateRequest) (*Client, error)
-	DeleteClient(context.Context, *DeleteRequest) (*DeleteResponse, error)
-	ListClients(context.Context, *ListRequest) (*ListResponse, error)
+	Create(context.Context, *CreateRequest) (*Client, error)
+	Get(context.Context, *GetRequest) (*Client, error)
+	Update(context.Context, *UpdateRequest) (*Client, error)
+	Delete(context.Context, *DeleteRequest) (*DeleteResponse, error)
+	List(context.Context, *ListRequest) (*ListResponse, error)
+	Restore(context.Context, *RestoreRequest) (*Client, error)
 	mustEmbedUnimplementedClientServiceServer()
 }
 
@@ -114,20 +127,23 @@ type ClientServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedClientServiceServer struct{}
 
-func (UnimplementedClientServiceServer) CreateClient(context.Context, *CreateRequest) (*Client, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateClient not implemented")
+func (UnimplementedClientServiceServer) Create(context.Context, *CreateRequest) (*Client, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
-func (UnimplementedClientServiceServer) GetClient(context.Context, *GetRequest) (*Client, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetClient not implemented")
+func (UnimplementedClientServiceServer) Get(context.Context, *GetRequest) (*Client, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
-func (UnimplementedClientServiceServer) UpdateClient(context.Context, *UpdateRequest) (*Client, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateClient not implemented")
+func (UnimplementedClientServiceServer) Update(context.Context, *UpdateRequest) (*Client, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
-func (UnimplementedClientServiceServer) DeleteClient(context.Context, *DeleteRequest) (*DeleteResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteClient not implemented")
+func (UnimplementedClientServiceServer) Delete(context.Context, *DeleteRequest) (*DeleteResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
-func (UnimplementedClientServiceServer) ListClients(context.Context, *ListRequest) (*ListResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListClients not implemented")
+func (UnimplementedClientServiceServer) List(context.Context, *ListRequest) (*ListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method List not implemented")
+}
+func (UnimplementedClientServiceServer) Restore(context.Context, *RestoreRequest) (*Client, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Restore not implemented")
 }
 func (UnimplementedClientServiceServer) mustEmbedUnimplementedClientServiceServer() {}
 func (UnimplementedClientServiceServer) testEmbeddedByValue()                       {}
@@ -150,92 +166,110 @@ func RegisterClientServiceServer(s grpc.ServiceRegistrar, srv ClientServiceServe
 	s.RegisterService(&ClientService_ServiceDesc, srv)
 }
 
-func _ClientService_CreateClient_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ClientService_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ClientServiceServer).CreateClient(ctx, in)
+		return srv.(ClientServiceServer).Create(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ClientService_CreateClient_FullMethodName,
+		FullMethod: ClientService_Create_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ClientServiceServer).CreateClient(ctx, req.(*CreateRequest))
+		return srv.(ClientServiceServer).Create(ctx, req.(*CreateRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ClientService_GetClient_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ClientService_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ClientServiceServer).GetClient(ctx, in)
+		return srv.(ClientServiceServer).Get(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ClientService_GetClient_FullMethodName,
+		FullMethod: ClientService_Get_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ClientServiceServer).GetClient(ctx, req.(*GetRequest))
+		return srv.(ClientServiceServer).Get(ctx, req.(*GetRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ClientService_UpdateClient_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ClientService_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ClientServiceServer).UpdateClient(ctx, in)
+		return srv.(ClientServiceServer).Update(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ClientService_UpdateClient_FullMethodName,
+		FullMethod: ClientService_Update_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ClientServiceServer).UpdateClient(ctx, req.(*UpdateRequest))
+		return srv.(ClientServiceServer).Update(ctx, req.(*UpdateRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ClientService_DeleteClient_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ClientService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ClientServiceServer).DeleteClient(ctx, in)
+		return srv.(ClientServiceServer).Delete(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ClientService_DeleteClient_FullMethodName,
+		FullMethod: ClientService_Delete_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ClientServiceServer).DeleteClient(ctx, req.(*DeleteRequest))
+		return srv.(ClientServiceServer).Delete(ctx, req.(*DeleteRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ClientService_ListClients_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ClientService_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ClientServiceServer).ListClients(ctx, in)
+		return srv.(ClientServiceServer).List(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ClientService_ListClients_FullMethodName,
+		FullMethod: ClientService_List_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ClientServiceServer).ListClients(ctx, req.(*ListRequest))
+		return srv.(ClientServiceServer).List(ctx, req.(*ListRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ClientService_Restore_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RestoreRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ClientServiceServer).Restore(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ClientService_Restore_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ClientServiceServer).Restore(ctx, req.(*RestoreRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -248,24 +282,28 @@ var ClientService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*ClientServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "CreateClient",
-			Handler:    _ClientService_CreateClient_Handler,
+			MethodName: "Create",
+			Handler:    _ClientService_Create_Handler,
 		},
 		{
-			MethodName: "GetClient",
-			Handler:    _ClientService_GetClient_Handler,
+			MethodName: "Get",
+			Handler:    _ClientService_Get_Handler,
 		},
 		{
-			MethodName: "UpdateClient",
-			Handler:    _ClientService_UpdateClient_Handler,
+			MethodName: "Update",
+			Handler:    _ClientService_Update_Handler,
 		},
 		{
-			MethodName: "DeleteClient",
-			Handler:    _ClientService_DeleteClient_Handler,
+			MethodName: "Delete",
+			Handler:    _ClientService_Delete_Handler,
 		},
 		{
-			MethodName: "ListClients",
-			Handler:    _ClientService_ListClients_Handler,
+			MethodName: "List",
+			Handler:    _ClientService_List_Handler,
+		},
+		{
+			MethodName: "Restore",
+			Handler:    _ClientService_Restore_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

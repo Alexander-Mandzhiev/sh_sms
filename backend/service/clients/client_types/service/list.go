@@ -20,17 +20,17 @@ func (s *Service) List(ctx context.Context, filter models.Filter, pagination mod
 	}
 
 	if filter.Search != nil {
-		if len(*filter.Search) > 100 {
+		if len(*filter.Search) > 1000 {
 			logger.Warn("search parameter exceeds 100 characters")
 			return nil, 0, fmt.Errorf("search query too long")
 		}
-		if strings.Contains(*filter.Search, ";") {
+		if strings.Contains(*filter.Search, ";<>'\"\\") {
 			logger.Warn("search parameter contains semicolon")
 			return nil, 0, fmt.Errorf("invalid characters in search")
 		}
 	}
 
-	activeOnly := false
+	activeOnly := true
 	if filter.ActiveOnly != nil {
 		activeOnly = *filter.ActiveOnly
 	}

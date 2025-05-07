@@ -45,27 +45,27 @@ message CreateRequest {
 **Пример запроса**
 ```json
 {
-  "code": "VIP",
-  "name": "VIP Client",
-  "description": "Very Important Client Type",
+  "code": "Test",
+  "name": "Test Client",
+  "description": "Test Client Type",
   "is_active": true
 }
 ```
 **Пример успешного ответа**
 ```json
 {
-  "id": 42,
-  "code": "VIP",
-  "name": "VIP Client",
-  "description": "Very Important Client Type",
+  "id": 1,
+  "code": "Test",
+  "name": "Test Client",
+  "description": "Test Client Type",
   "is_active": true,
   "created_at": {
-    "seconds": 1718901234,
-    "nanos": 567890000
+    "seconds": "1746511098",
+    "nanos": 397514000
   },
   "updated_at": {
-    "seconds": 1718901234,
-    "nanos": 567890000
+    "seconds": "1746511098",
+    "nanos": 397514000
   }
 }
 ```
@@ -125,17 +125,17 @@ message GetRequest {
 ```json
 {
   "id": 1,
-  "code": "VIP",
-  "name": "VIP Client",
-  "description": "Very Important Client Type",
+  "code": "Test",
+  "name": "Test Client",
+  "description": "Test Client Type - update",
   "is_active": true,
   "created_at": {
-    "seconds": 1718901234,
-    "nanos": 567890000
+    "seconds": "1746511098",
+    "nanos": 397514000
   },
   "updated_at": {
-    "seconds": 1718901234,
-    "nanos": 567890000
+    "seconds": "1746511692",
+    "nanos": 257810000
   }
 }
 ```
@@ -189,28 +189,28 @@ message UpdateRequest {
 **Пример запроса**
 ```json
 {
-  "id": 42,
-  "code": "VIP_2",
-  "name": "Updated VIP",
-  "description": "New description"
+  "id": 1,
+  "code": "Test",
+  "name": "Test Client",
+  "description": "Test Client Type - update"
 }
 ```
 
 **Пример успешного ответа**
 ```json
 {
-  "id": 42,
-  "code": "VIP_2",
-  "name": "Updated VIP",
-  "description": "New description",
+  "id": 1,
+  "code": "Test",
+  "name": "Test Client",
+  "description": "Test Client Type - update",
   "is_active": true,
   "created_at": {
-    "seconds": 1718901234,
-    "nanos": 567890000
+    "seconds": "1746511098",
+    "nanos": 397514000
   },
   "updated_at": {
-    "seconds": 1718905678,
-    "nanos": 901234000
+    "seconds": "1746511692",
+    "nanos": 257810000
   }
 }
 ```
@@ -277,9 +277,9 @@ message ListRequest {
 **Пример запроса**
 ```json
 {
-  "page": 2,
+  "page": 1,
   "count": 20,
-  "search": "vip",
+  "search": "Test",
   "active_only": true
 }
 ```
@@ -289,23 +289,23 @@ message ListRequest {
 {
   "client_types": [
     {
-      "id": 42,
-      "code": "VIP",
-      "name": "VIP Client",
-      "description": "Very Important Client Type",
+      "id": 1,
+      "code": "Test",
+      "name": "Test Client",
+      "description": "Test Client Type - update",
       "is_active": true,
       "created_at": {
-        "seconds": 1718901234,
-        "nanos": 567890000
+        "seconds": "1746511098",
+        "nanos": 397514000
       },
       "updated_at": {
-        "seconds": 1718905678,
-        "nanos": 901234000
+        "seconds": "1746511692",
+        "nanos": 257810000
       }
     }
   ],
-  "total_count": 35,
-  "current_page": 2
+  "total_count": 1,
+  "current_page": 1
 }
 ```
 
@@ -356,14 +356,14 @@ message DeleteRequest {
 **Пример запроса (мягкое удаление)**
 ```json
 {
-  "id": 42,
+  "id": 1,
   "permanent": false
 }
 ```
 **Пример запроса (физическое удаление)**
 ```json
 {
-  "id": 42,
+  "id": 1,
   "permanent": true
 }
 ```
@@ -412,21 +412,28 @@ message RestoreRequest {
   int32 id = 1;
 }
 ```
+**Пример запроса**
+```json
+{
+  "id": 1
+}
+```
+
 **Пример успешного ответа**
 ```json
 {
-  "id": 42,
-  "code": "VIP",
-  "name": "VIP Client",
-  "description": "Very Important Client Type",
+  "id": 1,
+  "code": "Test",
+  "name": "Test Client",
+  "description": "Test Client Type - update",
   "is_active": true,
   "created_at": {
-    "seconds": 1718901234,
-    "nanos": 567890000
+    "seconds": "1746511098",
+    "nanos": 397514000
   },
   "updated_at": {
-    "seconds": 1718905678,
-    "nanos": 901234000
+    "seconds": "1746511967",
+    "nanos": 749768000
   }
 }
 ```
