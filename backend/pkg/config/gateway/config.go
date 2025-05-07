@@ -28,7 +28,7 @@ type ServicesConfig struct {
 }
 
 type Frontend struct {
-	Addr string `yaml:"addr" env:"FRONTEND_ADDR" env-default:"0.0.0.0:8080"`
+	Addr string `yaml:"addr" env:"FRONTEND_ADDR" env-default:"0.0.0.0:6900"`
 }
 
 func MustLoad() *Config {

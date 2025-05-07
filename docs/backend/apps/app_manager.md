@@ -73,7 +73,7 @@ message CreateRequest {
 ```
 **Особенности**
 - Автоматически генерирует: id, version, created_at, updated_at
-**Валидация**:
+  **Валидация**:
 - code: 1-50 символов
 - name: 1-250 символов
 
