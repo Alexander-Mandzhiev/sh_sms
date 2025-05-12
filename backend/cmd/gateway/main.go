@@ -7,6 +7,9 @@ import (
 	"backend/pkg/server/http_server"
 	"backend/service/gateway/factory"
 	"backend/service/gateway/handle"
+	"backend/service/gateway/service/appManager"
+	"backend/service/gateway/service/clientApps"
+	"backend/service/gateway/service/secrets"
 	"context"
 	"os"
 	"os/signal"
@@ -26,6 +29,9 @@ func main() {
 		}
 	}()
 
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
 	serviceMap := map[factory.ServiceType]string{
 		factory.ServiceSSO:     cfg.Services.SSOAddr,
 		factory.ServiceApps:    cfg.Services.AppsAddr,
@@ -35,12 +41,21 @@ func main() {
 	clientFactory := factory.New(grpcManager, serviceMap, logger)
 	defer clientFactory.Close()
 
+	appsClient, err := clientFactory.GetAppsClient(ctx)
+	if err != nil {
+		logger.Error("Failed to get app client", sl.Err(err, false))
+	}
+
+	_ = client_app_service.NewClientAppsService(appsClient, logger)
+	_ = app_manager_service.NewAppService(appsClient, logger)
+	_ = secrets_service.NewSecretService(appsClient, logger)
+
 	handler := handle.New(logger, cfg.MediaDir, cfg.Env, cfg.Frontend.Addr)
 
 	server := http_server.New(handler, logger)
 
 	go func() {
-		if err := server.Start(cfg.HTTPServer); err != nil {
+		if err = server.Start(cfg.HTTPServer); err != nil {
 			logger.Error("HTTP server error", sl.Err(err, false))
 			os.Exit(1)
 		}
@@ -54,7 +69,7 @@ func main() {
 	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer shutdownCancel()
 
-	if err := server.Shutdown(shutdownCtx); err != nil {
+	if err = server.Shutdown(shutdownCtx); err != nil {
 		logger.Error("Server shutdown error", sl.Err(err, false))
 	}
 
