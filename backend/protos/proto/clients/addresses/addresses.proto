@@ -3,10 +3,10 @@ package clients.addresses;
 option go_package = "clients.v1;addresses";
 
 service AddressService {
-  rpc Create(AddressRequest) returns (Address);
-  rpc Get(GetAddressRequest) returns (Address);
-  rpc Update(AddressRequest) returns (Address);
-  rpc Delete(DeleteAddressRequest) returns (DeleteResponse);
+  rpc CreateAddress(AddressRequest) returns (Address);
+  rpc GetAddress(GetAddressRequest) returns (Address);
+  rpc UpdateAddress(AddressRequest) returns (Address);
+  rpc DeleteAddress(DeleteAddressRequest) returns (DeleteResponse);
   rpc ListByClient(ListAddressesRequest) returns (ListAddressesResponse);
 }
 

@@ -10,7 +10,7 @@ import (
 	"math"
 )
 
-func (s *serverAPI) Update(ctx context.Context, req *clients.UpdateRequest) (*clients.Client, error) {
+func (s *serverAPI) UpdateClient(ctx context.Context, req *clients.UpdateRequest) (*clients.Client, error) {
 	const op = "grpc.clients.Update"
 	logger := s.logger.With(slog.String("op", op), slog.String("client_id", req.GetId()))
 	logger.Debug("processing client update")

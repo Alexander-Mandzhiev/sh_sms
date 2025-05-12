@@ -7,7 +7,7 @@ import (
 	"log/slog"
 )
 
-func (s *serverAPI) Delete(ctx context.Context, req *pb.IdentifierRequest) (*pb.DeleteResponse, error) {
+func (s *serverAPI) DeleteClientApp(ctx context.Context, req *pb.IdentifierRequest) (*pb.DeleteResponse, error) {
 	const op = "grpc.handler.ClientApp.Delete"
 	logger := s.logger.With(slog.String("op", op), slog.String("client_id", req.GetClientId()), slog.Int("app_id", int(req.GetAppId())))
 	logger.Debug("starting operation")

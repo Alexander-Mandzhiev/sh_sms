@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func (s *serverAPI) Restore(ctx context.Context, req *permissions.RestoreRequest) (*permissions.Permission, error) {
+func (s *serverAPI) RestorePermission(ctx context.Context, req *permissions.RestoreRequest) (*permissions.Permission, error) {
 	const op = "grpc.Permission.Restore"
 	logger := s.logger.With(slog.String("op", op), slog.String("permission_id", req.GetId()), slog.Int("app_id", int(req.GetAppId())))
 	logger.Debug("starting restore operation")

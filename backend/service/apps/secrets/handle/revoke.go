@@ -8,7 +8,7 @@ import (
 	"log/slog"
 )
 
-func (s *serverAPI) Revoke(ctx context.Context, req *pb.RevokeRequest) (*pb.Secret, error) {
+func (s *serverAPI) RevokeSecret(ctx context.Context, req *pb.RevokeRequest) (*pb.Secret, error) {
 	const op = "grpc.handler.Secret.Revoke"
 	logger := s.logger.With(slog.String("op", op), slog.String("client_id", req.GetClientId()),
 		slog.Int("app_id", int(req.GetAppId())), slog.String("secret_type", req.GetSecretType()))

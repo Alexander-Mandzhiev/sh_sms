@@ -11,7 +11,7 @@ import (
 	"log/slog"
 )
 
-func (s *serverAPI) List(ctx context.Context, req *pb.ListRequest) (*pb.ListResponse, error) {
+func (s *serverAPI) ListApps(ctx context.Context, req *pb.ListRequest) (*pb.ListResponse, error) {
 	const op = "grpc.handler.AppManager.List"
 	logger := s.logger.With(slog.String("op", op))
 	logger.Debug("List request received", slog.Int64("page", req.GetPage()), slog.Int64("count", req.GetCount()), slog.Any("filter_is_active", req.GetFilterIsActive()))

@@ -9,7 +9,7 @@ import (
 	"log/slog"
 )
 
-func (s *serverAPI) List(ctx context.Context, req *pb.ListRequest) (*pb.ListResponse, error) {
+func (s *serverAPI) ListClients(ctx context.Context, req *pb.ListRequest) (*pb.ListResponse, error) {
 	const op = "grpc.clients.List"
 	logger := s.logger.With(slog.String("op", op), slog.Int("page", int(req.GetPage())), slog.Int("count", int(req.GetCount())))
 	logger.Debug("processing list request")

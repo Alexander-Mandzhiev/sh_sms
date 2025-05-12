@@ -8,7 +8,7 @@ import (
 	"log/slog"
 )
 
-func (s *serverAPI) Get(ctx context.Context, req *client_types.GetRequest) (*client_types.ClientType, error) {
+func (s *serverAPI) GetClientType(ctx context.Context, req *client_types.GetRequest) (*client_types.ClientType, error) {
 	const op = "grpc.client_types.Get"
 	logger := s.logger.With(slog.String("op", op), slog.Int("requested_id", int(req.GetId())))
 	logger.Debug("processing get client type request")

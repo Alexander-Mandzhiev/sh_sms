@@ -10,7 +10,7 @@ import (
 	"backend/service/utils"
 )
 
-func (s *serverAPI) Create(ctx context.Context, req *users.CreateRequest) (*users.User, error) {
+func (s *serverAPI) CreateUser(ctx context.Context, req *users.CreateRequest) (*users.User, error) {
 	const op = "grpc.user.Create"
 	logger := s.logger.With(slog.String("op", op), slog.String("email", req.Email))
 	logger.Debug("attempting to create user")

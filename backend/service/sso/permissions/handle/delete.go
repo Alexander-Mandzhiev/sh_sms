@@ -7,7 +7,7 @@ import (
 	"log/slog"
 )
 
-func (s *serverAPI) Delete(ctx context.Context, req *permissions.DeleteRequest) (*permissions.SuccessResponse, error) {
+func (s *serverAPI) DeletePermission(ctx context.Context, req *permissions.DeleteRequest) (*permissions.SuccessResponse, error) {
 	const op = "grpc.Permission.Delete"
 	logger := s.logger.With(slog.String("op", op), slog.String("id", req.GetId()), slog.Int("app_id", int(req.GetAppId())))
 	logger.Debug("attempting to delete permission")

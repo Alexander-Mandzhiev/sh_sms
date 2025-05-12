@@ -5,11 +5,11 @@ option go_package = "clients.contacts.v1;contacts";
 import "google/protobuf/timestamp.proto";
 
 service ContactService {
-  rpc Create(CreateRequest) returns (Contact);
-  rpc Get(GetRequest) returns (Contact);
-  rpc Update(UpdateRequest) returns (Contact);
-  rpc Delete(DeleteRequest) returns (DeleteResponse);
-  rpc List(ListRequest) returns (ListResponse);
+  rpc CreateContact(CreateRequest) returns (Contact);
+  rpc GetContact(GetRequest) returns (Contact);
+  rpc UpdateContact(UpdateRequest) returns (Contact);
+  rpc DeleteContact(DeleteRequest) returns (DeleteResponse);
+  rpc ListContacts(ListRequest) returns (ListResponse);
 }
 
 message Contact {

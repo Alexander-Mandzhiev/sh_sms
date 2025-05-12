@@ -5,12 +5,12 @@ option go_package = "sso.permissions.v1;permissions";
 import "google/protobuf/timestamp.proto";
 
 service PermissionService {
-  rpc Create(CreateRequest) returns (Permission);
-  rpc Get(GetRequest) returns (Permission);
-  rpc Update(UpdateRequest) returns (Permission);
-  rpc Delete(DeleteRequest) returns (SuccessResponse);
-  rpc List(ListRequest) returns (ListResponse);
-  rpc Restore(RestoreRequest) returns (Permission);
+  rpc CreatePermission(CreateRequest) returns (Permission);
+  rpc GetPermission(GetRequest) returns (Permission);
+  rpc UpdatePermission(UpdateRequest) returns (Permission);
+  rpc DeletePermission(DeleteRequest) returns (SuccessResponse);
+  rpc ListPermissions(ListRequest) returns (ListResponse);
+  rpc RestorePermission(RestoreRequest) returns (Permission);
 }
 
 message Permission {

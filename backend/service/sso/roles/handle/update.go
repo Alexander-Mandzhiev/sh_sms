@@ -9,7 +9,7 @@ import (
 	"log/slog"
 )
 
-func (s *serverAPI) Update(ctx context.Context, req *roles.UpdateRequest) (*roles.Role, error) {
+func (s *serverAPI) UpdateRole(ctx context.Context, req *roles.UpdateRequest) (*roles.Role, error) {
 	const op = "grpc.roles.Update"
 	logger := s.logger.With(slog.String("op", op), slog.String("role_id", req.GetId()), slog.String("client_id", req.GetClientId()))
 	logger.Debug("attempting to update role")

@@ -7,7 +7,7 @@ import (
 	"log/slog"
 )
 
-func (s *serverAPI) List(ctx context.Context, req *users.ListRequest) (*users.ListResponse, error) {
+func (s *serverAPI) ListUsers(ctx context.Context, req *users.ListRequest) (*users.ListResponse, error) {
 	const op = "grpc.user.List"
 	logger := s.logger.With(slog.String("op", op))
 	logger.Debug("starting users listing")

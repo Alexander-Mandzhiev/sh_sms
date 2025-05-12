@@ -10,7 +10,7 @@ import (
 	"log/slog"
 )
 
-func (s *serverAPI) Create(ctx context.Context, req *roles.CreateRequest) (*roles.Role, error) {
+func (s *serverAPI) CreateRole(ctx context.Context, req *roles.CreateRequest) (*roles.Role, error) {
 	const op = "grpc.role.Create"
 	logger := s.logger.With(slog.String("op", op), slog.String("client_id", req.GetClientId()), slog.Int("app_id", int(req.GetAppId())), slog.String("role_name", req.GetName()))
 	logger.Info("role creation initiated")

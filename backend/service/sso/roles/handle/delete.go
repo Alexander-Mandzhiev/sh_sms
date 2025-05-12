@@ -8,7 +8,7 @@ import (
 	"log/slog"
 )
 
-func (s *serverAPI) Delete(ctx context.Context, req *roles.DeleteRequest) (*roles.DeleteResponse, error) {
+func (s *serverAPI) DeleteRole(ctx context.Context, req *roles.DeleteRequest) (*roles.DeleteResponse, error) {
 	const op = "grpc.roles.Delete"
 	logger := s.logger.With(slog.String("op", op), slog.String("role_id", req.GetId()), slog.String("client_id", req.GetClientId()))
 	logger.Debug("attempting to delete role")

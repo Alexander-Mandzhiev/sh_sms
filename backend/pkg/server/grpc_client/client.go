@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"net"
 	"sync"
 	"time"
 
@@ -42,11 +43,11 @@ func NewGRPCClientManager(logger *slog.Logger, opts ...grpc.DialOption) *GRPCCli
 }
 
 func (m *GRPCClientManager) GetClientConn(ctx context.Context, addr string) (*grpc.ClientConn, error) {
-	// Проверяем существующее соединение
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
 	if wrapper, exists := m.connections.Load(addr); exists {
 		w := wrapper.(*connectionWrapper)
-		m.mu.Lock()
-		defer m.mu.Unlock()
 
 		if w.conn.GetState() == connectivity.Ready {
 			w.refCount++
@@ -54,17 +55,31 @@ func (m *GRPCClientManager) GetClientConn(ctx context.Context, addr string) (*gr
 			return w.conn, nil
 		}
 
-		// Соединение не в порядке, удаляем его
 		m.connections.Delete(addr)
 		if err := w.conn.Close(); err != nil {
 			m.logger.Error("failed to close connection", "address", addr, "error", err)
 		}
 	}
 
-	// Создаем новое соединение
-	conn, err := grpc.DialContext(ctx, addr, m.options...)
+	conn, err := grpc.NewClient(
+		addr,
+		append(m.options, grpc.WithContextDialer(func(c context.Context, s string) (net.Conn, error) {
+			return net.DialTimeout("tcp", s, 5*time.Second)
+		}),
+		)...,
+	)
 	if err != nil {
-		return nil, fmt.Errorf("failed to connect to %s: %w", addr, err)
+		return nil, fmt.Errorf("failed to create client for %s: %w", addr, err)
+	}
+
+	conn.Connect()
+
+	for state := conn.GetState(); state != connectivity.Ready; {
+		if !conn.WaitForStateChange(ctx, state) {
+			conn.Close()
+			return nil, fmt.Errorf("connection to %s timed out", addr)
+		}
+		state = conn.GetState()
 	}
 
 	wrapper := &connectionWrapper{

@@ -8,7 +8,7 @@ import (
 	"log/slog"
 )
 
-func (s *serverAPI) List(ctx context.Context, req *pb.ListRequest) (*pb.ListResponse, error) {
+func (s *serverAPI) ListClientsApp(ctx context.Context, req *pb.ListRequest) (*pb.ListResponse, error) {
 	const op = "grpc.handler.ClientApp.List"
 	logger := s.logger.With(slog.String("op", op))
 	logger.Debug("starting operation", slog.Int("page", int(req.GetPage())), slog.Int("count", int(req.GetCount())))

@@ -9,7 +9,7 @@ import (
 	"log/slog"
 )
 
-func (s *serverAPI) Get(ctx context.Context, req *roles.GetRequest) (*roles.Role, error) {
+func (s *serverAPI) GetRole(ctx context.Context, req *roles.GetRequest) (*roles.Role, error) {
 	const op = "grpc.roles.Get"
 	logger := s.logger.With(slog.String("op", op), slog.String("role_id", req.GetId()), slog.String("client_id", req.GetClientId()))
 	logger.Debug("attempting to get role")

@@ -2,10 +2,12 @@ package handle
 
 import (
 	sl "backend/pkg/logger"
+	"fmt"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/rs/cors"
 	"log/slog"
 	"net/http"
+	"time"
 )
 
 type RouteInitializer interface {
@@ -16,29 +18,61 @@ type ServerAPI struct {
 	router   *gin.Engine
 	logger   *slog.Logger
 	mediaDir string
+	env      string
+	frontend string
 }
 
-func New(logger *slog.Logger, mediaDir string) *ServerAPI {
+func New(logger *slog.Logger, mediaDir string, env string, frontendAddr string) *ServerAPI {
 	router := gin.New()
-	router.Use(
-		gin.LoggerWithConfig(gin.LoggerConfig{
-			Output: sl.NewLoggerWriter(logger, slog.LevelInfo),
-			Formatter: func(params gin.LogFormatterParams) string {
-				sl.LogGinRequest(logger, params, slog.LevelInfo)
-				return ""
-			},
-		}),
-		gin.Recovery(),
-	)
+	router.Use(ginLoggerMiddleware(logger), gin.Recovery())
+
+	server := &ServerAPI{
+		router:   router,
+		logger:   logger,
+		mediaDir: mediaDir,
+		env:      env,
+		frontend: frontendAddr,
+	}
+
+	server.setupCORS()
+
 	if mediaDir != "" {
 		router.Static("/media", mediaDir)
 	}
 
-	return &ServerAPI{
-		router:   router,
-		logger:   logger,
-		mediaDir: mediaDir,
+	return server
+}
+
+func (s *ServerAPI) setupCORS() {
+	config := cors.Config{
+		AllowCredentials: true,
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"},
+		AllowHeaders:     []string{"Authorization", "Content-Type", "X-Requested-With"},
+		ExposeHeaders:    []string{"Content-Length"},
+		MaxAge:           12 * time.Hour,
 	}
+
+	if s.env == "development" {
+		config.AllowAllOrigins = true
+		s.logger.Warn("CORS: Allowing all origins in development mode")
+	} else {
+		config.AllowOrigins = []string{
+			fmt.Sprintf("http://%s", s.frontend),
+			fmt.Sprintf("https://%s", s.frontend),
+		}
+	}
+
+	s.router.Use(cors.New(config))
+}
+
+func ginLoggerMiddleware(logger *slog.Logger) gin.HandlerFunc {
+	return gin.LoggerWithConfig(gin.LoggerConfig{
+		Output: sl.NewLoggerWriter(logger, slog.LevelInfo),
+		Formatter: func(params gin.LogFormatterParams) string {
+			sl.LogGinRequest(logger, params, slog.LevelInfo)
+			return ""
+		},
+	})
 }
 
 func (s *ServerAPI) RegisterHandlers(handlers ...RouteInitializer) {
@@ -48,7 +82,7 @@ func (s *ServerAPI) RegisterHandlers(handlers ...RouteInitializer) {
 			handler.InitRoutes(apiGroup)
 		}
 	}
-	s.router.GET("/healthcheck", s.healthCheck)
+	s.router.GET("/health", s.healthCheck)
 }
 
 func (s *ServerAPI) healthCheck(c *gin.Context) {
@@ -59,26 +93,12 @@ func (s *ServerAPI) GetHTTPHandler() http.Handler {
 	return s.router
 }
 
-func (s *ServerAPI) EnableCORS() {
-	corsHandler := cors.New(cors.Options{
-		AllowedOrigins:   []string{"*"},
-		AllowedMethods:   []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
-		AllowedHeaders:   []string{"*"},
-		AllowCredentials: true,
-	})
-
-	s.router.Use(func(c *gin.Context) {
-		corsHandler.HandlerFunc(c.Writer, c.Request)
-		if c.Request.Method == "OPTIONS" {
-			c.AbortWithStatus(http.StatusNoContent)
-			return
-		}
-		c.Next()
-	})
-}
-
 func (s *ServerAPI) AddMiddleware(middleware ...gin.HandlerFunc) {
 	for _, m := range middleware {
 		s.router.Use(m)
 	}
+}
+
+func (s *ServerAPI) GetEnv() string {
+	return s.env
 }

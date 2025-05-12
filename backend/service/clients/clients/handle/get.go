@@ -8,7 +8,7 @@ import (
 	"log/slog"
 )
 
-func (s *serverAPI) Get(ctx context.Context, req *clients.GetRequest) (*clients.Client, error) {
+func (s *serverAPI) GetClient(ctx context.Context, req *clients.GetRequest) (*clients.Client, error) {
 	const op = "grpc.clients.Get"
 	logger := s.logger.With(slog.String("op", op), slog.String("client_id", req.GetId()))
 	logger.Debug("processing client request")

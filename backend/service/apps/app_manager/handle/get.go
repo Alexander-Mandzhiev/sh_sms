@@ -10,7 +10,7 @@ import (
 	"log/slog"
 )
 
-func (s *serverAPI) Get(ctx context.Context, req *pb.AppIdentifier) (*pb.App, error) {
+func (s *serverAPI) GetApp(ctx context.Context, req *pb.AppIdentifier) (*pb.App, error) {
 	const op = "grpc.handler.AppManager.Get"
 	logger := s.logger.With(slog.String("op", op))
 	logger.Debug("Get request received", slog.Any("request", req))

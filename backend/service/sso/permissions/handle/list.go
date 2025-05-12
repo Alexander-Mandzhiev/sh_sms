@@ -8,7 +8,7 @@ import (
 	"log/slog"
 )
 
-func (s *serverAPI) List(ctx context.Context, req *permissions.ListRequest) (*permissions.ListResponse, error) {
+func (s *serverAPI) ListPermissions(ctx context.Context, req *permissions.ListRequest) (*permissions.ListResponse, error) {
 	const op = "grpc.Permission.List"
 	logger := s.logger.With(slog.String("op", op), slog.Int("app_id", int(req.GetAppId())))
 	logger.Debug("processing list request")

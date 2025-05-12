@@ -7,7 +7,7 @@ import (
 	"log/slog"
 )
 
-func (s *serverAPI) Get(ctx context.Context, req *users.GetRequest) (*users.User, error) {
+func (s *serverAPI) GetUser(ctx context.Context, req *users.GetRequest) (*users.User, error) {
 	const op = "grpc.user.Get"
 	logger := s.logger.With(slog.String("op", op), slog.String("user_id", req.GetId()), slog.String("client_id", req.GetClientId()))
 	logger.Debug("attempting to get user")

@@ -10,7 +10,7 @@ import (
 	"log/slog"
 )
 
-func (s *serverAPI) List(ctx context.Context, req *roles.ListRequest) (*roles.ListResponse, error) {
+func (s *serverAPI) ListRoles(ctx context.Context, req *roles.ListRequest) (*roles.ListResponse, error) {
 	const op = "grpc.roles.List"
 	logger := s.logger.With(slog.String("op", op), slog.String("client_id", req.GetClientId()))
 	logger.Debug("attempting to list roles")

@@ -5,12 +5,12 @@ option go_package = "sso.roles.v1;roles";
 import "google/protobuf/timestamp.proto";
 
 service RoleService {
-  rpc Create(CreateRequest) returns (Role);
-  rpc Get(GetRequest) returns (Role);
-  rpc Update(UpdateRequest) returns (Role);
-  rpc Delete(DeleteRequest) returns (DeleteResponse);
-  rpc List(ListRequest) returns (ListResponse);
-  rpc Restore(RestoreRequest) returns (Role);
+  rpc CreateRole(CreateRequest) returns (Role);
+  rpc GetRole(GetRequest) returns (Role);
+  rpc UpdateRole(UpdateRequest) returns (Role);
+  rpc DeleteRole(DeleteRequest) returns (DeleteResponse);
+  rpc ListRoles(ListRequest) returns (ListResponse);
+  rpc RestoreRole(RestoreRequest) returns (Role);
 }
 
 message Role {

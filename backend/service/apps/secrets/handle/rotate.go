@@ -9,7 +9,7 @@ import (
 	"log/slog"
 )
 
-func (s *serverAPI) Rotate(ctx context.Context, req *pb.RotateRequest) (*pb.Secret, error) {
+func (s *serverAPI) RotateSecret(ctx context.Context, req *pb.RotateRequest) (*pb.Secret, error) {
 	const op = "grpc.handler.Secret.Rotate"
 	logger := s.logger.With(slog.String("op", op),
 		slog.String("client_id", req.GetClientId()), slog.Int("app_id", int(req.GetAppId())),

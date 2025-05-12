@@ -6,11 +6,11 @@ option go_package = "apps.client_apps.v1;client_apps";
 import "google/protobuf/timestamp.proto";
 
 service ClientsAppService {
-  rpc Create(CreateRequest) returns (ClientApp);
-  rpc Get(IdentifierRequest) returns (ClientApp);
-  rpc Update(UpdateRequest) returns (ClientApp);
-  rpc Delete(IdentifierRequest) returns (DeleteResponse);
-  rpc List(ListRequest) returns (ListResponse);
+  rpc CreateClientApp(CreateRequest) returns (ClientApp);
+  rpc GetClientApp(IdentifierRequest) returns (ClientApp);
+  rpc UpdateClientApp(UpdateRequest) returns (ClientApp);
+  rpc DeleteClientApp(IdentifierRequest) returns (DeleteResponse);
+  rpc ListClientsApp(ListRequest) returns (ListResponse);
 }
 
 message ClientApp {

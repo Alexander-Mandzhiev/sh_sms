@@ -5,13 +5,13 @@ option go_package = "sso.users.v1;users";
 import "google/protobuf/timestamp.proto";
 
 service UserService {
-  rpc Create(CreateRequest) returns (User);
-  rpc Get(GetRequest) returns (User);
-  rpc Update(UpdateRequest) returns (User);
-  rpc Delete(DeleteRequest) returns (SuccessResponse);
-  rpc List(ListRequest) returns (ListResponse);
+  rpc CreateUser(CreateRequest) returns (User);
+  rpc GetUser(GetRequest) returns (User);
+  rpc UpdateUser(UpdateRequest) returns (User);
+  rpc DeleteUser(DeleteRequest) returns (SuccessResponse);
+  rpc ListUsers(ListRequest) returns (ListResponse);
   rpc SetPassword(SetPasswordRequest) returns (SuccessResponse);
-  rpc Restore(RestoreRequest) returns (User);
+  rpc RestoreUser(RestoreRequest) returns (User);
 }
 
 message User {

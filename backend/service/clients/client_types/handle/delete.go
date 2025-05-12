@@ -8,7 +8,7 @@ import (
 	"log/slog"
 )
 
-func (s *serverAPI) Delete(ctx context.Context, req *client_types.DeleteRequest) (*emptypb.Empty, error) {
+func (s *serverAPI) DeleteClientType(ctx context.Context, req *client_types.DeleteRequest) (*emptypb.Empty, error) {
 	const op = "grpc.client_types.Delete"
 	logger := s.logger.With(slog.String("op", op), slog.Int("id", int(req.GetId())), slog.Bool("permanent", req.GetPermanent()))
 	logger.Debug("processing client type deletion")

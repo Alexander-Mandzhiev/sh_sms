@@ -5,12 +5,12 @@ option go_package = "clients.v1;clients";
 import "google/protobuf/timestamp.proto";
 
 service ClientService {
-  rpc Create(CreateRequest) returns (Client);
-  rpc Get(GetRequest) returns (Client);
-  rpc Update(UpdateRequest) returns (Client);
-  rpc Delete(DeleteRequest) returns (DeleteResponse);
-  rpc List(ListRequest) returns (ListResponse);
-  rpc Restore(RestoreRequest) returns (Client);
+  rpc CreateClient(CreateRequest) returns (Client);
+  rpc GetClient(GetRequest) returns (Client);
+  rpc UpdateClient(UpdateRequest) returns (Client);
+  rpc DeleteClient(DeleteRequest) returns (DeleteResponse);
+  rpc ListClients(ListRequest) returns (ListResponse);
+  rpc RestoreClient(RestoreRequest) returns (Client);
 }
 
 message Client {

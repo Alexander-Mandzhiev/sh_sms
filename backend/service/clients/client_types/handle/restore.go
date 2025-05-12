@@ -8,7 +8,7 @@ import (
 	"log/slog"
 )
 
-func (s *serverAPI) Restore(ctx context.Context, req *client_types.RestoreRequest) (*client_types.ClientType, error) {
+func (s *serverAPI) RestoreClientType(ctx context.Context, req *client_types.RestoreRequest) (*client_types.ClientType, error) {
 	const op = "grpc.client_types.Restore"
 	logger := s.logger.With(slog.String("op", op), slog.Int("id", int(req.GetId())))
 	logger.Debug("processing client type restoration")

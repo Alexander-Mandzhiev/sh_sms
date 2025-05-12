@@ -12,19 +12,23 @@ import (
 
 type Config struct {
 	Env        string         `yaml:"env" env:"ENV" env-default:"development"`
+	MediaDir   string         `yaml:"media_dir" env:"MEDIA_DIR"`
 	HTTPServer HTTPServer     `yaml:"http_server"`
 	Services   ServicesConfig `yaml:"services"`
 	Frontend   Frontend       `yaml:"frontend"`
 }
 
 type HTTPServer struct {
-	Address     string        `yaml:"address" env:"ADDRESS" env-default:"0.0.0.0"`       // Адрес сервера
-	Port        int           `yaml:"port" env:"PORT" env-default:"6000"`                // Порт сервера
-	Timeout     time.Duration `yaml:"timeout" env:"TIMEOUT" env-default:"5s"`            // Таймаут запроса
-	IdleTimeout time.Duration `yaml:"idle_timeout" env:"IDLE_TIMEOUT" env-default:"60s"` // Idle таймаут
+	Address     string        `yaml:"address" env:"ADDRESS" env-default:"0.0.0.0"`
+	Port        int           `yaml:"port" env:"PORT" env-default:"6000"`
+	Timeout     time.Duration `yaml:"timeout" env:"TIMEOUT" env-default:"5s"`
+	IdleTimeout time.Duration `yaml:"idle_timeout" env:"IDLE_TIMEOUT" env-default:"60s"`
 }
 
 type ServicesConfig struct {
+	AppsAddr    string `yaml:"apps_addr" env:"APPS_ADDR"`
+	ClientsAddr string `yaml:"clients_addr" env:"CLIENTS_ADDR"`
+	SSOAddr     string `yaml:"sso_addr" env:"SSO_ADDR"`
 }
 
 type Frontend struct {
@@ -71,13 +75,19 @@ func loadingDataInEnv() *Config {
 	}
 
 	return &Config{
+		Env:      os.Getenv("ENV"),
+		MediaDir: os.Getenv("MEDIA_DIR"),
 		HTTPServer: HTTPServer{
 			Address:     os.Getenv("ADDRESS"),
 			Port:        port,
 			Timeout:     parseDuration(os.Getenv("TIMEOUT"), 5*time.Second),
 			IdleTimeout: parseDuration(os.Getenv("IDLE_TIMEOUT"), 60*time.Second),
 		},
-		Services: ServicesConfig{},
+		Services: ServicesConfig{
+			AppsAddr:    os.Getenv("APPS_ADDR"),
+			ClientsAddr: os.Getenv("CLIENTS_ADDR"),
+			SSOAddr:     os.Getenv("SSO_ADDR"),
+		},
 		Frontend: Frontend{
 			Addr: os.Getenv("FRONTEND_ADDR"),
 		},

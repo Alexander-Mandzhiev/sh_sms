@@ -6,11 +6,11 @@ option go_package = "apps.app_manager.v1;app_manager";
 import "google/protobuf/timestamp.proto";
 
 service AppService {
-  rpc Create(CreateRequest) returns (App);
-  rpc Get(AppIdentifier) returns (App);
-  rpc Update(UpdateRequest) returns (App);
-  rpc Delete(AppIdentifier) returns (DeleteResponse);
-  rpc List(ListRequest) returns (ListResponse);
+  rpc CreateApp(CreateRequest) returns (App);
+  rpc GetApp(AppIdentifier) returns (App);
+  rpc UpdateApp(UpdateRequest) returns (App);
+  rpc DeleteApp(AppIdentifier) returns (DeleteResponse);
+  rpc ListApps(ListRequest) returns (ListResponse);
 }
 
 message App {

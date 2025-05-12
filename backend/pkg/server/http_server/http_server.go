@@ -4,11 +4,10 @@ import (
 	cfg "backend/pkg/config/gateway"
 	"backend/service/gateway/handle"
 	"context"
+	"errors"
 	"fmt"
-	"github.com/rs/cors"
 	"log/slog"
 	"net/http"
-	"time"
 )
 
 type APIServer struct {
@@ -24,54 +23,35 @@ func New(handler *handle.ServerAPI, logger *slog.Logger) *APIServer {
 	}
 }
 
-func (s *APIServer) Start(frontendAddr string, httpServerCfg cfg.HTTPServer) error {
-	if frontendAddr == "" {
-		s.logger.Error("Frontend address is not configured")
-		return fmt.Errorf("frontend address is not configured")
-	}
-
-	allowedOrigins := []string{
-		"http://localhost:*", "https://localhost:*",
-		fmt.Sprintf("http://%s", frontendAddr),
-		fmt.Sprintf("https://%s", frontendAddr),
-	}
-
-	c := cors.New(cors.Options{
-		AllowedOrigins:   allowedOrigins,
-		AllowCredentials: true,
-		AllowedMethods:   []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
-		AllowedHeaders:   []string{"Content-Type", "Authorization", "X-Requested-With", "X-API-Key", "X-Csrf-Token"},
-	})
-
-	handlerWithCORS := c.Handler(s.gateway.GetHTTPHandler())
-
+func (s *APIServer) Start(httpServerCfg cfg.HTTPServer) error {
 	s.httpserver = &http.Server{
 		Addr:           fmt.Sprintf("%s:%d", httpServerCfg.Address, httpServerCfg.Port),
-		Handler:        handlerWithCORS,
+		Handler:        s.gateway.GetHTTPHandler(),
 		MaxHeaderBytes: 1 << 20,
 		ReadTimeout:    httpServerCfg.Timeout,
 		WriteTimeout:   httpServerCfg.Timeout,
 		IdleTimeout:    httpServerCfg.IdleTimeout,
 	}
 
-	s.logger.Info("Starting HTTP server", slog.String("address", s.httpserver.Addr))
-
-	if err := s.httpserver.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-		s.logger.Error("Failed to start HTTP server", slog.Any("error", err))
-		return err
+	s.logger.Info("Starting HTTP server", slog.String("address", s.httpserver.Addr), slog.String("env", s.gateway.GetEnv()))
+	if err := s.httpserver.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+		s.logger.Error("Failed to start HTTP server", slog.Any("error", err), slog.String("env", s.gateway.GetEnv()))
+		return fmt.Errorf("server failed: %w", err)
 	}
-
 	return nil
 }
 
 func (s *APIServer) Shutdown(ctx context.Context) error {
-	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
-	defer cancel()
+	s.logger.Info("Shutting down HTTP server...",
+		slog.String("env", s.gateway.GetEnv()),
+	)
 
-	s.logger.Info("Shutting down HTTP server...")
-	err := s.httpserver.Shutdown(ctx)
-	if err != nil {
-		s.logger.Error("HTTP server shutdown error", slog.Any("error", err))
+	if err := s.httpserver.Shutdown(ctx); err != nil {
+		if !errors.Is(err, context.DeadlineExceeded) {
+			s.logger.Error("HTTP server shutdown error", slog.Any("error", err), slog.String("env", s.gateway.GetEnv()))
+			return fmt.Errorf("shutdown error: %w", err)
+		}
+		return nil
 	}
-	return err
+	return nil
 }

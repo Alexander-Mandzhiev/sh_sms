@@ -8,7 +8,7 @@ import (
 	"backend/protos/gen/go/sso/users"
 )
 
-func (s *serverAPI) Delete(ctx context.Context, req *users.DeleteRequest) (*users.SuccessResponse, error) {
+func (s *serverAPI) DeleteUser(ctx context.Context, req *users.DeleteRequest) (*users.SuccessResponse, error) {
 	const op = "grpc.user.Delete"
 	logger := s.logger.With(slog.String("op", op), slog.String("user_id", req.GetId()), slog.String("client_id", req.GetClientId()), slog.Bool("permanent", req.GetPermanent()))
 	logger.Debug("attempting to delete user")

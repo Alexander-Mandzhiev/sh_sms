@@ -19,22 +19,22 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ClientsAppService_Create_FullMethodName = "/apps.client_apps.ClientsAppService/Create"
-	ClientsAppService_Get_FullMethodName    = "/apps.client_apps.ClientsAppService/Get"
-	ClientsAppService_Update_FullMethodName = "/apps.client_apps.ClientsAppService/Update"
-	ClientsAppService_Delete_FullMethodName = "/apps.client_apps.ClientsAppService/Delete"
-	ClientsAppService_List_FullMethodName   = "/apps.client_apps.ClientsAppService/List"
+	ClientsAppService_CreateClientApp_FullMethodName = "/apps.client_apps.ClientsAppService/CreateClientApp"
+	ClientsAppService_GetClientApp_FullMethodName    = "/apps.client_apps.ClientsAppService/GetClientApp"
+	ClientsAppService_UpdateClientApp_FullMethodName = "/apps.client_apps.ClientsAppService/UpdateClientApp"
+	ClientsAppService_DeleteClientApp_FullMethodName = "/apps.client_apps.ClientsAppService/DeleteClientApp"
+	ClientsAppService_ListClientsApp_FullMethodName  = "/apps.client_apps.ClientsAppService/ListClientsApp"
 )
 
 // ClientsAppServiceClient is the client API for ClientsAppService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ClientsAppServiceClient interface {
-	Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*ClientApp, error)
-	Get(ctx context.Context, in *IdentifierRequest, opts ...grpc.CallOption) (*ClientApp, error)
-	Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*ClientApp, error)
-	Delete(ctx context.Context, in *IdentifierRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
-	List(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*ListResponse, error)
+	CreateClientApp(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*ClientApp, error)
+	GetClientApp(ctx context.Context, in *IdentifierRequest, opts ...grpc.CallOption) (*ClientApp, error)
+	UpdateClientApp(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*ClientApp, error)
+	DeleteClientApp(ctx context.Context, in *IdentifierRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
+	ListClientsApp(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*ListResponse, error)
 }
 
 type clientsAppServiceClient struct {
@@ -45,50 +45,50 @@ func NewClientsAppServiceClient(cc grpc.ClientConnInterface) ClientsAppServiceCl
 	return &clientsAppServiceClient{cc}
 }
 
-func (c *clientsAppServiceClient) Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*ClientApp, error) {
+func (c *clientsAppServiceClient) CreateClientApp(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*ClientApp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ClientApp)
-	err := c.cc.Invoke(ctx, ClientsAppService_Create_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, ClientsAppService_CreateClientApp_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *clientsAppServiceClient) Get(ctx context.Context, in *IdentifierRequest, opts ...grpc.CallOption) (*ClientApp, error) {
+func (c *clientsAppServiceClient) GetClientApp(ctx context.Context, in *IdentifierRequest, opts ...grpc.CallOption) (*ClientApp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ClientApp)
-	err := c.cc.Invoke(ctx, ClientsAppService_Get_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, ClientsAppService_GetClientApp_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *clientsAppServiceClient) Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*ClientApp, error) {
+func (c *clientsAppServiceClient) UpdateClientApp(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*ClientApp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ClientApp)
-	err := c.cc.Invoke(ctx, ClientsAppService_Update_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, ClientsAppService_UpdateClientApp_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *clientsAppServiceClient) Delete(ctx context.Context, in *IdentifierRequest, opts ...grpc.CallOption) (*DeleteResponse, error) {
+func (c *clientsAppServiceClient) DeleteClientApp(ctx context.Context, in *IdentifierRequest, opts ...grpc.CallOption) (*DeleteResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(DeleteResponse)
-	err := c.cc.Invoke(ctx, ClientsAppService_Delete_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, ClientsAppService_DeleteClientApp_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *clientsAppServiceClient) List(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*ListResponse, error) {
+func (c *clientsAppServiceClient) ListClientsApp(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*ListResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListResponse)
-	err := c.cc.Invoke(ctx, ClientsAppService_List_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, ClientsAppService_ListClientsApp_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -99,11 +99,11 @@ func (c *clientsAppServiceClient) List(ctx context.Context, in *ListRequest, opt
 // All implementations must embed UnimplementedClientsAppServiceServer
 // for forward compatibility.
 type ClientsAppServiceServer interface {
-	Create(context.Context, *CreateRequest) (*ClientApp, error)
-	Get(context.Context, *IdentifierRequest) (*ClientApp, error)
-	Update(context.Context, *UpdateRequest) (*ClientApp, error)
-	Delete(context.Context, *IdentifierRequest) (*DeleteResponse, error)
-	List(context.Context, *ListRequest) (*ListResponse, error)
+	CreateClientApp(context.Context, *CreateRequest) (*ClientApp, error)
+	GetClientApp(context.Context, *IdentifierRequest) (*ClientApp, error)
+	UpdateClientApp(context.Context, *UpdateRequest) (*ClientApp, error)
+	DeleteClientApp(context.Context, *IdentifierRequest) (*DeleteResponse, error)
+	ListClientsApp(context.Context, *ListRequest) (*ListResponse, error)
 	mustEmbedUnimplementedClientsAppServiceServer()
 }
 
@@ -114,20 +114,20 @@ type ClientsAppServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedClientsAppServiceServer struct{}
 
-func (UnimplementedClientsAppServiceServer) Create(context.Context, *CreateRequest) (*ClientApp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
+func (UnimplementedClientsAppServiceServer) CreateClientApp(context.Context, *CreateRequest) (*ClientApp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateClientApp not implemented")
 }
-func (UnimplementedClientsAppServiceServer) Get(context.Context, *IdentifierRequest) (*ClientApp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
+func (UnimplementedClientsAppServiceServer) GetClientApp(context.Context, *IdentifierRequest) (*ClientApp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetClientApp not implemented")
 }
-func (UnimplementedClientsAppServiceServer) Update(context.Context, *UpdateRequest) (*ClientApp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
+func (UnimplementedClientsAppServiceServer) UpdateClientApp(context.Context, *UpdateRequest) (*ClientApp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateClientApp not implemented")
 }
-func (UnimplementedClientsAppServiceServer) Delete(context.Context, *IdentifierRequest) (*DeleteResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+func (UnimplementedClientsAppServiceServer) DeleteClientApp(context.Context, *IdentifierRequest) (*DeleteResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteClientApp not implemented")
 }
-func (UnimplementedClientsAppServiceServer) List(context.Context, *ListRequest) (*ListResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method List not implemented")
+func (UnimplementedClientsAppServiceServer) ListClientsApp(context.Context, *ListRequest) (*ListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListClientsApp not implemented")
 }
 func (UnimplementedClientsAppServiceServer) mustEmbedUnimplementedClientsAppServiceServer() {}
 func (UnimplementedClientsAppServiceServer) testEmbeddedByValue()                           {}
@@ -150,92 +150,92 @@ func RegisterClientsAppServiceServer(s grpc.ServiceRegistrar, srv ClientsAppServ
 	s.RegisterService(&ClientsAppService_ServiceDesc, srv)
 }
 
-func _ClientsAppService_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ClientsAppService_CreateClientApp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ClientsAppServiceServer).Create(ctx, in)
+		return srv.(ClientsAppServiceServer).CreateClientApp(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ClientsAppService_Create_FullMethodName,
+		FullMethod: ClientsAppService_CreateClientApp_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ClientsAppServiceServer).Create(ctx, req.(*CreateRequest))
+		return srv.(ClientsAppServiceServer).CreateClientApp(ctx, req.(*CreateRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ClientsAppService_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ClientsAppService_GetClientApp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(IdentifierRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ClientsAppServiceServer).Get(ctx, in)
+		return srv.(ClientsAppServiceServer).GetClientApp(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ClientsAppService_Get_FullMethodName,
+		FullMethod: ClientsAppService_GetClientApp_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ClientsAppServiceServer).Get(ctx, req.(*IdentifierRequest))
+		return srv.(ClientsAppServiceServer).GetClientApp(ctx, req.(*IdentifierRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ClientsAppService_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ClientsAppService_UpdateClientApp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ClientsAppServiceServer).Update(ctx, in)
+		return srv.(ClientsAppServiceServer).UpdateClientApp(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ClientsAppService_Update_FullMethodName,
+		FullMethod: ClientsAppService_UpdateClientApp_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ClientsAppServiceServer).Update(ctx, req.(*UpdateRequest))
+		return srv.(ClientsAppServiceServer).UpdateClientApp(ctx, req.(*UpdateRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ClientsAppService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ClientsAppService_DeleteClientApp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(IdentifierRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ClientsAppServiceServer).Delete(ctx, in)
+		return srv.(ClientsAppServiceServer).DeleteClientApp(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ClientsAppService_Delete_FullMethodName,
+		FullMethod: ClientsAppService_DeleteClientApp_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ClientsAppServiceServer).Delete(ctx, req.(*IdentifierRequest))
+		return srv.(ClientsAppServiceServer).DeleteClientApp(ctx, req.(*IdentifierRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ClientsAppService_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ClientsAppService_ListClientsApp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ClientsAppServiceServer).List(ctx, in)
+		return srv.(ClientsAppServiceServer).ListClientsApp(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ClientsAppService_List_FullMethodName,
+		FullMethod: ClientsAppService_ListClientsApp_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ClientsAppServiceServer).List(ctx, req.(*ListRequest))
+		return srv.(ClientsAppServiceServer).ListClientsApp(ctx, req.(*ListRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -248,24 +248,24 @@ var ClientsAppService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*ClientsAppServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Create",
-			Handler:    _ClientsAppService_Create_Handler,
+			MethodName: "CreateClientApp",
+			Handler:    _ClientsAppService_CreateClientApp_Handler,
 		},
 		{
-			MethodName: "Get",
-			Handler:    _ClientsAppService_Get_Handler,
+			MethodName: "GetClientApp",
+			Handler:    _ClientsAppService_GetClientApp_Handler,
 		},
 		{
-			MethodName: "Update",
-			Handler:    _ClientsAppService_Update_Handler,
+			MethodName: "UpdateClientApp",
+			Handler:    _ClientsAppService_UpdateClientApp_Handler,
 		},
 		{
-			MethodName: "Delete",
-			Handler:    _ClientsAppService_Delete_Handler,
+			MethodName: "DeleteClientApp",
+			Handler:    _ClientsAppService_DeleteClientApp_Handler,
 		},
 		{
-			MethodName: "List",
-			Handler:    _ClientsAppService_List_Handler,
+			MethodName: "ListClientsApp",
+			Handler:    _ClientsAppService_ListClientsApp_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

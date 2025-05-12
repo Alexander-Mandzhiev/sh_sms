@@ -8,7 +8,7 @@ import (
 	"log/slog"
 )
 
-func (s *serverAPI) Update(ctx context.Context, req *permissions.UpdateRequest) (*permissions.Permission, error) {
+func (s *serverAPI) UpdatePermission(ctx context.Context, req *permissions.UpdateRequest) (*permissions.Permission, error) {
 	const op = "grpc.Permission.Update"
 	logger := s.logger.With(slog.String("op", op), slog.String("id", req.GetId()), slog.Int("app_id", int(req.GetAppId())))
 	logger.Debug("attempting to update permission")

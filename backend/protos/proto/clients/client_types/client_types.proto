@@ -7,12 +7,12 @@ import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
 
 service ClientTypeService {
-  rpc Create(CreateRequest) returns (ClientType);
-  rpc Get(GetRequest) returns (ClientType);
-  rpc Update(UpdateRequest) returns (ClientType);
-  rpc List(ListRequest) returns (ListResponse);
-  rpc Delete(DeleteRequest) returns (google.protobuf.Empty);
-  rpc Restore(RestoreRequest) returns (ClientType);
+  rpc CreateClientType(CreateRequest) returns (ClientType);
+  rpc GetClientType(GetRequest) returns (ClientType);
+  rpc UpdateClientType(UpdateRequest) returns (ClientType);
+  rpc ListClientType(ListRequest) returns (ListResponse);
+  rpc DeleteClientType(DeleteRequest) returns (google.protobuf.Empty);
+  rpc RestoreClientType(RestoreRequest) returns (ClientType);
 }
 
 message ClientType {

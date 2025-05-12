@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func (s *serverAPI) Create(ctx context.Context, req *pb.CreateRequest) (*pb.App, error) {
+func (s *serverAPI) CreateApp(ctx context.Context, req *pb.CreateRequest) (*pb.App, error) {
 	const op = "grpc.handler.AppManager.Create"
 	logger := s.logger.With(slog.String("op", op), slog.Time("timestamp", time.Now()))
 

@@ -7,7 +7,7 @@ import (
 	"log/slog"
 )
 
-func (s *serverAPI) Get(ctx context.Context, req *permissions.GetRequest) (*permissions.Permission, error) {
+func (s *serverAPI) GetPermission(ctx context.Context, req *permissions.GetRequest) (*permissions.Permission, error) {
 	const op = "grpc.Permission.Get"
 	logger := s.logger.With(slog.String("op", op), slog.String("id", req.GetId()), slog.Int("app_id", int(req.GetAppId())))
 	logger.Debug("attempting to get permission")

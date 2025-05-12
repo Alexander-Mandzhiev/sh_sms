@@ -9,7 +9,7 @@ import (
 	"log/slog"
 )
 
-func (s *serverAPI) List(ctx context.Context, req *pb.ListRequest) (*pb.ListResponse, error) {
+func (s *serverAPI) ListSecrets(ctx context.Context, req *pb.ListRequest) (*pb.ListResponse, error) {
 	const op = "grpc.handler.Secret.List"
 	logger := s.logger.With(slog.String("op", op))
 	logger.Debug("List secrets request received")

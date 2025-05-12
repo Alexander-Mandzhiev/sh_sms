@@ -8,7 +8,7 @@ import (
 	"log/slog"
 )
 
-func (s *serverAPI) Create(ctx context.Context, req *permissions.CreateRequest) (*permissions.Permission, error) {
+func (s *serverAPI) CreatePermission(ctx context.Context, req *permissions.CreateRequest) (*permissions.Permission, error) {
 	const op = "grpc.Permission.Create"
 	logger := s.logger.With(slog.String("op", op), slog.String("code", req.GetCode()), slog.Int("app_id", int(req.GetAppId())))
 	logger.Debug("attempting to create permission")

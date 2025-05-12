@@ -11,7 +11,7 @@ import (
 	"backend/service/utils"
 )
 
-func (s *serverAPI) Update(ctx context.Context, req *users.UpdateRequest) (*users.User, error) {
+func (s *serverAPI) UpdateUser(ctx context.Context, req *users.UpdateRequest) (*users.User, error) {
 	const op = "grpc.user.Update"
 	logger := s.logger.With(slog.String("op", op), slog.String("user_id", req.GetId()), slog.String("client_id", req.GetClientId()))
 	logger.Debug("attempting to update user")

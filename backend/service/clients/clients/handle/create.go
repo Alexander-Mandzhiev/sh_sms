@@ -9,7 +9,7 @@ import (
 	"log/slog"
 )
 
-func (s *serverAPI) Create(ctx context.Context, req *clients.CreateRequest) (*clients.Client, error) {
+func (s *serverAPI) CreateClient(ctx context.Context, req *clients.CreateRequest) (*clients.Client, error) {
 	const op = "grpc.clients.Create"
 	logger := s.logger.With(slog.String("op", op), slog.String("name", req.GetName()), slog.Int("type_id", int(req.GetTypeId())))
 	logger.Debug("processing client creation")

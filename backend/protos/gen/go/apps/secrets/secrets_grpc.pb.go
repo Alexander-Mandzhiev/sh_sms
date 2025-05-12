@@ -20,11 +20,11 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	SecretService_Generate_FullMethodName      = "/apps.secrets.SecretService/Generate"
-	SecretService_Get_FullMethodName           = "/apps.secrets.SecretService/Get"
-	SecretService_Rotate_FullMethodName        = "/apps.secrets.SecretService/Rotate"
-	SecretService_Revoke_FullMethodName        = "/apps.secrets.SecretService/Revoke"
-	SecretService_Delete_FullMethodName        = "/apps.secrets.SecretService/Delete"
-	SecretService_List_FullMethodName          = "/apps.secrets.SecretService/List"
+	SecretService_GetSecret_FullMethodName     = "/apps.secrets.SecretService/GetSecret"
+	SecretService_RotateSecret_FullMethodName  = "/apps.secrets.SecretService/RotateSecret"
+	SecretService_RevokeSecret_FullMethodName  = "/apps.secrets.SecretService/RevokeSecret"
+	SecretService_DeleteSecret_FullMethodName  = "/apps.secrets.SecretService/DeleteSecret"
+	SecretService_ListSecrets_FullMethodName   = "/apps.secrets.SecretService/ListSecrets"
 	SecretService_GetRotation_FullMethodName   = "/apps.secrets.SecretService/GetRotation"
 	SecretService_ListRotations_FullMethodName = "/apps.secrets.SecretService/ListRotations"
 )
@@ -34,11 +34,11 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type SecretServiceClient interface {
 	Generate(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*Secret, error)
-	Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*Secret, error)
-	Rotate(ctx context.Context, in *RotateRequest, opts ...grpc.CallOption) (*Secret, error)
-	Revoke(ctx context.Context, in *RevokeRequest, opts ...grpc.CallOption) (*Secret, error)
-	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
-	List(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*ListResponse, error)
+	GetSecret(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*Secret, error)
+	RotateSecret(ctx context.Context, in *RotateRequest, opts ...grpc.CallOption) (*Secret, error)
+	RevokeSecret(ctx context.Context, in *RevokeRequest, opts ...grpc.CallOption) (*Secret, error)
+	DeleteSecret(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
+	ListSecrets(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*ListResponse, error)
 	GetRotation(ctx context.Context, in *GetRotationHistoryRequest, opts ...grpc.CallOption) (*RotationHistory, error)
 	ListRotations(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*ListRotationHistoryResponse, error)
 }
@@ -61,50 +61,50 @@ func (c *secretServiceClient) Generate(ctx context.Context, in *CreateRequest, o
 	return out, nil
 }
 
-func (c *secretServiceClient) Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*Secret, error) {
+func (c *secretServiceClient) GetSecret(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*Secret, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(Secret)
-	err := c.cc.Invoke(ctx, SecretService_Get_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SecretService_GetSecret_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *secretServiceClient) Rotate(ctx context.Context, in *RotateRequest, opts ...grpc.CallOption) (*Secret, error) {
+func (c *secretServiceClient) RotateSecret(ctx context.Context, in *RotateRequest, opts ...grpc.CallOption) (*Secret, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(Secret)
-	err := c.cc.Invoke(ctx, SecretService_Rotate_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SecretService_RotateSecret_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *secretServiceClient) Revoke(ctx context.Context, in *RevokeRequest, opts ...grpc.CallOption) (*Secret, error) {
+func (c *secretServiceClient) RevokeSecret(ctx context.Context, in *RevokeRequest, opts ...grpc.CallOption) (*Secret, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(Secret)
-	err := c.cc.Invoke(ctx, SecretService_Revoke_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SecretService_RevokeSecret_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *secretServiceClient) Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error) {
+func (c *secretServiceClient) DeleteSecret(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(DeleteResponse)
-	err := c.cc.Invoke(ctx, SecretService_Delete_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SecretService_DeleteSecret_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *secretServiceClient) List(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*ListResponse, error) {
+func (c *secretServiceClient) ListSecrets(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*ListResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListResponse)
-	err := c.cc.Invoke(ctx, SecretService_List_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SecretService_ListSecrets_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -136,11 +136,11 @@ func (c *secretServiceClient) ListRotations(ctx context.Context, in *ListRequest
 // for forward compatibility.
 type SecretServiceServer interface {
 	Generate(context.Context, *CreateRequest) (*Secret, error)
-	Get(context.Context, *GetRequest) (*Secret, error)
-	Rotate(context.Context, *RotateRequest) (*Secret, error)
-	Revoke(context.Context, *RevokeRequest) (*Secret, error)
-	Delete(context.Context, *DeleteRequest) (*DeleteResponse, error)
-	List(context.Context, *ListRequest) (*ListResponse, error)
+	GetSecret(context.Context, *GetRequest) (*Secret, error)
+	RotateSecret(context.Context, *RotateRequest) (*Secret, error)
+	RevokeSecret(context.Context, *RevokeRequest) (*Secret, error)
+	DeleteSecret(context.Context, *DeleteRequest) (*DeleteResponse, error)
+	ListSecrets(context.Context, *ListRequest) (*ListResponse, error)
 	GetRotation(context.Context, *GetRotationHistoryRequest) (*RotationHistory, error)
 	ListRotations(context.Context, *ListRequest) (*ListRotationHistoryResponse, error)
 	mustEmbedUnimplementedSecretServiceServer()
@@ -156,20 +156,20 @@ type UnimplementedSecretServiceServer struct{}
 func (UnimplementedSecretServiceServer) Generate(context.Context, *CreateRequest) (*Secret, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Generate not implemented")
 }
-func (UnimplementedSecretServiceServer) Get(context.Context, *GetRequest) (*Secret, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
+func (UnimplementedSecretServiceServer) GetSecret(context.Context, *GetRequest) (*Secret, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSecret not implemented")
 }
-func (UnimplementedSecretServiceServer) Rotate(context.Context, *RotateRequest) (*Secret, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Rotate not implemented")
+func (UnimplementedSecretServiceServer) RotateSecret(context.Context, *RotateRequest) (*Secret, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RotateSecret not implemented")
 }
-func (UnimplementedSecretServiceServer) Revoke(context.Context, *RevokeRequest) (*Secret, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Revoke not implemented")
+func (UnimplementedSecretServiceServer) RevokeSecret(context.Context, *RevokeRequest) (*Secret, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RevokeSecret not implemented")
 }
-func (UnimplementedSecretServiceServer) Delete(context.Context, *DeleteRequest) (*DeleteResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+func (UnimplementedSecretServiceServer) DeleteSecret(context.Context, *DeleteRequest) (*DeleteResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteSecret not implemented")
 }
-func (UnimplementedSecretServiceServer) List(context.Context, *ListRequest) (*ListResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method List not implemented")
+func (UnimplementedSecretServiceServer) ListSecrets(context.Context, *ListRequest) (*ListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListSecrets not implemented")
 }
 func (UnimplementedSecretServiceServer) GetRotation(context.Context, *GetRotationHistoryRequest) (*RotationHistory, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRotation not implemented")
@@ -216,92 +216,92 @@ func _SecretService_Generate_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SecretService_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SecretService_GetSecret_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SecretServiceServer).Get(ctx, in)
+		return srv.(SecretServiceServer).GetSecret(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: SecretService_Get_FullMethodName,
+		FullMethod: SecretService_GetSecret_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SecretServiceServer).Get(ctx, req.(*GetRequest))
+		return srv.(SecretServiceServer).GetSecret(ctx, req.(*GetRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SecretService_Rotate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SecretService_RotateSecret_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RotateRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SecretServiceServer).Rotate(ctx, in)
+		return srv.(SecretServiceServer).RotateSecret(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: SecretService_Rotate_FullMethodName,
+		FullMethod: SecretService_RotateSecret_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SecretServiceServer).Rotate(ctx, req.(*RotateRequest))
+		return srv.(SecretServiceServer).RotateSecret(ctx, req.(*RotateRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SecretService_Revoke_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SecretService_RevokeSecret_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RevokeRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SecretServiceServer).Revoke(ctx, in)
+		return srv.(SecretServiceServer).RevokeSecret(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: SecretService_Revoke_FullMethodName,
+		FullMethod: SecretService_RevokeSecret_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SecretServiceServer).Revoke(ctx, req.(*RevokeRequest))
+		return srv.(SecretServiceServer).RevokeSecret(ctx, req.(*RevokeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SecretService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SecretService_DeleteSecret_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SecretServiceServer).Delete(ctx, in)
+		return srv.(SecretServiceServer).DeleteSecret(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: SecretService_Delete_FullMethodName,
+		FullMethod: SecretService_DeleteSecret_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SecretServiceServer).Delete(ctx, req.(*DeleteRequest))
+		return srv.(SecretServiceServer).DeleteSecret(ctx, req.(*DeleteRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SecretService_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SecretService_ListSecrets_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SecretServiceServer).List(ctx, in)
+		return srv.(SecretServiceServer).ListSecrets(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: SecretService_List_FullMethodName,
+		FullMethod: SecretService_ListSecrets_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SecretServiceServer).List(ctx, req.(*ListRequest))
+		return srv.(SecretServiceServer).ListSecrets(ctx, req.(*ListRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -354,24 +354,24 @@ var SecretService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _SecretService_Generate_Handler,
 		},
 		{
-			MethodName: "Get",
-			Handler:    _SecretService_Get_Handler,
+			MethodName: "GetSecret",
+			Handler:    _SecretService_GetSecret_Handler,
 		},
 		{
-			MethodName: "Rotate",
-			Handler:    _SecretService_Rotate_Handler,
+			MethodName: "RotateSecret",
+			Handler:    _SecretService_RotateSecret_Handler,
 		},
 		{
-			MethodName: "Revoke",
-			Handler:    _SecretService_Revoke_Handler,
+			MethodName: "RevokeSecret",
+			Handler:    _SecretService_RevokeSecret_Handler,
 		},
 		{
-			MethodName: "Delete",
-			Handler:    _SecretService_Delete_Handler,
+			MethodName: "DeleteSecret",
+			Handler:    _SecretService_DeleteSecret_Handler,
 		},
 		{
-			MethodName: "List",
-			Handler:    _SecretService_List_Handler,
+			MethodName: "ListSecrets",
+			Handler:    _SecretService_ListSecrets_Handler,
 		},
 		{
 			MethodName: "GetRotation",

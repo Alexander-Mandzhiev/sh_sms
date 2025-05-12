@@ -8,7 +8,7 @@ import (
 	"log/slog"
 )
 
-func (s *serverAPI) Restore(ctx context.Context, req *roles.RestoreRequest) (*roles.Role, error) {
+func (s *serverAPI) RestoreRole(ctx context.Context, req *roles.RestoreRequest) (*roles.Role, error) {
 	const op = "grpc.roles.Restore"
 	logger := s.logger.With(slog.String("op", op), slog.String("role_id", req.GetId()), slog.String("client_id", req.GetClientId()))
 	logger.Debug("attempting to restore role")

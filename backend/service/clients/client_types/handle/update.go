@@ -8,7 +8,7 @@ import (
 	"log/slog"
 )
 
-func (s *serverAPI) Update(ctx context.Context, req *client_types.UpdateRequest) (*client_types.ClientType, error) {
+func (s *serverAPI) UpdateClientType(ctx context.Context, req *client_types.UpdateRequest) (*client_types.ClientType, error) {
 	const op = "grpc.client_types.Update"
 	logger := s.logger.With(slog.String("op", op), slog.Int("id", int(req.GetId())))
 	logger.Debug("processing client type update")
