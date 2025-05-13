@@ -16,9 +16,9 @@ message Contact {
   string id = 1;
   string client_id = 2;
   string full_name = 3;
-  string position = 4;
-  string email = 5;
-  string phone = 6;
+  optional string position = 4;
+  optional string email = 5;
+  optional string phone = 6;
   bool is_active = 7;
   google.protobuf.Timestamp created_at = 8;
   google.protobuf.Timestamp updated_at = 9;
@@ -27,21 +27,22 @@ message Contact {
 message CreateRequest {
   string client_id = 1;
   string full_name = 2;
-  string position = 3;
-  string email = 4;
-  string phone = 5;
-}
-
-message GetRequest {
-  string id = 1;
+  optional string position = 3;
+  optional string email = 4;
+  optional string phone = 5;
 }
 
 message UpdateRequest {
   string id = 1;
-  string full_name = 2;
-  string position = 3;
-  string email = 4;
-  string phone = 5;
+  optional string full_name = 2;
+  optional string position = 3;
+  optional string email = 4;
+  optional string phone = 5;
+  optional bool is_active = 6;
+}
+
+message GetRequest {
+  string id = 1;
 }
 
 message DeleteRequest {

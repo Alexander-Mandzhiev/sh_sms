@@ -7,7 +7,7 @@ CREATE TABLE contacts (
     position VARCHAR(255),
     email VARCHAR(320),
     phone VARCHAR(30),
-    is_active BOOLEAN DEFAULT TRUE,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );

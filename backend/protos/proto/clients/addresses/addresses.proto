@@ -3,30 +3,45 @@ package clients.addresses;
 option go_package = "clients.v1;addresses";
 
 service AddressService {
-  rpc CreateAddress(AddressRequest) returns (Address);
-  rpc GetAddress(GetAddressRequest) returns (Address);
-  rpc UpdateAddress(AddressRequest) returns (Address);
-  rpc DeleteAddress(DeleteAddressRequest) returns (DeleteResponse);
-  rpc ListByClient(ListAddressesRequest) returns (ListAddressesResponse);
+  rpc CreateAddress(CreateRequest) returns (Address);
+  rpc GetAddress(GetRequest) returns (Address);
+  rpc UpdateAddress(UpdateRequest) returns (Address);
+  rpc DeleteAddress(DeleteRequest) returns (DeleteResponse);
+  rpc ListByClient(ListRequest) returns (ListResponse);
 }
 
 message Address {
   string id = 1;
   string client_id = 2;
   string country = 3;
-  string region = 4;
+  optional string region = 4;
   string city = 5;
-  string district = 6;
-  string micro_district = 7;
+  optional string district = 6;
+  optional string micro_district = 7;
   string street = 8;
   string house_number = 9;
-  string apartment = 10;
-  string postal_code = 11;
-  double latitude = 12;
-  double longitude = 13;
+  optional string apartment = 10;
+  optional string postal_code = 11;
+  optional double latitude = 12;
+  optional double longitude = 13;
 }
 
-message AddressRequest {
+message CreateRequest {
+  string client_id = 1;
+  string country = 2;
+  string city = 3;
+  optional string region = 4;
+  optional string district = 5;
+  optional string micro_district = 6;
+  string street = 7;
+  string house_number = 8;
+  optional string apartment = 9;
+  optional string postal_code = 10;
+  optional double latitude = 11;
+  optional double longitude = 12;
+}
+
+message UpdateRequest {
   string id = 1;
   string client_id = 2;
   optional string country = 3;
@@ -42,21 +57,21 @@ message AddressRequest {
   optional double longitude = 13;
 }
 
-message GetAddressRequest {
+message GetRequest {
   string id = 1;
 }
 
-message DeleteAddressRequest {
+message DeleteRequest {
   string id = 1;
 }
 
-message ListAddressesRequest {
+message ListRequest {
   string client_id = 1;
   int32 page = 2;
   int32 count = 3;
 }
 
-message ListAddressesResponse {
+message ListResponse {
   repeated Address addresses = 1;
   int32 total_count = 2;
 }
