@@ -36,6 +36,7 @@ func (s *serverAPI) CreateUser(ctx context.Context, req *users.CreateRequest) (*
 		Email:    req.Email,
 		FullName: req.FullName,
 		Phone:    req.Phone,
+		IsActive: true,
 	}
 
 	if err = s.service.Create(ctx, user, req.Password); err != nil {

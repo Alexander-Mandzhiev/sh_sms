@@ -1,0 +1,54 @@
+package permissions_handle
+
+import (
+	"log/slog"
+	"net/http"
+	"strconv"
+
+	"backend/protos/gen/go/sso/permissions"
+	"backend/service/gateway/models"
+	"github.com/gin-gonic/gin"
+)
+
+func (h *Handler) restore(c *gin.Context) {
+	const op = "gateway.Permissions.Restore"
+	logger := h.logger.With(slog.String("op", op))
+
+	id := c.Param("id")
+	appIDStr := c.Query("app_id")
+
+	if id == "" || appIDStr == "" {
+		logger.Error("Missing required parameters", slog.String("permission_id", id), slog.String("app_id", appIDStr))
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Parameters 'id' and 'app_id' are required"})
+		return
+	}
+
+	appID, err := strconv.Atoi(appIDStr)
+	if err != nil {
+		logger.Error("Invalid app_id format", slog.String("app_id", appIDStr), slog.String("error", err.Error()))
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid app_id format, must be integer"})
+		return
+	}
+
+	grpcReq := &permissions.RestoreRequest{
+		Id:    id,
+		AppId: int32(appID),
+	}
+
+	resp, err := h.service.RestorePermission(c.Request.Context(), grpcReq)
+	if err != nil {
+		logger.Error("Failed to restore permission", slog.String("permission_id", id), slog.Int("app_id", appID), slog.String("error", err.Error()))
+		h.handleGRPCError(c, err)
+		return
+	}
+
+	permission, err := models.PermissionFromProto(resp)
+	if err != nil {
+		logger.Error("Proto conversion failed", slog.String("error", err.Error()))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+		return
+	}
+
+	logger.Info("Permission restored successfully", slog.String("permission_id", permission.ID), slog.Int("app_id", int(permission.AppID)))
+	c.JSON(http.StatusOK, permission)
+}
