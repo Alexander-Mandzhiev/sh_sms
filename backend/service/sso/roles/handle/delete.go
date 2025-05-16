@@ -1,8 +1,8 @@
 package handle
 
 import (
+	"backend/pkg/utils"
 	"backend/protos/gen/go/sso/roles"
-	"backend/service/utils"
 	"context"
 	"fmt"
 	"log/slog"

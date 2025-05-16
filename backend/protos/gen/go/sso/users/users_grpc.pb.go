@@ -19,13 +19,14 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	UserService_CreateUser_FullMethodName  = "/sso.users.UserService/CreateUser"
-	UserService_GetUser_FullMethodName     = "/sso.users.UserService/GetUser"
-	UserService_UpdateUser_FullMethodName  = "/sso.users.UserService/UpdateUser"
-	UserService_DeleteUser_FullMethodName  = "/sso.users.UserService/DeleteUser"
-	UserService_ListUsers_FullMethodName   = "/sso.users.UserService/ListUsers"
-	UserService_SetPassword_FullMethodName = "/sso.users.UserService/SetPassword"
-	UserService_RestoreUser_FullMethodName = "/sso.users.UserService/RestoreUser"
+	UserService_CreateUser_FullMethodName     = "/sso.users.UserService/CreateUser"
+	UserService_GetUser_FullMethodName        = "/sso.users.UserService/GetUser"
+	UserService_UpdateUser_FullMethodName     = "/sso.users.UserService/UpdateUser"
+	UserService_DeleteUser_FullMethodName     = "/sso.users.UserService/DeleteUser"
+	UserService_ListUsers_FullMethodName      = "/sso.users.UserService/ListUsers"
+	UserService_SetPassword_FullMethodName    = "/sso.users.UserService/SetPassword"
+	UserService_RestoreUser_FullMethodName    = "/sso.users.UserService/RestoreUser"
+	UserService_GetUserByLogin_FullMethodName = "/sso.users.UserService/GetUserByLogin"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -39,6 +40,7 @@ type UserServiceClient interface {
 	ListUsers(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*ListResponse, error)
 	SetPassword(ctx context.Context, in *SetPasswordRequest, opts ...grpc.CallOption) (*SuccessResponse, error)
 	RestoreUser(ctx context.Context, in *RestoreRequest, opts ...grpc.CallOption) (*User, error)
+	GetUserByLogin(ctx context.Context, in *GetUserByLoginRequest, opts ...grpc.CallOption) (*UserInfo, error)
 }
 
 type userServiceClient struct {
@@ -119,6 +121,16 @@ func (c *userServiceClient) RestoreUser(ctx context.Context, in *RestoreRequest,
 	return out, nil
 }
 
+func (c *userServiceClient) GetUserByLogin(ctx context.Context, in *GetUserByLoginRequest, opts ...grpc.CallOption) (*UserInfo, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UserInfo)
+	err := c.cc.Invoke(ctx, UserService_GetUserByLogin_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility.
@@ -130,6 +142,7 @@ type UserServiceServer interface {
 	ListUsers(context.Context, *ListRequest) (*ListResponse, error)
 	SetPassword(context.Context, *SetPasswordRequest) (*SuccessResponse, error)
 	RestoreUser(context.Context, *RestoreRequest) (*User, error)
+	GetUserByLogin(context.Context, *GetUserByLoginRequest) (*UserInfo, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -160,6 +173,9 @@ func (UnimplementedUserServiceServer) SetPassword(context.Context, *SetPasswordR
 }
 func (UnimplementedUserServiceServer) RestoreUser(context.Context, *RestoreRequest) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RestoreUser not implemented")
+}
+func (UnimplementedUserServiceServer) GetUserByLogin(context.Context, *GetUserByLoginRequest) (*UserInfo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserByLogin not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 func (UnimplementedUserServiceServer) testEmbeddedByValue()                     {}
@@ -308,6 +324,24 @@ func _UserService_RestoreUser_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_GetUserByLogin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserByLoginRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetUserByLogin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_GetUserByLogin_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetUserByLogin(ctx, req.(*GetUserByLoginRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -342,6 +376,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RestoreUser",
 			Handler:    _UserService_RestoreUser_Handler,
+		},
+		{
+			MethodName: "GetUserByLogin",
+			Handler:    _UserService_GetUserByLogin_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

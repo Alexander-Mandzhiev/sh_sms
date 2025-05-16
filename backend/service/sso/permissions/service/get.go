@@ -1,9 +1,9 @@
 package service
 
 import (
+	"backend/pkg/utils"
 	"backend/service/sso/models"
 	"backend/service/sso/permissions/repository"
-	"backend/service/utils"
 	"context"
 	"errors"
 	"fmt"

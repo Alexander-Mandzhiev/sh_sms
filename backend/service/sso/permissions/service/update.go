@@ -1,12 +1,12 @@
 package service
 
 import (
+	"backend/pkg/utils"
 	"context"
 	"fmt"
 	"log/slog"
 
 	"backend/service/sso/models"
-	"backend/service/utils"
 )
 
 func (s *Service) Update(ctx context.Context, updatedPerm models.Permission) (*models.Permission, error) {

@@ -1,7 +1,7 @@
 package service
 
 import (
-	"backend/service/utils"
+	"backend/pkg/utils"
 	"context"
 	"fmt"
 	"github.com/google/uuid"

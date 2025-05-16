@@ -1,8 +1,8 @@
 package handle
 
 import (
+	"backend/pkg/utils"
 	"backend/protos/gen/go/sso/role_permissions"
-	"backend/service/utils"
 	"context"
 	"fmt"
 	"github.com/google/uuid"

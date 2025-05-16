@@ -1,9 +1,9 @@
 package roles_handle
 
 import (
+	"backend/pkg/utils"
 	"backend/protos/gen/go/sso/roles"
 	"backend/service/gateway/models"
-	"backend/service/utils"
 	"github.com/gin-gonic/gin"
 	"log/slog"
 	"net/http"

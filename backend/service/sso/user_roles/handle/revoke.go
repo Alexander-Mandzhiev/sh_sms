@@ -1,8 +1,8 @@
 package handle
 
 import (
+	"backend/pkg/utils"
 	user_roles "backend/protos/gen/go/sso/users_roles"
-	"backend/service/utils"
 	"context"
 	"fmt"
 	"google.golang.org/protobuf/types/known/timestamppb"

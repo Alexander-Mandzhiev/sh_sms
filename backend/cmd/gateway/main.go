@@ -10,13 +10,15 @@ import (
 	"backend/service/gateway/handle/permissions_handle"
 	"backend/service/gateway/handle/role_permissions_handle"
 	"backend/service/gateway/handle/roles_handle"
+	"backend/service/gateway/handle/user_roles_handle"
 	"backend/service/gateway/handle/users_handle"
 	"backend/service/gateway/service/appManager"
 	"backend/service/gateway/service/clientApps"
-	permission_service "backend/service/gateway/service/permissions"
-	role_permission_service "backend/service/gateway/service/rolePermissions"
+	"backend/service/gateway/service/permissions"
+	"backend/service/gateway/service/rolePermissions"
 	"backend/service/gateway/service/roles"
 	"backend/service/gateway/service/secrets"
+	"backend/service/gateway/service/userRoles"
 	"backend/service/gateway/service/users"
 	"context"
 	"os"
@@ -66,21 +68,23 @@ func main() {
 	_ = secrets_service.NewSecretService(appsClient, logger)
 
 	usersSRV := users_service.NewUserService(ssoClient, logger)
-	rolesSRV := roles_service.NewRoleService(ssoClient, logger)
-	permissionSRV := permission_service.NewPermissionService(ssoClient, logger)
-	rolePermissionSRV := role_permission_service.NewRolePermissionService(ssoClient, logger)
-
 	userHandle := users_handle.New(usersSRV, logger)
+
+	rolesSRV := roles_service.NewRoleService(ssoClient, logger)
 	roleHandle := roles_handle.New(rolesSRV, logger)
+
+	permissionSRV := permission_service.NewPermissionService(ssoClient, logger)
 	permissionHandle := permissions_handle.New(permissionSRV, logger)
+
+	rolePermissionSRV := role_permission_service.NewRolePermissionService(ssoClient, logger)
 	rolePermissionHandle := role_permissions_handle.New(rolePermissionSRV, logger)
 
+	userRoleSRV := user_roles_service.NewUserRoleService(ssoClient, logger)
+	userRoleHandle := user_roles_handle.New(userRoleSRV, logger)
+
 	handler := handle.New(logger, cfg.MediaDir, cfg.Env, cfg.Frontend.Addr)
-
-	handler.RegisterHandlers(userHandle, roleHandle, permissionHandle, rolePermissionHandle)
-
+	handler.RegisterHandlers(userHandle, roleHandle, permissionHandle, rolePermissionHandle, userRoleHandle)
 	server := http_server.New(handler, logger)
-
 	go func() {
 		if err = server.Start(cfg.HTTPServer); err != nil {
 			logger.Error("HTTP server error", sl.Err(err, false))

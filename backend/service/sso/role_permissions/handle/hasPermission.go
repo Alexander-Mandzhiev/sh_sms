@@ -1,8 +1,8 @@
 package handle
 
 import (
+	"backend/pkg/utils"
 	"backend/protos/gen/go/sso/role_permissions"
-	"backend/service/utils"
 	"context"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

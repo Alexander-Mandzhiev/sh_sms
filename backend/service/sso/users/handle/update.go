@@ -1,6 +1,7 @@
 package handle
 
 import (
+	"backend/pkg/utils"
 	"context"
 	"fmt"
 	"log/slog"
@@ -8,7 +9,6 @@ import (
 
 	"backend/protos/gen/go/sso/users"
 	"backend/service/sso/models"
-	"backend/service/utils"
 )
 
 func (s *serverAPI) UpdateUser(ctx context.Context, req *users.UpdateRequest) (*users.User, error) {
@@ -64,5 +64,5 @@ func (s *serverAPI) UpdateUser(ctx context.Context, req *users.UpdateRequest) (*
 	}
 
 	logger.Info("user updated successfully")
-	return convertUserToProto(*updatedUser), nil
+	return models.ConvertUserToProto(updatedUser), nil
 }

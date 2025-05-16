@@ -1,10 +1,10 @@
 package service
 
 import (
+	"backend/pkg/utils"
 	"backend/service/sso/models"
 	servicePermission "backend/service/sso/permissions/service"
 	serviceRole "backend/service/sso/roles/service"
-	"backend/service/utils"
 	"context"
 	"errors"
 	"fmt"

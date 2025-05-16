@@ -1,9 +1,9 @@
 package handle
 
 import (
+	"backend/pkg/utils"
 	"backend/protos/gen/go/sso/roles"
 	"backend/service/sso/models"
-	"backend/service/utils"
 	"context"
 	"fmt"
 	"github.com/google/uuid"

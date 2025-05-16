@@ -1,8 +1,8 @@
 package service
 
 import (
+	"backend/pkg/utils"
 	servicePermission "backend/service/sso/permissions/service"
-	"backend/service/utils"
 	"context"
 	"errors"
 	"fmt"

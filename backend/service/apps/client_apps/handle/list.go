@@ -1,9 +1,9 @@
 package handle
 
 import (
+	"backend/pkg/utils"
 	pb "backend/protos/gen/go/apps/clients_apps"
 	"backend/service/apps/models"
-	"backend/service/utils"
 	"context"
 	"log/slog"
 )

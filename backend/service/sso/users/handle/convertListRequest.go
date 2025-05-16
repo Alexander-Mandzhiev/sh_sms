@@ -1,9 +1,9 @@
 package handle
 
 import (
+	"backend/pkg/utils"
 	"backend/protos/gen/go/sso/users"
 	"backend/service/sso/models"
-	"backend/service/utils"
 )
 
 func (s *serverAPI) convertListRequest(req *users.ListRequest) (*models.ListRequest, error) {

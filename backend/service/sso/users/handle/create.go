@@ -1,13 +1,13 @@
 package handle
 
 import (
+	"backend/pkg/utils"
 	"context"
 	"fmt"
 	"log/slog"
 
 	"backend/protos/gen/go/sso/users"
 	"backend/service/sso/models"
-	"backend/service/utils"
 )
 
 func (s *serverAPI) CreateUser(ctx context.Context, req *users.CreateRequest) (*users.User, error) {
@@ -45,5 +45,5 @@ func (s *serverAPI) CreateUser(ctx context.Context, req *users.CreateRequest) (*
 	}
 
 	logger.Info("user created successfully", slog.String("user_id", user.ID.String()))
-	return convertUserToProto(*user), nil
+	return models.ConvertUserToProto(user), nil
 }

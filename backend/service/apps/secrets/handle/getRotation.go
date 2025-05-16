@@ -1,9 +1,9 @@
 package handle
 
 import (
+	"backend/pkg/utils"
 	pb "backend/protos/gen/go/apps/secrets"
 	"backend/service/constants"
-	"backend/service/utils"
 	"context"
 	"errors"
 	"log/slog"

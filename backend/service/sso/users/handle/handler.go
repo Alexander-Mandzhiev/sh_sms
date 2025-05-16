@@ -26,6 +26,7 @@ type UserService interface {
 	List(ctx context.Context, req models.ListRequest) ([]models.User, int, error)
 	SetPassword(ctx context.Context, clientID, userID uuid.UUID, password string) error
 	Restore(ctx context.Context, clientID, userID uuid.UUID) (*models.User, error)
+	GetUserByLogin(ctx context.Context, login, password string, clientID uuid.UUID) (*models.UserInfo, error)
 }
 
 type serverAPI struct {

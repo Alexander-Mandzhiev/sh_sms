@@ -1,9 +1,9 @@
 package handle
 
 import (
+	utils2 "backend/pkg/utils"
 	user_roles "backend/protos/gen/go/sso/users_roles"
 	"backend/service/sso/models"
-	"backend/service/utils"
 	"context"
 	"fmt"
 	"log/slog"
@@ -19,19 +19,19 @@ func (s *serverAPI) ListForUser(ctx context.Context, req *user_roles.UserRequest
 		return nil, s.convertError(err)
 	}
 
-	userID, err := utils.ValidateAndReturnUUID(req.GetUserId())
+	userID, err := utils2.ValidateAndReturnUUID(req.GetUserId())
 	if err != nil {
 		logger.Warn("invalid user_id format", slog.String("field", "user_id"), slog.String("value", req.GetUserId()), slog.Any("error", err))
 		return nil, s.convertError(fmt.Errorf("%w: user_id", ErrInvalidArgument))
 	}
 
-	clientID, err := utils.ValidateAndReturnUUID(req.GetClientId())
+	clientID, err := utils2.ValidateAndReturnUUID(req.GetClientId())
 	if err != nil {
 		logger.Warn("invalid client_id format", slog.String("field", "client_id"), slog.String("value", req.GetClientId()), slog.Any("error", err))
 		return nil, s.convertError(fmt.Errorf("%w: client_id", ErrInvalidArgument))
 	}
 
-	if err = utils.ValidateAppID(int(req.GetAppId())); err != nil {
+	if err = utils2.ValidateAppID(int(req.GetAppId())); err != nil {
 		logger.Warn("invalid app_id format", slog.String("field", "assigned_by"), slog.Int("value", int(req.GetAppId())), slog.Any("error", err))
 		return nil, fmt.Errorf("%w: app_id", ErrInvalidArgument)
 	}
@@ -39,7 +39,7 @@ func (s *serverAPI) ListForUser(ctx context.Context, req *user_roles.UserRequest
 	filter := models.ListRequest{
 		UserID:   &userID,
 		ClientID: &clientID,
-		AppID:    utils.GetIntPointer(int(req.GetAppId())),
+		AppID:    utils2.GetIntPointer(int(req.GetAppId())),
 		Page:     int(req.Page),
 		Count:    int(req.Count),
 	}

@@ -1,10 +1,10 @@
 package handle
 
 import (
+	utils2 "backend/pkg/utils"
 	"backend/protos/gen/go/sso/roles"
 	"backend/service/constants"
 	"backend/service/sso/models"
-	"backend/service/utils"
 	"context"
 	"fmt"
 	"log/slog"
@@ -15,30 +15,30 @@ func (s *serverAPI) ListRoles(ctx context.Context, req *roles.ListRequest) (*rol
 	logger := s.logger.With(slog.String("op", op), slog.String("client_id", req.GetClientId()))
 	logger.Debug("attempting to list roles")
 
-	clientID, err := utils.ValidateAndReturnUUID(req.GetClientId())
+	clientID, err := utils2.ValidateAndReturnUUID(req.GetClientId())
 	if err != nil {
 		logger.Warn("invalid client_id", slog.Any("error", err))
 		return nil, s.convertError(fmt.Errorf("%w: client_id", constants.ErrInvalidArgument))
 	}
-	if err = utils.ValidatePagination(int(req.GetPage()), int(req.GetCount())); err != nil {
+	if err = utils2.ValidatePagination(int(req.GetPage()), int(req.GetCount())); err != nil {
 		logger.Warn("invalid pagination", slog.Int("page", int(req.GetPage())), slog.Int("count", int(req.GetCount())), slog.Any("error", err))
 		return nil, s.convertError(err)
 	}
 
-	if err = utils.ValidateAppID(int(req.GetAppId())); err != nil {
+	if err = utils2.ValidateAppID(int(req.GetAppId())); err != nil {
 		logger.Warn("invalid app_id", slog.Any("error", err))
 		return nil, s.convertError(fmt.Errorf("%w: app_id", constants.ErrInvalidArgument))
 	}
 
 	listReq := models.ListRequest{
 		ClientID: &clientID,
-		AppID:    utils.GetIntPointer(int(req.GetAppId())),
+		AppID:    utils2.GetIntPointer(int(req.GetAppId())),
 		Page:     int(req.GetPage()),
 		Count:    int(req.GetCount()),
 	}
 
 	if req.LevelFilter != nil {
-		listReq.LevelFilter = utils.GetIntPointer(int(req.GetLevelFilter()))
+		listReq.LevelFilter = utils2.GetIntPointer(int(req.GetLevelFilter()))
 	}
 
 	if req.GetNameFilter() != "" {

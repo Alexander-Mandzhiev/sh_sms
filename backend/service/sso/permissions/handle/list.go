@@ -1,9 +1,9 @@
 package handle
 
 import (
+	utils2 "backend/pkg/utils"
 	"backend/protos/gen/go/sso/permissions"
 	"backend/service/sso/models"
-	"backend/service/utils"
 	"context"
 	"log/slog"
 )
@@ -13,18 +13,18 @@ func (s *serverAPI) ListPermissions(ctx context.Context, req *permissions.ListRe
 	logger := s.logger.With(slog.String("op", op), slog.Int("app_id", int(req.GetAppId())))
 	logger.Debug("processing list request")
 
-	if err := utils.ValidateAppID(int(req.GetAppId())); err != nil {
+	if err := utils2.ValidateAppID(int(req.GetAppId())); err != nil {
 		logger.Warn("invalid app_id", slog.Any("error", err))
 		return nil, s.convertError(ErrInvalidArgument)
 	}
 
-	if err := utils.ValidatePagination(int(req.GetPage()), int(req.GetCount())); err != nil {
+	if err := utils2.ValidatePagination(int(req.GetPage()), int(req.GetCount())); err != nil {
 		logger.Warn("invalid pagination", slog.Int("page", int(req.GetPage())), slog.Int("count", int(req.GetCount())), slog.Any("error", err))
 		return nil, s.convertError(err)
 	}
 
 	filter := models.ListRequest{
-		AppID: utils.GetIntPointer(int(req.GetAppId())),
+		AppID: utils2.GetIntPointer(int(req.GetAppId())),
 		Page:  int(req.GetPage()),
 		Count: int(req.GetCount()),
 	}

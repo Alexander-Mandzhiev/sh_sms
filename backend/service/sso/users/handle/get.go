@@ -1,8 +1,9 @@
 package handle
 
 import (
+	"backend/pkg/utils"
 	"backend/protos/gen/go/sso/users"
-	"backend/service/utils"
+	"backend/service/sso/models"
 	"context"
 	"log/slog"
 )
@@ -31,5 +32,5 @@ func (s *serverAPI) GetUser(ctx context.Context, req *users.GetRequest) (*users.
 	}
 
 	logger.Info("user retrieved successfully")
-	return convertUserToProto(*user), nil
+	return models.ConvertUserToProto(user), nil
 }

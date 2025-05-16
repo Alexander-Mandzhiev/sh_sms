@@ -1,8 +1,8 @@
 package service
 
 import (
+	"backend/pkg/utils"
 	"backend/service/clients/client_types/models"
-	"backend/service/utils"
 	"context"
 	"fmt"
 	"log/slog"

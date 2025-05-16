@@ -1,13 +1,11 @@
 package roles_handle
 
 import (
-	"log/slog"
-	"net/http"
-	"strconv"
-
 	"backend/protos/gen/go/sso/roles"
 	"backend/service/gateway/models"
 	"github.com/gin-gonic/gin"
+	"log/slog"
+	"net/http"
 )
 
 func (h *Handler) updateRole(c *gin.Context) {
@@ -15,26 +13,14 @@ func (h *Handler) updateRole(c *gin.Context) {
 	logger := h.logger.With(slog.String("op", op))
 
 	id := c.Param("id")
-	clientID := c.Query("client_id")
-	appIDStr := c.Query("app_id")
-
-	if id == "" || clientID == "" || appIDStr == "" {
-		logger.Error("Missing required parameters", slog.String("role_id", id), slog.String("client_id", clientID), slog.String("app_id", appIDStr))
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Parameters 'id', 'client_id' and 'app_id' are required",
-		})
-		return
-	}
-
-	appID, err := strconv.Atoi(appIDStr)
-	if err != nil {
-		logger.Error("Invalid app_id format", slog.String("app_id", appIDStr), slog.String("error", err.Error()))
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid app_id format, must be integer"})
+	if id == "" {
+		logger.Error("Missing required parameters", slog.String("role_id", id))
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Parameters 'id', 'client_id' and 'app_id' are required"})
 		return
 	}
 
 	var req models.UpdateRoleRequest
-	if err = c.ShouldBindJSON(&req); err != nil {
+	if err := c.ShouldBindJSON(&req); err != nil {
 		logger.Error("Failed to bind JSON", slog.String("error", err.Error()))
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
 		return
@@ -48,8 +34,8 @@ func (h *Handler) updateRole(c *gin.Context) {
 
 	grpcReq := &roles.UpdateRequest{
 		Id:          id,
-		ClientId:    clientID,
-		AppId:       int32(appID),
+		ClientId:    req.ClientID,
+		AppId:       req.AppID,
 		Name:        req.Name,
 		Description: req.Description,
 		Level:       req.Level,
@@ -57,7 +43,7 @@ func (h *Handler) updateRole(c *gin.Context) {
 
 	resp, err := h.service.UpdateRole(c.Request.Context(), grpcReq)
 	if err != nil {
-		logger.Error("Failed to update role", slog.String("role_id", id), slog.String("client_id", clientID), slog.Int("app_id", appID), slog.String("error", err.Error()))
+		logger.Error("Failed to update role", slog.String("role_id", id), slog.String("client_id", req.ClientID), slog.Int("app_id", int(req.AppID)), slog.String("error", err.Error()))
 		h.handleGRPCError(c, err)
 		return
 	}

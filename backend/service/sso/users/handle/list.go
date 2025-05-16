@@ -1,8 +1,9 @@
 package handle
 
 import (
+	"backend/pkg/utils"
 	"backend/protos/gen/go/sso/users"
-	"backend/service/utils"
+	"backend/service/sso/models"
 	"context"
 	"log/slog"
 )
@@ -38,7 +39,7 @@ func (s *serverAPI) ListUsers(ctx context.Context, req *users.ListRequest) (*use
 
 	pbUsers := make([]*users.User, 0, len(usersList))
 	for _, user := range usersList {
-		pbUsers = append(pbUsers, convertUserToProto(user))
+		pbUsers = append(pbUsers, models.ConvertUserToProto(&user))
 	}
 
 	logger.Info("successfully retrieved users", slog.Int("total", total), slog.Int("returned", len(usersList)))
