@@ -4,6 +4,7 @@ import (
 	"backend/protos/gen/go/auth"
 	"github.com/google/uuid"
 	"google.golang.org/protobuf/types/known/timestamppb"
+	"net"
 	"time"
 )
 
@@ -14,7 +15,7 @@ type Session struct {
 	AppID            int
 	AccessTokenHash  string
 	RefreshTokenHash string
-	IPAddress        string
+	IPAddress        net.IP
 	UserAgent        string
 	CreatedAt        time.Time
 	LastActivity     time.Time
@@ -32,7 +33,14 @@ func SessionToProto(s *Session) *auth.Session {
 		CreatedAt:    timestamppb.New(s.CreatedAt),
 		LastActivity: timestamppb.New(s.LastActivity),
 		ClientId:     s.ClientID.String(),
-		IpAddress:    s.IPAddress,
+		IpAddress:    s.IPAddress.String(),
 		UserAgent:    s.UserAgent,
 	}
+}
+func SessionsToProto(sessions []Session) *auth.SessionList {
+	pbSessions := make([]*auth.Session, 0, len(sessions))
+	for _, session := range sessions {
+		pbSessions = append(pbSessions, SessionToProto(&session))
+	}
+	return &auth.SessionList{Sessions: pbSessions}
 }

@@ -1,43 +1,25 @@
 package config
 
 import (
+	"backend/pkg/config/models"
 	"flag"
 	"fmt"
-	"log"
-	"os"
-	"regexp"
-	"time"
-
 	"github.com/ilyakaznacheev/cleanenv"
 	"github.com/joho/godotenv"
 	"gopkg.in/yaml.v3"
+	"log"
+	"os"
+	"regexp"
 )
 
 type Config struct {
-	Env        string         `yaml:"env" env:"ENV" env-default:"development"`
-	GRPCServer GRPCServer     `yaml:"grpc_server"`
-	DBConfig   DatabaseConfig `yaml:"database"`
-}
-
-type GRPCServer struct {
-	Address     string        `yaml:"address" env:"GRPC_ADDRESS" env-default:"0.0.0.0"`
-	Port        int           `yaml:"port" env:"GRPC_PORT" env-default:"6511"`
-	Timeout     time.Duration `yaml:"timeout" env:"GRPC_TIMEOUT" env-default:"10s"`
-	IdleTimeout time.Duration `yaml:"idle_timeout" env:"GRPC_IDLE_TIMEOUT" env-default:"60s"`
+	Env        string            `yaml:"env" env:"ENV" env-default:"development"`
+	GRPCServer models.GRPCServer `yaml:"grpc_server"`
+	DBConfig   DatabaseConfig    `yaml:"database"`
 }
 
 type DatabaseConfig struct {
-	Postgres PostgresConfig `yaml:"postgresql"`
-}
-
-type PostgresConfig struct {
-	ConnectionString   string        `yaml:"connection_string" env:"POSTGRES_CONNECTION_STRING" env-required:"true"`
-	MaxOpenConnections int32         `yaml:"max_open_connections" env:"POSTGRES_MAX_OPEN_CONNS" env-default:"20"`
-	MaxIdleConnections int32         `yaml:"max_idle_connections" env:"POSTGRES_MAX_IDLE_CONNS" env-default:"10"`
-	ConnMaxLifetime    time.Duration `yaml:"conn_max_lifetime" env:"POSTGRES_CONN_MAX_LIFETIME" env-default:"30m"`
-	ConnMaxIdleTime    time.Duration `yaml:"conn_max_idle_time" env:"POSTGRES_CONN_MAX_IDLE_TIME" env-default:"5m"`
-	HealthCheckPeriod  time.Duration `yaml:"health_check_period" env:"POSTGRES_HEALTH_CHECK_PERIOD" env-default:"1m"`
-	ConnectTimeout     time.Duration `yaml:"connect_timeout" env:"POSTGRES_CONNECT_TIMEOUT" env-default:"5s"`
+	Postgres models.PostgresConfig `yaml:"postgresql"`
 }
 
 func (c *Config) Validate() error {
@@ -137,11 +119,13 @@ func logConfig(cfg *Config) {
 	logCfg := *cfg
 	logCfg.DBConfig.Postgres.ConnectionString = maskPassword(logCfg.DBConfig.Postgres.ConnectionString)
 
-	_, err := yaml.Marshal(logCfg)
+	data, err := yaml.Marshal(logCfg)
 	if err != nil {
 		log.Printf("Failed to marshal config for logging: %v", err)
 		return
 	}
+
+	log.Printf("Loaded config:\n%s", string(data))
 }
 
 func maskPassword(dsn string) string {

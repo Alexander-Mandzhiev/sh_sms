@@ -24,6 +24,7 @@ type UsersProvider interface {
 
 	GetByID(ctx context.Context, clientID, userID uuid.UUID) (*models.User, error)
 	GetByEmail(ctx context.Context, clientID uuid.UUID, email string) (*models.User, error)
+	GetByEmailOrPhone(ctx context.Context, clientID uuid.UUID, login string) (*models.User, error)
 	List(ctx context.Context, filter models.ListRequest) ([]models.User, int, error)
 
 	SoftDeleteUser(ctx context.Context, clientID, userID uuid.UUID) error

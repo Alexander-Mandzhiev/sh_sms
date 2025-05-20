@@ -7,7 +7,7 @@ CREATE TABLE roles (
     app_id INT NOT NULL,
     name VARCHAR(150) NOT NULL,
     description TEXT NOT NULL DEFAULT '',
-    level INT DEFAULT 0 CHECK (level >= 0),
+    level INT DEFAULT 1 CHECK (level > 0),
     is_custom BOOLEAN NOT NULL DEFAULT TRUE,
     is_active BOOLEAN NOT NULL DEFAULT TRUE,
     created_by UUID REFERENCES users(id) ON DELETE SET NULL,

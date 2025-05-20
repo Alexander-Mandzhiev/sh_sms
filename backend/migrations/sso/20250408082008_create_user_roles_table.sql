@@ -6,7 +6,7 @@ CREATE TABLE user_roles (
     role_id UUID NOT NULL,
     client_id UUID NOT NULL,
     app_id INT NOT NULL,
-    assigned_by UUID NOT NULL REFERENCES users(id),
+    assigned_by UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     expires_at TIMESTAMPTZ,
     assigned_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (user_id, role_id, client_id, app_id),

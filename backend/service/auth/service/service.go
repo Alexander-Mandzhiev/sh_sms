@@ -1,6 +1,7 @@
 package service
 
 import (
+	config "backend/pkg/config/auth"
 	"log/slog"
 )
 
@@ -14,12 +15,15 @@ type AuthService struct {
 	clientApps     ClientAppsService
 	secret         SecretService
 	client         ClientService
+	session        SessionProvider
 	logger         *slog.Logger
+	cfg            *config.Config
 }
 
 func NewAuthService(userService UserService, roleService RoleService, permissionService PermissionService,
 	rolePermission RolePermissionService, userRole UserRoleService, appManager AppService, secret SecretService,
-	clientApps ClientAppsService, client ClientService, logger *slog.Logger) *AuthService {
+	clientApps ClientAppsService, client ClientService, session SessionProvider,
+	logger *slog.Logger, cfg *config.Config) *AuthService {
 	return &AuthService{
 		users:          userService,
 		roles:          roleService,
@@ -30,6 +34,8 @@ func NewAuthService(userService UserService, roleService RoleService, permission
 		clientApps:     clientApps,
 		secret:         secret,
 		client:         client,
+		session:        session,
 		logger:         logger.With("service", "auth"),
+		cfg:            cfg,
 	}
 }

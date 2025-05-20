@@ -62,6 +62,27 @@ services:
       timeout: 5s
       retries: 5
 
+  auth_database:
+    container_name: auth_database
+    image: postgres
+    environment:
+      POSTGRES_DB: ${AUTH_DB_NAME}
+      POSTGRES_USER: ${AUTH_DB_USER}
+      POSTGRES_PASSWORD: ${AUTH_DB_PASSWORD}
+    volumes:
+      - auth_init:/docker-entrypoint-initdb.d
+      - auth_data:/var/lib/postgresql/data
+    ports:
+      - "5436:5432"
+    networks:
+      - sh-sms-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d auth"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   prometheus:
     image: prom/prometheus
     container_name: prometheus
@@ -102,6 +123,8 @@ volumes:
   sso_data:
   clients_init:
   clients_data:
+  auth_init:
+  auth_data:
   media-data:
   grafana-storage:
 

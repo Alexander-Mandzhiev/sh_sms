@@ -1,7 +1,7 @@
 package dbManager
 
 import (
-	config "backend/pkg/config/service"
+	"backend/pkg/config/models"
 	"context"
 	"fmt"
 	"log/slog"
@@ -12,8 +12,8 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func OpenPostgresqlConnection(cfg config.PostgresConfig, logger *slog.Logger) (*pgxpool.Pool, error) {
-	const op = "db_manager.OpenPostgreSQLConnection"
+func OpenPostgresqlConnection(cfg models.PostgresConfig, logger *slog.Logger) (*pgxpool.Pool, error) {
+	const op = "db_manager.OpenPostgresSQLConnection"
 
 	if cfg.ConnectionString == "" {
 		return nil, fmt.Errorf("%s: database configuration is not initialized", op)

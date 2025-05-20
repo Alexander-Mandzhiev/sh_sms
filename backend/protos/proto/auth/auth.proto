@@ -79,7 +79,15 @@ message TokenIntrospection {
   google.protobuf.Timestamp iat = 6;
   repeated string roles = 7;
   repeated string permissions = 8;
-  map<string, string> metadata = 9;
+  IntrospectMetadata metadata = 9;
+}
+
+message IntrospectMetadata {
+  string ip_address = 1;
+  string user_agent = 2;
+  string client_app = 3;
+  string session_id = 4;
+  int32 app_id = 5;
 }
 
 message PermissionCheckRequest {
@@ -101,6 +109,8 @@ message SessionFilter {
   string client_id = 2;
   int32 app_id = 3;
   bool active_only = 4;
+  int32 page = 5;  
+  int32 count = 6;
 }
 
 message Session {

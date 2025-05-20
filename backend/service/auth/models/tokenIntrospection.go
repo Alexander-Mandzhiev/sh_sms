@@ -8,15 +8,22 @@ import (
 )
 
 type TokenIntrospection struct {
-	Active         bool
-	ClientID       uuid.UUID
-	UserID         uuid.UUID
-	TokenType      string
-	ExpiresAt      time.Time
-	IssuedAt       time.Time
-	Roles          []string
-	Permissions    []string
-	ClientMetadata map[string]string
+	Active      bool
+	ClientID    uuid.UUID
+	UserID      uuid.UUID
+	TokenType   string
+	ExpiresAt   time.Time
+	IssuedAt    time.Time
+	Roles       []string
+	Permissions []string
+	Metadata    IntrospectMetadata
+}
+type IntrospectMetadata struct {
+	IPAddress string
+	UserAgent string
+	ClientApp string
+	SessionID string
+	AppID     int32
 }
 
 func TokenIntrospectionToProto(ti *TokenIntrospection) *auth.TokenIntrospection {
@@ -29,6 +36,12 @@ func TokenIntrospectionToProto(ti *TokenIntrospection) *auth.TokenIntrospection 
 		Iat:         timestamppb.New(ti.IssuedAt),
 		Roles:       ti.Roles,
 		Permissions: ti.Permissions,
-		Metadata:    ti.ClientMetadata,
+		Metadata: &auth.IntrospectMetadata{
+			IpAddress: ti.Metadata.IPAddress,
+			UserAgent: ti.Metadata.UserAgent,
+			ClientApp: ti.Metadata.ClientApp,
+			SessionId: ti.Metadata.SessionID,
+			AppId:     ti.Metadata.AppID,
+		},
 	}
 }
