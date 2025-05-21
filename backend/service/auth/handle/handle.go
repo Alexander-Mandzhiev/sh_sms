@@ -12,9 +12,13 @@ import (
 )
 
 var (
-	ErrInvalidArgument  = errors.New("invalid argument")
-	ErrPermissionDenied = errors.New("permission denied")
-	ErrUnauthenticated  = errors.New("unauthenticated")
+	ErrInvalidArgument   = errors.New("invalid argument")
+	ErrPermissionDenied  = errors.New("permission denied")
+	ErrUnauthenticated   = errors.New("unauthenticated")
+	ErrInvalidEmail      = errors.New("invalid email")
+	ErrInvalidPagination = errors.New("invalid pagination")
+	ErrInvalidAppID      = errors.New("invalid app id")
+	ErrInvalidUserID     = errors.New("invalid user id")
 )
 
 type AuthService interface {
@@ -26,7 +30,8 @@ type AuthService interface {
 	IntrospectToken(ctx context.Context, token string, tokenTypeHint string) (*models.TokenIntrospection, error)
 	CheckPermission(ctx context.Context, check *models.PermissionCheck) (bool, []string, []string, error)
 
-	ListActiveSessions(ctx context.Context, filter models.SessionFilter) ([]models.Session, error)
+	ListSessionsForUser(ctx context.Context, filter models.SessionFilter) ([]models.Session, error)
+	ListAllSessions(ctx context.Context, filter models.AllSessionsFilter) ([]models.Session, error)
 	TerminateSession(ctx context.Context, sessionID uuid.UUID) error
 }
 

@@ -4,27 +4,24 @@ import (
 	"backend/service/auth/models"
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"log/slog"
 	"strings"
 )
 
-func (r *Repository) ListSessions(ctx context.Context, filter models.SessionFilter) ([]models.Session, error) {
-	const op = "repository.ListSessions"
+func (r *Repository) ListAllSessions(ctx context.Context, filter models.AllSessionsFilter) ([]models.Session, error) {
+	const op = "repository.ListAllSessions"
+	logger := r.logger.With(slog.String("op", op), slog.String("client_id", filter.ClientID.String()), slog.Int("app_id", filter.AppID))
 
 	query := strings.Builder{}
 	args := make([]interface{}, 0)
 	argPos := 1
 
-	query.WriteString(`SELECT session_id, user_id, client_id, app_id, access_token_hash, refresh_token_hash, 
-       ip_address, user_agent, created_at, last_activity, expires_at, revoked_at FROM sessions WHERE 1=1`)
-
-	if filter.UserID != uuid.Nil {
-		query.WriteString(fmt.Sprintf(" AND user_id = $%d", argPos))
-		args = append(args, filter.UserID)
-		argPos++
-	}
+	query.WriteString(`SELECT session_id, user_id, client_id, app_id, access_token_hash, refresh_token_hash,
+            ip_address, user_agent, created_at, last_activity, expires_at, revoked_at FROM sessions WHERE 1=1`)
 
 	if filter.ClientID != uuid.Nil {
 		query.WriteString(fmt.Sprintf(" AND client_id = $%d", argPos))
@@ -38,7 +35,7 @@ func (r *Repository) ListSessions(ctx context.Context, filter models.SessionFilt
 		argPos++
 	}
 
-	if filter.ActiveOnly {
+	if filter.ActiveOnly != nil && *filter.ActiveOnly {
 		query.WriteString(" AND revoked_at IS NULL AND expires_at > NOW()")
 	}
 
@@ -57,9 +54,11 @@ func (r *Repository) ListSessions(ctx context.Context, filter models.SessionFilt
 		argPos++
 	}
 
+	logger.Debug("executing query", slog.String("query", query.String()), slog.Any("args", args))
+
 	rows, err := r.db.Query(ctx, query.String(), args...)
 	if err != nil {
-		r.logger.Error("failed to query sessions", slog.String("op", op), slog.String("user_id", filter.UserID.String()), slog.String("client_id", filter.ClientID.String()), slog.Int("app_id", filter.AppID), slog.Bool("active_only", filter.ActiveOnly), slog.Int("page", filter.Page), slog.Int("count", filter.Count), slog.Any("error", err))
+		logger.Error("query execution failed", slog.Any("error", err))
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 	defer rows.Close()
@@ -70,22 +69,27 @@ func (r *Repository) ListSessions(ctx context.Context, filter models.SessionFilt
 		var revokedAt sql.NullTime
 
 		err = rows.Scan(&session.SessionID, &session.UserID, &session.ClientID, &session.AppID, &session.AccessTokenHash,
-			&session.RefreshTokenHash, &session.IPAddress, &session.UserAgent, &session.CreatedAt, &session.LastActivity, &session.ExpiresAt, &revokedAt,
-		)
+			&session.RefreshTokenHash, &session.IPAddress, &session.UserAgent, &session.CreatedAt, &session.LastActivity, &session.ExpiresAt, &revokedAt)
 		if err != nil {
-			r.logger.Error("failed to scan session row", slog.String("op", op), slog.Any("error", err))
+			if errors.Is(err, pgx.ErrNoRows) {
+				continue
+			}
+			logger.Error("row scan error", slog.Any("error", err))
 			return nil, fmt.Errorf("%s: %w", op, err)
 		}
+
 		if revokedAt.Valid {
 			session.RevokedAt = &revokedAt.Time
 		}
+
 		sessions = append(sessions, session)
 	}
 
 	if err = rows.Err(); err != nil {
-		r.logger.Error("rows iteration error", slog.String("op", op), slog.Any("error", err))
+		logger.Error("rows iteration error", slog.Any("error", err))
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
+	logger.Debug("sessions fetched", slog.Int("count", len(sessions)), slog.Bool("has_results", len(sessions) > 0))
 	return sessions, nil
 }

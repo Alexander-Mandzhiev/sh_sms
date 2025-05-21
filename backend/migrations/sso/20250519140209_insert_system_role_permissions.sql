@@ -41,6 +41,10 @@ INSERT INTO role_permissions (role_id, permission_id) VALUES
     ('9936aed6-680a-4f4b-a093-389a30be4a15', '11da4c13-8252-439f-a5d8-f85c167b2141'),  -- role.restore
 
     -- admin получает только возможность просматривать права (read, list), но не изменять их
+    ('9936aed6-680a-4f4b-a093-389a30be4a15', 'ca24487a-dfd6-4ca4-82b7-a86dbc0a8992'),  -- permission.create
+    ('9936aed6-680a-4f4b-a093-389a30be4a15', 'fc257e28-14db-4030-8bc6-741287aab3f3'),  -- permission.delete
     ('9936aed6-680a-4f4b-a093-389a30be4a15', 'fc57a6b0-9d96-47da-b9df-7745394365f5'),  -- permission.read
-    ('9936aed6-680a-4f4b-a093-389a30be4a15', 'd1f0d48b-32bf-4087-9b50-443a80c0bc06');  -- permission.list
+    ('9936aed6-680a-4f4b-a093-389a30be4a15', 'd1f0d48b-32bf-4087-9b50-443a80c0bc06'),  -- permission.list
+    ('9936aed6-680a-4f4b-a093-389a30be4a15', '2fbdf044-18e9-478b-b3e1-eb9f5670ca7c'),  -- permission.update
+    ('9936aed6-680a-4f4b-a093-389a30be4a15', 'c7d12711-6d51-4156-b53e-539c517c9c97'),  -- permission.restore
 -- +goose StatementEnd

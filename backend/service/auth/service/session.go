@@ -19,12 +19,15 @@ var (
 type SessionProvider interface {
 	CreateSession(ctx context.Context, session *models.Session) error
 	UpdateTokens(ctx context.Context, sessionID uuid.UUID, accessHash, refreshHash string, expiresAt time.Time) error
-	GetSession(ctx context.Context, userID uuid.UUID, clientID uuid.UUID, appID int, refreshTokenHash string) (*models.Session, error)
 	RevokeSession(ctx context.Context, sessionID uuid.UUID) error
-	ListSessions(ctx context.Context, filter models.SessionFilter) ([]models.Session, error)
 	DeleteSession(ctx context.Context, sessionID uuid.UUID) error
+
+	GetSession(ctx context.Context, userID uuid.UUID, clientID uuid.UUID, appID int, refreshTokenHash string) (*models.Session, error)
 	GetSessionByTokenHash(ctx context.Context, accessTokenHash, refreshTokenHash string) (*models.Session, error)
 	GetSessionByToken(ctx context.Context, token string) (*models.Session, error)
+
+	ListSessionsForUser(ctx context.Context, filter models.SessionFilter, fullName, phone, email string) ([]models.Session, error)
+	ListAllSessions(ctx context.Context, filter models.AllSessionsFilter) ([]models.Session, error)
 }
 
 type SessionService struct {

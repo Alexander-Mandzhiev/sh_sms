@@ -6,6 +6,14 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+var (
+	ErrInvalidArgument  = errors.New("invalid argument")
+	ErrPermissionDenied = errors.New("permission denied")
+	ErrAlreadyExists    = errors.New("user already exists")
+	ErrNotFound         = errors.New("user not found")
+	ErrUnauthenticated  = errors.New("unauthenticated")
+)
+
 func (s *serverAPI) convertError(err error) error {
 	switch {
 	case errors.Is(err, ErrNotFound):

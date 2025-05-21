@@ -13,6 +13,7 @@ service UserService {
   rpc SetPassword(SetPasswordRequest) returns (SuccessResponse);
   rpc RestoreUser(RestoreRequest) returns (User);
   rpc GetUserByLogin(GetUserByLoginRequest) returns (UserInfo);
+  rpc BatchGetUsers(BatchGetRequest) returns (BatchGetResponse);
 }
 
 message User {
@@ -96,4 +97,15 @@ message GetUserByLoginRequest {
   string login = 1;
   string client_id = 2;
   string password = 3;
+}
+
+message BatchGetRequest {
+  repeated string user_ids = 1;
+  string client_id = 2;
+  bool include_inactive = 3;
+}
+
+message BatchGetResponse {
+  repeated User users = 1;
+  repeated string missing_ids = 2;
 }

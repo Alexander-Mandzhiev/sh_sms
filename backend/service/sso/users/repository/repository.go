@@ -11,6 +11,7 @@ var (
 	ErrInternal           = errors.New("internal server error")
 	ErrNotFound           = errors.New("user not found")
 	ErrEmailAlreadyExists = errors.New("email already exists")
+	ErrInvalidArgument    = errors.New("invalid argument")
 )
 
 type Repository struct {

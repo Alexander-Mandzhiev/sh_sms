@@ -4,18 +4,9 @@ import (
 	"backend/protos/gen/go/sso/users"
 	"backend/service/sso/models"
 	"context"
-	"errors"
 	"github.com/google/uuid"
 	"google.golang.org/grpc"
 	"log/slog"
-)
-
-var (
-	ErrInvalidArgument  = errors.New("invalid argument")
-	ErrPermissionDenied = errors.New("permission denied")
-	ErrAlreadyExists    = errors.New("user already exists")
-	ErrNotFound         = errors.New("user not found")
-	ErrUnauthenticated  = errors.New("unauthenticated")
 )
 
 type UserService interface {
@@ -27,6 +18,7 @@ type UserService interface {
 	SetPassword(ctx context.Context, clientID, userID uuid.UUID, password string) error
 	Restore(ctx context.Context, clientID, userID uuid.UUID) (*models.User, error)
 	GetUserByLogin(ctx context.Context, login, password string, clientID uuid.UUID) (*models.UserInfo, error)
+	BatchGetUsers(ctx context.Context, clientID uuid.UUID, userIDs []uuid.UUID, includeInactive bool) ([]*models.User, []uuid.UUID, error)
 }
 
 type serverAPI struct {

@@ -21,6 +21,10 @@ type Session struct {
 	LastActivity     time.Time
 	ExpiresAt        time.Time
 	RevokedAt        *time.Time
+	// Новые поля из внешнего источника
+	FullName string
+	Phone    string
+	Email    string
 }
 
 func (s Session) IsActive() bool {
@@ -35,8 +39,13 @@ func SessionToProto(s *Session) *auth.Session {
 		ClientId:     s.ClientID.String(),
 		IpAddress:    s.IPAddress.String(),
 		UserAgent:    s.UserAgent,
+		UserId:       s.UserID.String(),
+		FullName:     s.FullName,
+		Phone:        s.Phone,
+		Email:        s.Email,
 	}
 }
+
 func SessionsToProto(sessions []Session) *auth.SessionList {
 	pbSessions := make([]*auth.Session, 0, len(sessions))
 	for _, session := range sessions {

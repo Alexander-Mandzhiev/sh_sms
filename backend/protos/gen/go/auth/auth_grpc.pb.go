@@ -20,14 +20,15 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AuthService_Login_FullMethodName              = "/auth.AuthService/Login"
-	AuthService_Logout_FullMethodName             = "/auth.AuthService/Logout"
-	AuthService_RefreshToken_FullMethodName       = "/auth.AuthService/RefreshToken"
-	AuthService_ValidateToken_FullMethodName      = "/auth.AuthService/ValidateToken"
-	AuthService_IntrospectToken_FullMethodName    = "/auth.AuthService/IntrospectToken"
-	AuthService_CheckPermission_FullMethodName    = "/auth.AuthService/CheckPermission"
-	AuthService_ListActiveSessions_FullMethodName = "/auth.AuthService/ListActiveSessions"
-	AuthService_TerminateSession_FullMethodName   = "/auth.AuthService/TerminateSession"
+	AuthService_Login_FullMethodName               = "/auth.AuthService/Login"
+	AuthService_Logout_FullMethodName              = "/auth.AuthService/Logout"
+	AuthService_RefreshToken_FullMethodName        = "/auth.AuthService/RefreshToken"
+	AuthService_ValidateToken_FullMethodName       = "/auth.AuthService/ValidateToken"
+	AuthService_IntrospectToken_FullMethodName     = "/auth.AuthService/IntrospectToken"
+	AuthService_CheckPermission_FullMethodName     = "/auth.AuthService/CheckPermission"
+	AuthService_ListSessionsForUser_FullMethodName = "/auth.AuthService/ListSessionsForUser"
+	AuthService_ListAllSessions_FullMethodName     = "/auth.AuthService/ListAllSessions"
+	AuthService_TerminateSession_FullMethodName    = "/auth.AuthService/TerminateSession"
 )
 
 // AuthServiceClient is the client API for AuthService service.
@@ -40,7 +41,8 @@ type AuthServiceClient interface {
 	ValidateToken(ctx context.Context, in *ValidateRequest, opts ...grpc.CallOption) (*TokenInfo, error)
 	IntrospectToken(ctx context.Context, in *ValidateRequest, opts ...grpc.CallOption) (*TokenIntrospection, error)
 	CheckPermission(ctx context.Context, in *PermissionCheckRequest, opts ...grpc.CallOption) (*PermissionCheckResponse, error)
-	ListActiveSessions(ctx context.Context, in *SessionFilter, opts ...grpc.CallOption) (*SessionList, error)
+	ListSessionsForUser(ctx context.Context, in *SessionFilter, opts ...grpc.CallOption) (*SessionList, error)
+	ListAllSessions(ctx context.Context, in *AllSessionsFilter, opts ...grpc.CallOption) (*SessionList, error)
 	TerminateSession(ctx context.Context, in *SessionID, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
@@ -112,10 +114,20 @@ func (c *authServiceClient) CheckPermission(ctx context.Context, in *PermissionC
 	return out, nil
 }
 
-func (c *authServiceClient) ListActiveSessions(ctx context.Context, in *SessionFilter, opts ...grpc.CallOption) (*SessionList, error) {
+func (c *authServiceClient) ListSessionsForUser(ctx context.Context, in *SessionFilter, opts ...grpc.CallOption) (*SessionList, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SessionList)
-	err := c.cc.Invoke(ctx, AuthService_ListActiveSessions_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, AuthService_ListSessionsForUser_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authServiceClient) ListAllSessions(ctx context.Context, in *AllSessionsFilter, opts ...grpc.CallOption) (*SessionList, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SessionList)
+	err := c.cc.Invoke(ctx, AuthService_ListAllSessions_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -142,7 +154,8 @@ type AuthServiceServer interface {
 	ValidateToken(context.Context, *ValidateRequest) (*TokenInfo, error)
 	IntrospectToken(context.Context, *ValidateRequest) (*TokenIntrospection, error)
 	CheckPermission(context.Context, *PermissionCheckRequest) (*PermissionCheckResponse, error)
-	ListActiveSessions(context.Context, *SessionFilter) (*SessionList, error)
+	ListSessionsForUser(context.Context, *SessionFilter) (*SessionList, error)
+	ListAllSessions(context.Context, *AllSessionsFilter) (*SessionList, error)
 	TerminateSession(context.Context, *SessionID) (*emptypb.Empty, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
@@ -172,8 +185,11 @@ func (UnimplementedAuthServiceServer) IntrospectToken(context.Context, *Validate
 func (UnimplementedAuthServiceServer) CheckPermission(context.Context, *PermissionCheckRequest) (*PermissionCheckResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckPermission not implemented")
 }
-func (UnimplementedAuthServiceServer) ListActiveSessions(context.Context, *SessionFilter) (*SessionList, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListActiveSessions not implemented")
+func (UnimplementedAuthServiceServer) ListSessionsForUser(context.Context, *SessionFilter) (*SessionList, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListSessionsForUser not implemented")
+}
+func (UnimplementedAuthServiceServer) ListAllSessions(context.Context, *AllSessionsFilter) (*SessionList, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListAllSessions not implemented")
 }
 func (UnimplementedAuthServiceServer) TerminateSession(context.Context, *SessionID) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TerminateSession not implemented")
@@ -307,20 +323,38 @@ func _AuthService_CheckPermission_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AuthService_ListActiveSessions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _AuthService_ListSessionsForUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SessionFilter)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AuthServiceServer).ListActiveSessions(ctx, in)
+		return srv.(AuthServiceServer).ListSessionsForUser(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AuthService_ListActiveSessions_FullMethodName,
+		FullMethod: AuthService_ListSessionsForUser_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServiceServer).ListActiveSessions(ctx, req.(*SessionFilter))
+		return srv.(AuthServiceServer).ListSessionsForUser(ctx, req.(*SessionFilter))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuthService_ListAllSessions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AllSessionsFilter)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).ListAllSessions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_ListAllSessions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).ListAllSessions(ctx, req.(*AllSessionsFilter))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -375,8 +409,12 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AuthService_CheckPermission_Handler,
 		},
 		{
-			MethodName: "ListActiveSessions",
-			Handler:    _AuthService_ListActiveSessions_Handler,
+			MethodName: "ListSessionsForUser",
+			Handler:    _AuthService_ListSessionsForUser_Handler,
+		},
+		{
+			MethodName: "ListAllSessions",
+			Handler:    _AuthService_ListAllSessions_Handler,
 		},
 		{
 			MethodName: "TerminateSession",
