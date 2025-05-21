@@ -1,12 +1,12 @@
 package user_roles_handle
 
 import (
+	"backend/service/gateway/models/sso"
 	"log/slog"
 	"net/http"
 	"time"
 
 	"backend/protos/gen/go/sso/users_roles"
-	"backend/service/gateway/models"
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,7 +14,7 @@ func (h *Handler) revokeRole(c *gin.Context) {
 	const op = "gateway.UserRoles.RevokeRole"
 	logger := h.logger.With(slog.String("op", op))
 
-	var req models.RevokeRoleRequest
+	var req sso_models.RevokeRoleRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		logger.Error("Failed to parse request", slog.String("error", err.Error()))
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
@@ -41,7 +41,7 @@ func (h *Handler) revokeRole(c *gin.Context) {
 		return
 	}
 
-	revokeResponse := models.RevokeResponseFromProto(resp)
+	revokeResponse := sso_models.RevokeResponseFromProto(resp)
 	logger.Info("Role revoked successfully", slog.String("user_id", req.UserID), slog.String("role_id", req.RoleID))
 	c.JSON(http.StatusOK, gin.H{
 		"success":    revokeResponse.Success,

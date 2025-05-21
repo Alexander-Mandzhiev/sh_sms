@@ -1,12 +1,12 @@
 package roles_handle
 
 import (
+	"backend/service/gateway/models/sso"
 	"log/slog"
 	"net/http"
 	"strconv"
 
 	"backend/protos/gen/go/sso/roles"
-	"backend/service/gateway/models"
 	"github.com/gin-gonic/gin"
 )
 
@@ -44,7 +44,7 @@ func (h *Handler) restoreRole(c *gin.Context) {
 		return
 	}
 
-	role, err := models.RoleFromProto(resp)
+	role, err := sso_models.RoleFromProto(resp)
 	if err != nil {
 		logger.Error("Proto conversion failed", slog.String("error", err.Error()))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})

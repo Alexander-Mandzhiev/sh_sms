@@ -11,11 +11,12 @@ import (
 )
 
 type Config struct {
-	Env        string         `yaml:"env" env:"ENV" env-default:"development"`
-	MediaDir   string         `yaml:"media_dir" env:"MEDIA_DIR"`
-	HTTPServer HTTPServer     `yaml:"http_server"`
-	Services   ServicesConfig `yaml:"services"`
-	Frontend   Frontend       `yaml:"frontend"`
+	Env           string         `yaml:"env" env:"ENV" env-default:"development"`
+	MediaDir      string         `yaml:"media_dir" env:"MEDIA_DIR"`
+	TokenDuration time.Duration  `yaml:"token_duration" env:"TOKEN_DURATION"`
+	HTTPServer    HTTPServer     `yaml:"http_server"`
+	Services      ServicesConfig `yaml:"services"`
+	Frontend      Frontend       `yaml:"frontend"`
 }
 
 type HTTPServer struct {

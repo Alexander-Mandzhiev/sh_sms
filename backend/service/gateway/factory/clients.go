@@ -6,10 +6,11 @@ import (
 	"backend/protos/gen/go/clients/clients"
 	"backend/protos/gen/go/clients/contacts"
 	"context"
+	"fmt"
 	"google.golang.org/grpc"
 )
 
-type ClientsClientType interface {
+type ClientsType interface {
 	clients.ClientServiceClient
 	client_types.ClientTypeServiceClient
 	addresses.AddressServiceClient
@@ -29,10 +30,14 @@ func (c *ClientsClient) Close() error {
 	return c.conn.Close()
 }
 
-func (p *ClientProvider) GetClientsClient(ctx context.Context) (ClientsClientType, error) {
+func (p *ClientProvider) GetClientsClient(ctx context.Context) (ClientsType, error) {
 	client, err := p.getClient(ctx, ServiceClients)
 	if err != nil {
 		return nil, err
 	}
-	return client.(ClientsClientType), nil
+	clientsClient, ok := client.(ClientsType)
+	if !ok {
+		return nil, fmt.Errorf("type assertion failed for SSO client")
+	}
+	return clientsClient, nil
 }

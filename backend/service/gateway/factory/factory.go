@@ -12,6 +12,7 @@ const (
 	ServiceSSO ServiceType = iota
 	ServiceApps
 	ServiceClients
+	ServiceAuth
 )
 
 func (s ServiceType) String() string {

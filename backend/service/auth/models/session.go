@@ -21,10 +21,9 @@ type Session struct {
 	LastActivity     time.Time
 	ExpiresAt        time.Time
 	RevokedAt        *time.Time
-	// Новые поля из внешнего источника
-	FullName string
-	Phone    string
-	Email    string
+	FullName         string
+	Phone            string
+	Email            string
 }
 
 func (s Session) IsActive() bool {

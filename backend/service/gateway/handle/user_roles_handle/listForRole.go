@@ -3,10 +3,10 @@ package user_roles_handle
 import (
 	"backend/pkg/utils"
 	user_roles "backend/protos/gen/go/sso/users_roles"
+	"backend/service/gateway/models/sso"
 	"log/slog"
 	"net/http"
 
-	"backend/service/gateway/models"
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,7 +14,7 @@ func (h *Handler) listForRole(c *gin.Context) {
 	const op = "gateway.UserRoles.ListForRole"
 	logger := h.logger.With(slog.String("op", op))
 
-	var req models.RoleUsersListRequest
+	var req sso_models.RoleUsersListRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		logger.Error("Failed to parse request", slog.String("error", err.Error()))
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
@@ -48,7 +48,7 @@ func (h *Handler) listForRole(c *gin.Context) {
 		return
 	}
 
-	response := models.UserRolesListFromProto(resp)
+	response := sso_models.UserRolesListFromProto(resp)
 	logger.Info("Users listed for role", slog.String("role_id", req.RoleID), slog.Int("users_count", len(response.Assignments)))
 	c.JSON(http.StatusOK, gin.H{
 		"data": response.Assignments,

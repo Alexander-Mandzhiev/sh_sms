@@ -2,7 +2,7 @@ package users_handle
 
 import (
 	"backend/protos/gen/go/sso/users"
-	"backend/service/gateway/models"
+	"backend/service/gateway/models/sso"
 	"github.com/gin-gonic/gin"
 	"log/slog"
 	"net/http"
@@ -33,7 +33,7 @@ func (h *Handler) restoreUser(c *gin.Context) {
 		return
 	}
 
-	user, err := models.UserFromProto(resp)
+	user, err := sso_models.UserFromProto(resp)
 	if err != nil {
 		logger.Error("Proto conversion failed", slog.String("error", err.Error()))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})

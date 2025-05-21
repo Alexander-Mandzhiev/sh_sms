@@ -1,11 +1,11 @@
 package role_permissions_handle
 
 import (
+	"backend/service/gateway/models/sso"
 	"log/slog"
 	"net/http"
 
 	"backend/protos/gen/go/sso/role_permissions"
-	"backend/service/gateway/models"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,7 +13,7 @@ func (h *Handler) listPermissionsForRole(c *gin.Context) {
 	const op = "gateway.RolePermissions.ListPermissionsForRole"
 	logger := h.logger.With(slog.String("op", op))
 
-	var req models.ListRolePermissionsRequest
+	var req sso_models.ListRolePermissionsRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		logger.Error("failed to bind JSON", slog.String("error", err.Error()))
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
@@ -41,7 +41,7 @@ func (h *Handler) listPermissionsForRole(c *gin.Context) {
 		return
 	}
 
-	permissionsList := models.RolePermissionsListFromProto(resp)
+	permissionsList := sso_models.RolePermissionsListFromProto(resp)
 
 	logger.Info("permissions listed successfully", slog.String("role_id", req.RoleID), slog.Int("permissions_count", len(permissionsList.PermissionIDs)))
 	c.JSON(http.StatusOK, gin.H{

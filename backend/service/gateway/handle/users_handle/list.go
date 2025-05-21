@@ -1,11 +1,11 @@
 package users_handle
 
 import (
+	"backend/service/gateway/models/sso"
 	"log/slog"
 	"net/http"
 
 	"backend/protos/gen/go/sso/users"
-	"backend/service/gateway/models"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,7 +13,7 @@ func (h *Handler) listUsers(c *gin.Context) {
 	const op = "gateway.Users.List"
 	logger := h.logger.With(slog.String("op", op))
 
-	var req models.ListUsersRequest
+	var req sso_models.ListUsersRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		logger.Error("Invalid request format", slog.String("error", err.Error()))
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
@@ -43,9 +43,9 @@ func (h *Handler) listUsers(c *gin.Context) {
 		return
 	}
 
-	usersList := make([]*models.User, 0, len(resp.Users))
+	usersList := make([]*sso_models.User, 0, len(resp.Users))
 	for _, protoUser := range resp.Users {
-		user, err := models.UserFromProto(protoUser)
+		user, err := sso_models.UserFromProto(protoUser)
 		if err != nil {
 			logger.Error("Proto conversion failed",
 				slog.String("error", err.Error()))

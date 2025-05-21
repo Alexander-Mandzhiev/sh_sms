@@ -1,12 +1,12 @@
 package permissions_handle
 
 import (
+	"backend/service/gateway/models/sso"
 	"log/slog"
 	"net/http"
 	"strconv"
 
 	"backend/protos/gen/go/sso/permissions"
-	"backend/service/gateway/models"
 	"github.com/gin-gonic/gin"
 )
 
@@ -42,7 +42,7 @@ func (h *Handler) restore(c *gin.Context) {
 		return
 	}
 
-	permission, err := models.PermissionFromProto(resp)
+	permission, err := sso_models.PermissionFromProto(resp)
 	if err != nil {
 		logger.Error("Proto conversion failed", slog.String("error", err.Error()))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})

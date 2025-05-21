@@ -1,12 +1,12 @@
 package permissions_handle
 
 import (
+	"backend/service/gateway/models/sso"
 	"log/slog"
 	"net/http"
 	"strconv"
 
 	"backend/protos/gen/go/sso/permissions"
-	"backend/service/gateway/models"
 	"github.com/gin-gonic/gin"
 )
 
@@ -30,7 +30,7 @@ func (h *Handler) update(c *gin.Context) {
 		return
 	}
 
-	var req models.UpdatePermissionRequest
+	var req sso_models.UpdatePermissionRequest
 	if err = c.ShouldBindJSON(&req); err != nil {
 		logger.Error("Failed to bind JSON", slog.String("error", err.Error()))
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
@@ -60,7 +60,7 @@ func (h *Handler) update(c *gin.Context) {
 		return
 	}
 
-	permission, err := models.PermissionFromProto(resp)
+	permission, err := sso_models.PermissionFromProto(resp)
 	if err != nil {
 		logger.Error("Proto conversion failed", slog.String("error", err.Error()))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})

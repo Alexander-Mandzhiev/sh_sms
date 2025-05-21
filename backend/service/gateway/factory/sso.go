@@ -7,6 +7,7 @@ import (
 	"backend/protos/gen/go/sso/users"
 	"backend/protos/gen/go/sso/users_roles"
 	"context"
+	"fmt"
 	"google.golang.org/grpc"
 )
 
@@ -37,5 +38,9 @@ func (p *ClientProvider) GetSSOClient(ctx context.Context) (SSOClientType, error
 	if err != nil {
 		return nil, err
 	}
-	return client.(SSOClientType), nil
+	ssoClient, ok := client.(SSOClientType)
+	if !ok {
+		return nil, fmt.Errorf("type assertion failed for SSO client")
+	}
+	return ssoClient, nil
 }

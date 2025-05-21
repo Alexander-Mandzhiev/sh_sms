@@ -2,7 +2,7 @@ package roles_handle
 
 import (
 	"backend/protos/gen/go/sso/roles"
-	"backend/service/gateway/models"
+	"backend/service/gateway/models/sso"
 	"github.com/gin-gonic/gin"
 	"log/slog"
 	"net/http"
@@ -19,7 +19,7 @@ func (h *Handler) updateRole(c *gin.Context) {
 		return
 	}
 
-	var req models.UpdateRoleRequest
+	var req sso_models.UpdateRoleRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		logger.Error("Failed to bind JSON", slog.String("error", err.Error()))
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
@@ -48,7 +48,7 @@ func (h *Handler) updateRole(c *gin.Context) {
 		return
 	}
 
-	role, err := models.RoleFromProto(resp)
+	role, err := sso_models.RoleFromProto(resp)
 	if err != nil {
 		logger.Error("Proto conversion failed", slog.String("error", err.Error()))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})

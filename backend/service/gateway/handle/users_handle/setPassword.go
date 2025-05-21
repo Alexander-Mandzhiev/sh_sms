@@ -1,7 +1,7 @@
 package users_handle
 
 import (
-	"backend/service/gateway/models"
+	"backend/service/gateway/models/sso"
 	"log/slog"
 	"net/http"
 
@@ -24,7 +24,7 @@ func (h *Handler) setUserPassword(c *gin.Context) {
 		return
 	}
 
-	var reqBody models.SetPasswordRequest
+	var reqBody sso_models.SetPasswordRequest
 	if err := c.ShouldBindJSON(&reqBody); err != nil {
 		logger.Error("Invalid request body", "error", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})

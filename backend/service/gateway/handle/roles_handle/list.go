@@ -1,11 +1,11 @@
 package roles_handle
 
 import (
+	"backend/service/gateway/models/sso"
 	"log/slog"
 	"net/http"
 
 	"backend/protos/gen/go/sso/roles"
-	"backend/service/gateway/models"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,7 +13,7 @@ func (h *Handler) listRoles(c *gin.Context) {
 	const op = "gateway.Roles.List"
 	logger := h.logger.With(slog.String("op", op))
 
-	var req models.ListRolesRequest
+	var req sso_models.ListRolesRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		logger.Error("Invalid request format", slog.String("error", err.Error()))
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
@@ -44,9 +44,9 @@ func (h *Handler) listRoles(c *gin.Context) {
 		return
 	}
 
-	rolesList := make([]*models.Role, 0, len(resp.Roles))
+	rolesList := make([]*sso_models.Role, 0, len(resp.Roles))
 	for _, protoRole := range resp.Roles {
-		role, err := models.RoleFromProto(protoRole)
+		role, err := sso_models.RoleFromProto(protoRole)
 		if err != nil {
 			logger.Error("Proto conversion failed", slog.String("error", err.Error()))
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})

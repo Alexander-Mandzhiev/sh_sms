@@ -5,6 +5,7 @@ import (
 	"backend/protos/gen/go/apps/clients_apps"
 	"backend/protos/gen/go/apps/secrets"
 	"context"
+	"fmt"
 	"google.golang.org/grpc"
 )
 
@@ -31,5 +32,9 @@ func (p *ClientProvider) GetAppsClient(ctx context.Context) (AppsClientType, err
 	if err != nil {
 		return nil, err
 	}
-	return client.(AppsClientType), nil
+	appsClient, ok := client.(AppsClientType)
+	if !ok {
+		return nil, fmt.Errorf("type assertion failed for SSO client")
+	}
+	return appsClient, nil
 }

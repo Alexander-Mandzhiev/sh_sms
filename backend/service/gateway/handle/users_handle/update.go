@@ -2,7 +2,7 @@ package users_handle
 
 import (
 	"backend/protos/gen/go/sso/users"
-	"backend/service/gateway/models"
+	"backend/service/gateway/models/sso"
 	"github.com/gin-gonic/gin"
 	"log/slog"
 	"net/http"
@@ -19,7 +19,7 @@ func (h *Handler) updateUser(c *gin.Context) {
 		return
 	}
 
-	var req models.UpdateUserRequest
+	var req sso_models.UpdateUserRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		logger.Error("Failed to bind JSON", "error", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
@@ -47,7 +47,7 @@ func (h *Handler) updateUser(c *gin.Context) {
 		return
 	}
 
-	user, err := models.UserFromProto(resp)
+	user, err := sso_models.UserFromProto(resp)
 	if err != nil {
 		logger.Error("Proto conversion failed", "error", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
