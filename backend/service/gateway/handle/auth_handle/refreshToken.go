@@ -7,6 +7,7 @@ import (
 	"backend/protos/gen/go/auth"
 	"backend/service/gateway/models/auth"
 	"context"
+	"errors"
 	"github.com/gin-gonic/gin"
 	"log/slog"
 	"net/http"
@@ -17,10 +18,21 @@ func (h *Handler) refreshToken(c *gin.Context) {
 	const op = "auth_handler.RefreshToken"
 	logger := h.logger.With(slog.String("op", op))
 
-	refreshToken, err := c.Cookie("refresh_token")
-	if err != nil || refreshToken == "" {
-		logger.Error("refresh token missing", "error", err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": "refresh token required"})
+	logger.Debug("Request cookies",
+		slog.Any("cookies", c.Request.Cookies()),
+		slog.String("host", c.Request.Host),
+		slog.String("url", c.Request.URL.String()),
+	)
+
+	refreshCookie, err := c.Cookie(refreshToken)
+	if errors.Is(err, http.ErrNoCookie) {
+		logger.Error("Cookie 'refresh_token' not found in request")
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "authentication required"})
+		return
+	}
+	if err != nil {
+		logger.Error("Error reading cookie", slog.String("error", err.Error()))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "server error"})
 		return
 	}
 
@@ -44,7 +56,7 @@ func (h *Handler) refreshToken(c *gin.Context) {
 	}
 
 	grpcReq := &auth.RefreshRequest{
-		RefreshToken: refreshToken,
+		RefreshToken: refreshCookie,
 		ClientId:     req.ClientID.String(),
 		AppId:        int32(req.AppID),
 	}
@@ -59,15 +71,9 @@ func (h *Handler) refreshToken(c *gin.Context) {
 		return
 	}
 
-	// 6. Обновление refresh token в cookies
-	cookies.SetRefreshCookie(
-		c.Writer,
-		res.RefreshToken,
-		cookies.DefaultConfig,
-		h.cfg.TokenDuration,
-	)
+	cookies.SetRefreshCookie(c.Writer, res.AccessToken, accessToken, cookies.DefaultConfig, h.cfg.TokensTTL.AccessTokenDuration)
+	cookies.SetRefreshCookie(c.Writer, res.RefreshToken, refreshToken, cookies.DefaultConfig, h.cfg.TokensTTL.RefreshTokenDuration)
 
-	// 7. Формирование ответа
 	response, err := auth_models.AuthResponseFromProto(res)
 	if err != nil {
 		logger.Error("failed to convert response", "error", err)

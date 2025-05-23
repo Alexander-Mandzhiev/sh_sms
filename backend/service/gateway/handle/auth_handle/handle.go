@@ -4,8 +4,17 @@ import (
 	config "backend/pkg/config/gateway"
 	"backend/protos/gen/go/auth"
 	"context"
+	"errors"
 	"github.com/gin-gonic/gin"
 	"log/slog"
+)
+
+var (
+	ErrSessionNotFound       = errors.New("session not found")
+	ErrSessionAlreadyRevoked = errors.New("session already revoked")
+
+	accessToken  = "access_token"
+	refreshToken = "refresh_token"
 )
 
 type AuthService interface {
@@ -37,13 +46,13 @@ func (h *Handler) InitRoutes(router *gin.RouterGroup) {
 	authGroup := router.Group("/auth")
 	{
 		authGroup.POST("/login", h.login)
-		authGroup.POST("/logout", h.logout)
+		authGroup.GET("/logout", h.logout)
 		authGroup.POST("/refresh", h.refreshToken)
 		authGroup.POST("/validate", h.validateToken)
 		authGroup.POST("/introspect", h.introspectToken)
 		authGroup.POST("/check-permission", h.checkPermission)
-		authGroup.GET("/sessions", h.listUserSessions)
-		authGroup.GET("/all-sessions", h.listAllSessions)
+		authGroup.POST("/sessions", h.listUserSessions)
+		authGroup.POST("/all-sessions", h.listAllSessions)
 		authGroup.DELETE("/sessions/:session_id", h.terminateSession)
 	}
 }

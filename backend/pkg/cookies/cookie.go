@@ -6,25 +6,26 @@ import (
 )
 
 type Config struct {
-	Secure   bool          // Использовать Secure (HTTPS only)
-	SameSite http.SameSite // Политика SameSite
-	Domain   string        // Домен для cookie
-	Path     string        // Путь для cookie
-	HTTPOnly bool          // Запретить доступ через JavaScript
+	Secure   bool
+	SameSite http.SameSite
+	Domain   string
+	Path     string
+	HTTPOnly bool
 }
 
 var DefaultConfig = Config{
-	Secure:   true,
-	SameSite: http.SameSiteLaxMode,
+	Secure:   false,
+	SameSite: http.SameSiteNoneMode,
+	Domain:   "localhost",
 	Path:     "/",
 	HTTPOnly: true,
 }
 
-func SetRefreshCookie(w http.ResponseWriter, token string, cfg Config, ttl time.Duration) {
+func SetRefreshCookie(w http.ResponseWriter, token, tokenName string, cfg Config, ttl time.Duration) {
 	expires := time.Now().Add(ttl)
 
 	http.SetCookie(w, &http.Cookie{
-		Name:     "refresh_token",
+		Name:     tokenName,
 		Value:    token,
 		Path:     cfg.Path,
 		Domain:   cfg.Domain,
@@ -36,10 +37,9 @@ func SetRefreshCookie(w http.ResponseWriter, token string, cfg Config, ttl time.
 	})
 }
 
-// RemoveRefreshCookie удаляет refresh token cookie
-func RemoveRefreshCookie(w http.ResponseWriter, cfg Config) {
+func RemoveRefreshCookie(w http.ResponseWriter, tokenName string, cfg Config) {
 	http.SetCookie(w, &http.Cookie{
-		Name:     "refresh_token",
+		Name:     tokenName,
 		Value:    "",
 		Path:     cfg.Path,
 		Domain:   cfg.Domain,

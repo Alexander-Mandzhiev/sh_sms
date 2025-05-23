@@ -23,7 +23,6 @@ type SessionProvider interface {
 	DeleteSession(ctx context.Context, sessionID uuid.UUID) error
 
 	GetSession(ctx context.Context, userID uuid.UUID, clientID uuid.UUID, appID int, refreshTokenHash string) (*models.Session, error)
-	GetSessionByTokenHash(ctx context.Context, accessTokenHash, refreshTokenHash string) (*models.Session, error)
 	GetSessionByToken(ctx context.Context, token string) (*models.Session, error)
 
 	ListSessionsForUser(ctx context.Context, filter models.SessionFilter, fullName, phone, email string) ([]models.Session, error)

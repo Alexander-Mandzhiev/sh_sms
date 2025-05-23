@@ -1,7 +1,7 @@
 package http_server
 
 import (
-	cfg "backend/pkg/config/gateway"
+	"backend/pkg/config/models"
 	"backend/service/gateway/handle"
 	"context"
 	"errors"
@@ -23,7 +23,7 @@ func New(handler *handle.ServerAPI, logger *slog.Logger) *APIServer {
 	}
 }
 
-func (s *APIServer) Start(httpServerCfg cfg.HTTPServer) error {
+func (s *APIServer) Start(httpServerCfg models.HTTPServer) error {
 	s.httpserver = &http.Server{
 		Addr:           fmt.Sprintf("%s:%d", httpServerCfg.Address, httpServerCfg.Port),
 		Handler:        s.gateway.GetHTTPHandler(),

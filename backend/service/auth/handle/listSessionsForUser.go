@@ -37,6 +37,12 @@ func (h *serverAPI) ListSessionsForUser(ctx context.Context, req *auth.SessionFi
 		return nil, h.convertError(op, err)
 	}
 
-	logger.Info("user sessions fetched", slog.Int("count", len(sessions)))
-	return models.SessionsToProto(sessions), nil
+	pbSessionList, err := models.SessionsToProto(sessions)
+	if err != nil {
+		logger.Error("failed to convert sessions to proto", slog.Any("error", err))
+		return nil, status.Error(codes.Internal, "failed to process sessions")
+	}
+
+	logger.Info("all sessions fetched", slog.Int("count", len(sessions)))
+	return pbSessionList, nil
 }

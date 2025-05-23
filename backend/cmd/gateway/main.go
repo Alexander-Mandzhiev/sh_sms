@@ -7,12 +7,14 @@ import (
 	"backend/pkg/server/http_server"
 	"backend/service/gateway/factory"
 	"backend/service/gateway/handle"
+	"backend/service/gateway/handle/auth_handle"
 	"backend/service/gateway/handle/permissions_handle"
 	"backend/service/gateway/handle/role_permissions_handle"
 	"backend/service/gateway/handle/roles_handle"
 	"backend/service/gateway/handle/user_roles_handle"
 	"backend/service/gateway/handle/users_handle"
 	"backend/service/gateway/service/appManager"
+	"backend/service/gateway/service/auth"
 	"backend/service/gateway/service/clientApps"
 	"backend/service/gateway/service/permissions"
 	"backend/service/gateway/service/rolePermissions"
@@ -46,6 +48,7 @@ func main() {
 		factory.ServiceSSO:     cfg.Services.SSOAddr,
 		factory.ServiceApps:    cfg.Services.AppsAddr,
 		factory.ServiceClients: cfg.Services.ClientsAddr,
+		factory.ServiceAuth:    cfg.Services.AuthHAddr,
 	}
 
 	clientFactory := factory.New(grpcManager, serviceMap, logger)
@@ -58,6 +61,12 @@ func main() {
 	}
 
 	ssoClient, err := clientFactory.GetSSOClient(ctx)
+	if err != nil {
+		logger.Error("Failed to get SSO client", sl.Err(err, false))
+		return
+	}
+
+	authClient, err := clientFactory.GetAuthClient(ctx)
 	if err != nil {
 		logger.Error("Failed to get SSO client", sl.Err(err, false))
 		return
@@ -82,8 +91,11 @@ func main() {
 	userRoleSRV := user_roles_service.NewUserRoleService(ssoClient, logger)
 	userRoleHandle := user_roles_handle.New(userRoleSRV, logger)
 
+	authSRV := auth_service.NewAuthService(authClient, logger)
+	authHandle := auth_handle.New(authSRV, logger)
+
 	handler := handle.New(logger, cfg.MediaDir, cfg.Env, cfg.Frontend.Addr)
-	handler.RegisterHandlers(userHandle, roleHandle, permissionHandle, rolePermissionHandle, userRoleHandle)
+	handler.RegisterHandlers(userHandle, roleHandle, permissionHandle, rolePermissionHandle, userRoleHandle, authHandle)
 	server := http_server.New(handler, logger)
 	go func() {
 		if err = server.Start(cfg.HTTPServer); err != nil {

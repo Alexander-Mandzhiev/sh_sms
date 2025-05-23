@@ -2,7 +2,6 @@ package auth_handle
 
 import (
 	"backend/pkg/cookies"
-	"backend/pkg/utils"
 	"backend/protos/gen/go/auth"
 	"backend/service/gateway/models/auth"
 	"context"
@@ -23,12 +22,6 @@ func (h *Handler) login(c *gin.Context) {
 		return
 	}
 
-	if err := utils.ValidateUUID(req.ClientID); err != nil {
-		logger.Error("invalid client id", "error", err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid client_id"})
-		return
-	}
-
 	grpcReq := &auth.LoginRequest{
 		ClientId: req.ClientID.String(),
 		AppId:    int32(req.AppID),
@@ -46,7 +39,8 @@ func (h *Handler) login(c *gin.Context) {
 		return
 	}
 
-	cookies.SetRefreshCookie(c.Writer, res.RefreshToken, cookies.DefaultConfig, h.cfg.TokenDuration)
+	cookies.SetRefreshCookie(c.Writer, res.AccessToken, accessToken, cookies.DefaultConfig, h.cfg.TokensTTL.AccessTokenDuration)
+	cookies.SetRefreshCookie(c.Writer, res.RefreshToken, refreshToken, cookies.DefaultConfig, h.cfg.TokensTTL.RefreshTokenDuration)
 
 	response, err := auth_models.AuthResponseFromProto(res)
 	if err != nil {

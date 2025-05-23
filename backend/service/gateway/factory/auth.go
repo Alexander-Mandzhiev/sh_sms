@@ -22,7 +22,7 @@ func (c *AuthClient) Close() error {
 }
 
 func (p *ClientProvider) GetAuthClient(ctx context.Context) (AuthClientType, error) {
-	client, err := p.getClient(ctx, ServiceSSO)
+	client, err := p.getClient(ctx, ServiceAuth)
 	if err != nil {
 		return nil, err
 	}

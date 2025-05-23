@@ -8,10 +8,9 @@ import (
 )
 
 type AuthResponse struct {
-	AccessToken string        `json:"access_token"`
-	ExpiresIn   time.Time     `json:"expires_in"`
-	User        UserInfo      `json:"user"`
-	Metadata    TokenMetadata `json:"metadata"`
+	ExpiresIn time.Time     `json:"expires_in"`
+	User      UserInfo      `json:"user"`
+	Metadata  TokenMetadata `json:"metadata"`
 }
 
 func AuthResponseFromProto(req *auth.AuthResponse) (*AuthResponse, error) {
@@ -21,8 +20,7 @@ func AuthResponseFromProto(req *auth.AuthResponse) (*AuthResponse, error) {
 	}
 
 	return &AuthResponse{
-		AccessToken: req.AccessToken,
-		ExpiresIn:   req.ExpiresAt.AsTime(),
+		ExpiresIn: req.ExpiresAt.AsTime(),
 		User: UserInfo{
 			ID:          req.User.Id,
 			Email:       req.User.Email,

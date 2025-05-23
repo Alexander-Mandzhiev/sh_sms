@@ -29,11 +29,10 @@ func (h *Handler) validateToken(c *gin.Context) {
 		return
 	}
 
-	authHeader := c.GetHeader("Authorization")
-	token, err := h.extractBearerToken(authHeader)
-	if err != nil || token == "" {
-		logger.Warn("invalid authorization header", "error", err)
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
+	token, err := h.extractTokenFromCookie(c, req.TokenTypeHint)
+	if err != nil {
+		logger.Warn("token extraction failed", "error", err.Error(), "token_type", req.TokenTypeHint)
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "token required"})
 		return
 	}
 

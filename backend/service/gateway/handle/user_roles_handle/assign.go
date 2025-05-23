@@ -13,7 +13,7 @@ func (h *Handler) assignRole(c *gin.Context) {
 	const op = "gateway.UserRoles.AssignRole"
 	logger := h.logger.With(slog.String("op", op))
 
-	var req sso.AssignRoleRequest
+	var req sso_models.AssignRoleRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		logger.Error("Failed to bind JSON", slog.String("error", err.Error()))
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})

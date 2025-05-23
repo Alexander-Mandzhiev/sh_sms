@@ -22,17 +22,17 @@ func (h *Handler) introspectToken(c *gin.Context) {
 		return
 	}
 
+	// Валидация типа токена
 	if req.TokenTypeHint != "access" && req.TokenTypeHint != "refresh" {
 		logger.Warn("invalid token_type_hint", "hint", req.TokenTypeHint)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid token_type_hint"})
 		return
 	}
 
-	authHeader := c.GetHeader("Authorization")
-	token, err := h.extractBearerToken(authHeader)
-	if err != nil || token == "" {
-		logger.Warn("invalid or empty token", "error", err)
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
+	token, err := h.extractTokenFromCookie(c, req.TokenTypeHint)
+	if err != nil {
+		logger.Warn("token extraction failed", "error", err.Error(), "token_type", req.TokenTypeHint)
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "token required"})
 		return
 	}
 

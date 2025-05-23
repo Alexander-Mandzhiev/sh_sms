@@ -1,7 +1,6 @@
 package handle
 
 import (
-	"backend/pkg/jwt_manager"
 	"backend/protos/gen/go/auth"
 	"context"
 	"google.golang.org/grpc/codes"
@@ -14,19 +13,14 @@ func (h *serverAPI) Logout(ctx context.Context, req *auth.LogoutRequest) (*empty
 	const op = "grpc.handler.Logout"
 	logger := h.logger.With(slog.String("op", op))
 
-	if req.AccessToken == "" {
-		logger.Warn("access_token is empty")
-		return nil, status.Error(codes.InvalidArgument, "access_token is required")
-	}
-
 	if req.RefreshToken == "" {
 		logger.Warn("refresh_token is empty")
 		return nil, status.Error(codes.InvalidArgument, "refresh_token is required")
 	}
 
-	logger.Debug("initiating logout", slog.String("access_token_hash", jwt_manager.HashToken(req.AccessToken)))
+	logger.Debug("initiating logout")
 
-	err := h.service.Logout(ctx, req.AccessToken, req.RefreshToken)
+	err := h.service.Logout(ctx, req.RefreshToken)
 	if err != nil {
 		return nil, h.convertError(op, err)
 	}

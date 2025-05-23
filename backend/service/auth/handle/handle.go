@@ -23,12 +23,12 @@ var (
 
 type AuthService interface {
 	Login(ctx context.Context, req models.AuthRequest) (*models.UserInfo, string, string, error)
-	Logout(ctx context.Context, accessToken, refreshToken string) error
+	Logout(ctx context.Context, refreshToken string) error
 	RefreshToken(ctx context.Context, refreshToken string, clientID uuid.UUID, appID int) (*models.UserInfo, string, string, error)
 
 	ValidateToken(ctx context.Context, token string, tokenTypeHint string) (*models.TokenValidationResult, error)
 	IntrospectToken(ctx context.Context, token string, tokenTypeHint string) (*models.TokenIntrospection, error)
-	CheckPermission(ctx context.Context, check *models.PermissionCheck) (bool, []string, []string, error)
+	CheckPermission(ctx context.Context, clientID uuid.UUID, appID int, resource, token, permission string) (bool, []string, []string, error)
 
 	ListSessionsForUser(ctx context.Context, filter models.SessionFilter) ([]models.Session, error)
 	ListAllSessions(ctx context.Context, filter models.AllSessionsFilter) ([]models.Session, error)

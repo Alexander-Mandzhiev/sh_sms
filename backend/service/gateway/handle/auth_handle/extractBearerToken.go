@@ -2,18 +2,28 @@ package auth_handle
 
 import (
 	"fmt"
-	"strings"
+	"github.com/gin-gonic/gin"
 )
 
-func (h *Handler) extractBearerToken(authHeader string) (string, error) {
-	if authHeader == "" {
-		return "", fmt.Errorf("empty authorization header")
+func (h *Handler) extractTokenFromCookie(c *gin.Context, tokenType string) (string, error) {
+	cookieName := ""
+	switch tokenType {
+	case "access":
+		cookieName = "access_token"
+	case "refresh":
+		cookieName = "refresh_token"
+	default:
+		return "", fmt.Errorf("invalid token type")
 	}
 
-	parts := strings.SplitN(authHeader, " ", 2)
-	if len(parts) != 2 || strings.ToLower(parts[0]) != "bearer" {
-		return "", fmt.Errorf("invalid authorization header format")
+	token, err := c.Cookie(cookieName)
+	if err != nil {
+		return "", fmt.Errorf("cookie %s not found: %w", cookieName, err)
 	}
 
-	return parts[1], nil
+	if token == "" {
+		return "", fmt.Errorf("empty %s token", cookieName)
+	}
+
+	return token, nil
 }

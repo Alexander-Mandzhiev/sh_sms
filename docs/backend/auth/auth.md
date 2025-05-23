@@ -157,14 +157,12 @@ message AuthResponse {
 rpc Logout(LogoutRequest) returns (google.protobuf.Empty);
 
 message LogoutRequest {
-  string access_token = 1;
-  string refresh_token = 2;
+  string refresh_token = 1;
 }
 ```
 *Пример запроса*
 ```json
 {
-  "access_token": "eyJhbGciOiJIUzI1NiIs...", 
   "refresh_token": "eyJhbGciOiJIUzI1NiIs..."
 }
 ```

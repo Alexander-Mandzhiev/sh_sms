@@ -8,16 +8,16 @@ import (
 	"log/slog"
 )
 
-func (s *AuthService) Logout(ctx context.Context, accessToken, refreshToken string) error {
+func (s *AuthService) Logout(ctx context.Context, refreshToken string) error {
 	const op = "service.Logout"
-	logger := s.logger.With(slog.String("op", op), slog.String("access_token_hash", jwt_manager.HashToken(accessToken)), slog.String("refresh_token_hash", jwt_manager.HashToken(refreshToken)))
+	logger := s.logger.With(slog.String("op", op), slog.String("refresh_token_hash", jwt_manager.HashToken(refreshToken)))
 
-	if accessToken == "" || refreshToken == "" {
+	if refreshToken == "" {
 		logger.Warn("empty tokens provided")
 		return fmt.Errorf("%s: %w", op, handle.ErrInvalidToken)
 	}
 
-	session, err := s.session.GetSessionByTokenHash(ctx, jwt_manager.HashToken(accessToken), jwt_manager.HashToken(refreshToken))
+	session, err := s.session.GetSessionByToken(ctx, jwt_manager.HashToken(refreshToken))
 	if err != nil {
 		logger.Error("session lookup failed", slog.Any("error", err))
 		return fmt.Errorf("%s: %w", op, err)

@@ -5,8 +5,8 @@ import (
 )
 
 type AuthRequest struct {
-	ClientID uuid.UUID `json:"clientID"`
-	AppID    int       `json:"appID"`
+	ClientID uuid.UUID `json:"client_id"`
+	AppID    int       `json:"app_id"`
 	Login    string    `json:"login"`
 	Password string    `json:"password"`
 }

@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/google/uuid"
-	"math"
 	"net/url"
 	"regexp"
 	"strings"
@@ -30,9 +29,10 @@ func ValidateUUIDToString(id string) error {
 }
 
 func ValidateAppID(appID int) error {
-	if appID <= 0 || appID > math.MaxInt32 {
-		return constants.ErrInvalidAppId
+	if appID <= 0 {
+		return fmt.Errorf("%w: appID must be positive", constants.ErrInvalidAppId)
 	}
+
 	return nil
 }
 
