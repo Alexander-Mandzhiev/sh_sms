@@ -8,7 +8,7 @@ CREATE TABLE secrets (
     current_secret VARCHAR(512) NOT NULL,
     algorithm VARCHAR(20) NOT NULL DEFAULT 'bcrypt',
     secret_version INT DEFAULT 1,
-    generated_at TIMESTAMP NOT NULL,
+    generated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     revoked_at TIMESTAMP,
     PRIMARY KEY (client_id, app_id, secret_type),
     FOREIGN KEY (app_id) REFERENCES apps(id)
