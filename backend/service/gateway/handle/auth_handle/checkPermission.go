@@ -8,7 +8,6 @@ import (
 	"github.com/google/uuid"
 	"log/slog"
 	"net/http"
-	"strings"
 	"time"
 )
 
@@ -36,24 +35,19 @@ func (h *Handler) checkPermission(c *gin.Context) {
 		return
 	}
 
-	authHeader := c.GetHeader("Authorization")
-	if authHeader == "" {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "authorization header required"})
+	token, err := h.extractTokenFromCookie(c, "access")
+	if err != nil {
+		logger.Warn("token extraction failed", "error", err.Error())
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "token required"})
 		return
 	}
-	tokenParts := strings.Split(authHeader, "Bearer ")
-	if len(tokenParts) != 2 {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token format"})
-		return
-	}
-	accessToken := tokenParts[1]
 
 	grpcReq := &auth.PermissionCheckRequest{
 		ClientId:   req.ClientID.String(),
 		AppId:      int32(req.AppID),
 		Permission: req.Permission,
 		Resource:   req.Resource,
-		Token:      accessToken,
+		Token:      token,
 	}
 
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 3*time.Second)

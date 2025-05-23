@@ -13,3 +13,8 @@ CREATE TABLE client_types (
 
 CREATE INDEX idx_client_types_active ON client_types(is_active);
 -- +goose StatementEnd
+
+-- +goose Down
+-- +goose StatementBegin
+DROP TABLE IF EXISTS client_types;
+-- +goose StatementEnd
