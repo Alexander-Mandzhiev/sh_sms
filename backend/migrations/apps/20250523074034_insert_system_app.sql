@@ -3,7 +3,7 @@
 
 -- Вставка приложений
 INSERT INTO apps (code, name, description, is_active, version) VALUES
-    ('mobile_sales', 'Mobile Sales', 'Приложение для мобильных продаж Царицынского мясокомбината', TRUE, 1)
+    ('CEMS', 'ЦСУО', 'Централизованная система управления образованием/Centralized education management system', TRUE, 1)
     ON CONFLICT (code) DO NOTHING;
 
 -- Назначаем клиенту приложение "mobile_sales"
