@@ -1,0 +1,1159 @@
+{
+	"info": {
+		"_postman_id": "db685da0-617a-47e5-82bd-056bbf9d67e9",
+		"name": "ecomers",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24515554"
+	},
+	"item": [
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"app_id\": 1,\r\n  \"client_id\": \"8268ec76-d6c2-48b5-a0e4-a9c2538b8f48\",\r\n  \"login\": \"admin@example.com\",\r\n  \"password\": \"Str0ngP@ssw0rd!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:7010/api/v1/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7010",
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "refresh",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "refresh_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMDI3ZjdjNTQtZGViMy00MjEwLTlmZWQtNzFiNGY3MjcxZmJhIiwiY2xpZW50X2lkIjoiODI2OGVjNzYtZDZjMi00OGI1LWEwZTQtYTljMjUzOGI4ZjQ4IiwiYXBwX2lkIjoxLCJyb2xlcyI6WyI5OTM2YWVkNi02ODBhLTRmNGItYTA5My0zODlhMzBiZTRhMTUiXSwicGVybWlzc2lvbnMiOlsiZGEzY2EyODUtODAwMS00ZGNhLTg0ODYtYWQ2NjdiZDVjNGE4IiwiYTZmZWFjMzYtM2Q2Ny00NWY4LWI3ODctOWUxZTZjMzIyMDk2IiwiYWRhYTk3N2EtNjU3My00NDM3LWExNWMtMmI5NTExMTkzMDIyIiwiYzdkMTI3MTEtNmQ1MS00MTU2LWI1M2UtNTM5YzUxN2M5Yzk3IiwiMDQxYTZjZmYtNWQwZC00NTM3LTlmOGEtMmY1OGEyYjNkNDI5IiwiZGRjOGJhMWEtODFlYy00N2M0LThlMmMtYzg2ODE4YjQwZDRjIiwiODU0ODY5YmYtNDQ1NS00Yzk3LWExOWUtNTNhNWE1MzFkYzc3IiwiY2EyNDQ4N2EtZGZkNi00Y2E0LTgyYjctYTg2ZGJjMGE4OTkyIiwiZmM1N2E2YjAtOWQ5Ni00N2RhLWI5ZGYtNzc0NTM5NDM2NWY1IiwiZDFmMGQ0OGItMzJiZi00MDg3LTliNTAtNDQzYTgwYzBiYzA2IiwiMWJjMGUyYjctZWFiNS00YTA3LTlhMjctZmJkNmYyZDBhNTcwIiwiMTQ3ZjViYzUtZjA3MS00N2EzLWIyM2ItYjZkMDc2ZjUxNjc2IiwiMmU2MmU2ZGUtMTc2NC00ZDc0LWJlNTAtZDA4YmU2NzNiYzY2IiwiZmMyNTdlMjgtMTRkYi00MDMwLThiYzYtNzQxMjg3YWFiM2YzIiwiZmY3MWQzODktZTBmNy00Y2JhLTlkZjgtMGVhOTVmYjE4ZTFmIiwiZDdmZGZhY2QtNTViNS00YzllLWJiMzktOTMyNDBhZDU1NTQ2IiwiMTFkYTRjMTMtODI1Mi00MzlmLWE1ZDgtZjg1YzE2N2IyMTQxIiwiMmZiZGYwNDQtMThlOS00NzhiLWIzZTEtZWI5ZjU2NzBjYTdjIl0sInRva2VuX3R5cGUiOiJyZWZyZXNoIiwiZXhwIjoxNzQ4NjczMDYwLCJpYXQiOjE3NDgwNjgyNjB9.9xPRPL4juvDiafx03zByB23rIKqv-_Qc6vU-PpzNtMA; Path=/; Domain=localhost; Expires=Sat, 24 May 2025 06:31:00 GMT; HttpOnly; SameSite=None",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"app_id\": 1,\r\n  \"client_id\": \"8268ec76-d6c2-48b5-a0e4-a9c2538b8f48\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:7010/api/v1/auth/refresh",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7010",
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"refresh"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "logout",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "refresh_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMDI3ZjdjNTQtZGViMy00MjEwLTlmZWQtNzFiNGY3MjcxZmJhIiwiY2xpZW50X2lkIjoiODI2OGVjNzYtZDZjMi00OGI1LWEwZTQtYTljMjUzOGI4ZjQ4IiwiYXBwX2lkIjoxLCJyb2xlcyI6WyI5OTM2YWVkNi02ODBhLTRmNGItYTA5My0zODlhMzBiZTRhMTUiXSwicGVybWlzc2lvbnMiOlsiZGEzY2EyODUtODAwMS00ZGNhLTg0ODYtYWQ2NjdiZDVjNGE4IiwiMmU2MmU2ZGUtMTc2NC00ZDc0LWJlNTAtZDA4YmU2NzNiYzY2IiwiZDdmZGZhY2QtNTViNS00YzllLWJiMzktOTMyNDBhZDU1NTQ2IiwiMTFkYTRjMTMtODI1Mi00MzlmLWE1ZDgtZjg1YzE2N2IyMTQxIiwiZmM1N2E2YjAtOWQ5Ni00N2RhLWI5ZGYtNzc0NTM5NDM2NWY1IiwiMmZiZGYwNDQtMThlOS00NzhiLWIzZTEtZWI5ZjU2NzBjYTdjIiwiZGRjOGJhMWEtODFlYy00N2M0LThlMmMtYzg2ODE4YjQwZDRjIiwiODU0ODY5YmYtNDQ1NS00Yzk3LWExOWUtNTNhNWE1MzFkYzc3IiwiZDFmMGQ0OGItMzJiZi00MDg3LTliNTAtNDQzYTgwYzBiYzA2IiwiMDQxYTZjZmYtNWQwZC00NTM3LTlmOGEtMmY1OGEyYjNkNDI5IiwiZmMyNTdlMjgtMTRkYi00MDMwLThiYzYtNzQxMjg3YWFiM2YzIiwiYzdkMTI3MTEtNmQ1MS00MTU2LWI1M2UtNTM5YzUxN2M5Yzk3IiwiMWJjMGUyYjctZWFiNS00YTA3LTlhMjctZmJkNmYyZDBhNTcwIiwiMTQ3ZjViYzUtZjA3MS00N2EzLWIyM2ItYjZkMDc2ZjUxNjc2IiwiYTZmZWFjMzYtM2Q2Ny00NWY4LWI3ODctOWUxZTZjMzIyMDk2IiwiYWRhYTk3N2EtNjU3My00NDM3LWExNWMtMmI5NTExMTkzMDIyIiwiZmY3MWQzODktZTBmNy00Y2JhLTlkZjgtMGVhOTVmYjE4ZTFmIiwiY2EyNDQ4N2EtZGZkNi00Y2E0LTgyYjctYTg2ZGJjMGE4OTkyIl0sInRva2VuX3R5cGUiOiJyZWZyZXNoIiwiZXhwIjoxNzQ4NjczMDg0LCJpYXQiOjE3NDgwNjgyODR9.D-WGyojbpyHkZp4zxP9Ehatud2iAlJn-eTsfEK2bTMg; Path=/; Domain=localhost; Expires=Sat, 24 May 2025 06:31:24 GMT; HttpOnly; SameSite=None",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:7010/api/v1/auth/logout",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7010",
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "validate",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMDI3ZjdjNTQtZGViMy00MjEwLTlmZWQtNzFiNGY3MjcxZmJhIiwiY2xpZW50X2lkIjoiODI2OGVjNzYtZDZjMi00OGI1LWEwZTQtYTljMjUzOGI4ZjQ4IiwiYXBwX2lkIjoxLCJyb2xlcyI6WyI5OTM2YWVkNi02ODBhLTRmNGItYTA5My0zODlhMzBiZTRhMTUiXSwicGVybWlzc2lvbnMiOlsiMDQxYTZjZmYtNWQwZC00NTM3LTlmOGEtMmY1OGEyYjNkNDI5IiwiMWJjMGUyYjctZWFiNS00YTA3LTlhMjctZmJkNmYyZDBhNTcwIiwiZGRjOGJhMWEtODFlYy00N2M0LThlMmMtYzg2ODE4YjQwZDRjIiwiODU0ODY5YmYtNDQ1NS00Yzk3LWExOWUtNTNhNWE1MzFkYzc3IiwiMTQ3ZjViYzUtZjA3MS00N2EzLWIyM2ItYjZkMDc2ZjUxNjc2IiwiYWRhYTk3N2EtNjU3My00NDM3LWExNWMtMmI5NTExMTkzMDIyIiwiMmU2MmU2ZGUtMTc2NC00ZDc0LWJlNTAtZDA4YmU2NzNiYzY2IiwiZmY3MWQzODktZTBmNy00Y2JhLTlkZjgtMGVhOTVmYjE4ZTFmIiwiZGEzY2EyODUtODAwMS00ZGNhLTg0ODYtYWQ2NjdiZDVjNGE4IiwiYTZmZWFjMzYtM2Q2Ny00NWY4LWI3ODctOWUxZTZjMzIyMDk2IiwiZDdmZGZhY2QtNTViNS00YzllLWJiMzktOTMyNDBhZDU1NTQ2IiwiMTFkYTRjMTMtODI1Mi00MzlmLWE1ZDgtZjg1YzE2N2IyMTQxIiwiZmM1N2E2YjAtOWQ5Ni00N2RhLWI5ZGYtNzc0NTM5NDM2NWY1IiwiZDFmMGQ0OGItMzJiZi00MDg3LTliNTAtNDQzYTgwYzBiYzA2Il0sInRva2VuX3R5cGUiOiJhY2Nlc3MiLCJleHAiOjE3NDc5ODMxOTAsImlhdCI6MTc0Nzk4MjI5MH0.rZt5xM9DTx5fkpOTnpWEqtXnljbopL5qf-_uhjIeUlM; Path=/; Domain=localhost; Expires=Fri, 23 May 2025 06:38:10 GMT; HttpOnly; SameSite=None",
+								"type": "text"
+							},
+							{
+								"key": "Cookie",
+								"value": "refresh_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMDI3ZjdjNTQtZGViMy00MjEwLTlmZWQtNzFiNGY3MjcxZmJhIiwiY2xpZW50X2lkIjoiODI2OGVjNzYtZDZjMi00OGI1LWEwZTQtYTljMjUzOGI4ZjQ4IiwiYXBwX2lkIjoxLCJyb2xlcyI6WyI5OTM2YWVkNi02ODBhLTRmNGItYTA5My0zODlhMzBiZTRhMTUiXSwicGVybWlzc2lvbnMiOlsiMDQxYTZjZmYtNWQwZC00NTM3LTlmOGEtMmY1OGEyYjNkNDI5IiwiMWJjMGUyYjctZWFiNS00YTA3LTlhMjctZmJkNmYyZDBhNTcwIiwiZGRjOGJhMWEtODFlYy00N2M0LThlMmMtYzg2ODE4YjQwZDRjIiwiODU0ODY5YmYtNDQ1NS00Yzk3LWExOWUtNTNhNWE1MzFkYzc3IiwiMTQ3ZjViYzUtZjA3MS00N2EzLWIyM2ItYjZkMDc2ZjUxNjc2IiwiYWRhYTk3N2EtNjU3My00NDM3LWExNWMtMmI5NTExMTkzMDIyIiwiMmU2MmU2ZGUtMTc2NC00ZDc0LWJlNTAtZDA4YmU2NzNiYzY2IiwiZmY3MWQzODktZTBmNy00Y2JhLTlkZjgtMGVhOTVmYjE4ZTFmIiwiZGEzY2EyODUtODAwMS00ZGNhLTg0ODYtYWQ2NjdiZDVjNGE4IiwiYTZmZWFjMzYtM2Q2Ny00NWY4LWI3ODctOWUxZTZjMzIyMDk2IiwiZDdmZGZhY2QtNTViNS00YzllLWJiMzktOTMyNDBhZDU1NTQ2IiwiMTFkYTRjMTMtODI1Mi00MzlmLWE1ZDgtZjg1YzE2N2IyMTQxIiwiZmM1N2E2YjAtOWQ5Ni00N2RhLWI5ZGYtNzc0NTM5NDM2NWY1IiwiZDFmMGQ0OGItMzJiZi00MDg3LTliNTAtNDQzYTgwYzBiYzA2Il0sInRva2VuX3R5cGUiOiJyZWZyZXNoIiwiZXhwIjoxNzQ4NTg3MDkwLCJpYXQiOjE3NDc5ODIyOTB9.F4PWLc8VRKNKPFdHefKD4k6nlRRgWVShGmEHnvvU9-g; Path=/; Domain=localhost; Expires=Fri, 23 May 2025 06:38:10 GMT; HttpOnly; SameSite=None",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"token_type_hint\": \"refresh\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:7010/api/v1/auth/validate",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7010",
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"validate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "introspect",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMDI3ZjdjNTQtZGViMy00MjEwLTlmZWQtNzFiNGY3MjcxZmJhIiwiY2xpZW50X2lkIjoiODI2OGVjNzYtZDZjMi00OGI1LWEwZTQtYTljMjUzOGI4ZjQ4IiwiYXBwX2lkIjoxLCJyb2xlcyI6WyI5OTM2YWVkNi02ODBhLTRmNGItYTA5My0zODlhMzBiZTRhMTUiXSwicGVybWlzc2lvbnMiOlsiMDQxYTZjZmYtNWQwZC00NTM3LTlmOGEtMmY1OGEyYjNkNDI5IiwiMWJjMGUyYjctZWFiNS00YTA3LTlhMjctZmJkNmYyZDBhNTcwIiwiZGRjOGJhMWEtODFlYy00N2M0LThlMmMtYzg2ODE4YjQwZDRjIiwiODU0ODY5YmYtNDQ1NS00Yzk3LWExOWUtNTNhNWE1MzFkYzc3IiwiMTQ3ZjViYzUtZjA3MS00N2EzLWIyM2ItYjZkMDc2ZjUxNjc2IiwiYWRhYTk3N2EtNjU3My00NDM3LWExNWMtMmI5NTExMTkzMDIyIiwiMmU2MmU2ZGUtMTc2NC00ZDc0LWJlNTAtZDA4YmU2NzNiYzY2IiwiZmY3MWQzODktZTBmNy00Y2JhLTlkZjgtMGVhOTVmYjE4ZTFmIiwiZGEzY2EyODUtODAwMS00ZGNhLTg0ODYtYWQ2NjdiZDVjNGE4IiwiYTZmZWFjMzYtM2Q2Ny00NWY4LWI3ODctOWUxZTZjMzIyMDk2IiwiZDdmZGZhY2QtNTViNS00YzllLWJiMzktOTMyNDBhZDU1NTQ2IiwiMTFkYTRjMTMtODI1Mi00MzlmLWE1ZDgtZjg1YzE2N2IyMTQxIiwiZmM1N2E2YjAtOWQ5Ni00N2RhLWI5ZGYtNzc0NTM5NDM2NWY1IiwiZDFmMGQ0OGItMzJiZi00MDg3LTliNTAtNDQzYTgwYzBiYzA2Il0sInRva2VuX3R5cGUiOiJhY2Nlc3MiLCJleHAiOjE3NDc5ODMxOTAsImlhdCI6MTc0Nzk4MjI5MH0.rZt5xM9DTx5fkpOTnpWEqtXnljbopL5qf-_uhjIeUlM; Path=/; Domain=localhost; Expires=Fri, 23 May 2025 06:38:10 GMT; HttpOnly; SameSite=None",
+								"type": "text"
+							},
+							{
+								"key": "Cookie",
+								"value": "refresh_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMDI3ZjdjNTQtZGViMy00MjEwLTlmZWQtNzFiNGY3MjcxZmJhIiwiY2xpZW50X2lkIjoiODI2OGVjNzYtZDZjMi00OGI1LWEwZTQtYTljMjUzOGI4ZjQ4IiwiYXBwX2lkIjoxLCJyb2xlcyI6WyI5OTM2YWVkNi02ODBhLTRmNGItYTA5My0zODlhMzBiZTRhMTUiXSwicGVybWlzc2lvbnMiOlsiMDQxYTZjZmYtNWQwZC00NTM3LTlmOGEtMmY1OGEyYjNkNDI5IiwiMWJjMGUyYjctZWFiNS00YTA3LTlhMjctZmJkNmYyZDBhNTcwIiwiZGRjOGJhMWEtODFlYy00N2M0LThlMmMtYzg2ODE4YjQwZDRjIiwiODU0ODY5YmYtNDQ1NS00Yzk3LWExOWUtNTNhNWE1MzFkYzc3IiwiMTQ3ZjViYzUtZjA3MS00N2EzLWIyM2ItYjZkMDc2ZjUxNjc2IiwiYWRhYTk3N2EtNjU3My00NDM3LWExNWMtMmI5NTExMTkzMDIyIiwiMmU2MmU2ZGUtMTc2NC00ZDc0LWJlNTAtZDA4YmU2NzNiYzY2IiwiZmY3MWQzODktZTBmNy00Y2JhLTlkZjgtMGVhOTVmYjE4ZTFmIiwiZGEzY2EyODUtODAwMS00ZGNhLTg0ODYtYWQ2NjdiZDVjNGE4IiwiYTZmZWFjMzYtM2Q2Ny00NWY4LWI3ODctOWUxZTZjMzIyMDk2IiwiZDdmZGZhY2QtNTViNS00YzllLWJiMzktOTMyNDBhZDU1NTQ2IiwiMTFkYTRjMTMtODI1Mi00MzlmLWE1ZDgtZjg1YzE2N2IyMTQxIiwiZmM1N2E2YjAtOWQ5Ni00N2RhLWI5ZGYtNzc0NTM5NDM2NWY1IiwiZDFmMGQ0OGItMzJiZi00MDg3LTliNTAtNDQzYTgwYzBiYzA2Il0sInRva2VuX3R5cGUiOiJyZWZyZXNoIiwiZXhwIjoxNzQ4NTg3MDkwLCJpYXQiOjE3NDc5ODIyOTB9.F4PWLc8VRKNKPFdHefKD4k6nlRRgWVShGmEHnvvU9-g; Path=/; Domain=localhost; Expires=Fri, 23 May 2025 06:38:10 GMT; HttpOnly; SameSite=None",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"token_type_hint\": \"refresh\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:7010/api/v1/auth/introspect",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7010",
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"introspect"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "check-permission",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMDI3ZjdjNTQtZGViMy00MjEwLTlmZWQtNzFiNGY3MjcxZmJhIiwiY2xpZW50X2lkIjoiODI2OGVjNzYtZDZjMi00OGI1LWEwZTQtYTljMjUzOGI4ZjQ4IiwiYXBwX2lkIjoxLCJyb2xlcyI6WyI5OTM2YWVkNi02ODBhLTRmNGItYTA5My0zODlhMzBiZTRhMTUiXSwicGVybWlzc2lvbnMiOlsiMTFkYTRjMTMtODI1Mi00MzlmLWE1ZDgtZjg1YzE2N2IyMTQxIiwiZmM1N2E2YjAtOWQ5Ni00N2RhLWI5ZGYtNzc0NTM5NDM2NWY1IiwiZDFmMGQ0OGItMzJiZi00MDg3LTliNTAtNDQzYTgwYzBiYzA2IiwiMDQxYTZjZmYtNWQwZC00NTM3LTlmOGEtMmY1OGEyYjNkNDI5IiwiMWJjMGUyYjctZWFiNS00YTA3LTlhMjctZmJkNmYyZDBhNTcwIiwiZGRjOGJhMWEtODFlYy00N2M0LThlMmMtYzg2ODE4YjQwZDRjIiwiMTQ3ZjViYzUtZjA3MS00N2EzLWIyM2ItYjZkMDc2ZjUxNjc2IiwiZGEzY2EyODUtODAwMS00ZGNhLTg0ODYtYWQ2NjdiZDVjNGE4IiwiYTZmZWFjMzYtM2Q2Ny00NWY4LWI3ODctOWUxZTZjMzIyMDk2IiwiZmY3MWQzODktZTBmNy00Y2JhLTlkZjgtMGVhOTVmYjE4ZTFmIiwiZDdmZGZhY2QtNTViNS00YzllLWJiMzktOTMyNDBhZDU1NTQ2IiwiODU0ODY5YmYtNDQ1NS00Yzk3LWExOWUtNTNhNWE1MzFkYzc3IiwiYWRhYTk3N2EtNjU3My00NDM3LWExNWMtMmI5NTExMTkzMDIyIiwiMmU2MmU2ZGUtMTc2NC00ZDc0LWJlNTAtZDA4YmU2NzNiYzY2Il0sInRva2VuX3R5cGUiOiJhY2Nlc3MiLCJleHAiOjE3NDc5ODQzMTYsImlhdCI6MTc0Nzk4MzQxNn0.TjplLFT8V255-Y15mhModzVKJBaRwxmNbUjsD4ZxMM0; Path=/; Domain=localhost; Expires=Fri, 23 May 2025 06:56:58 GMT; HttpOnly; SameSite=None",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"app_id\": 1,\r\n    \"client_id\": \"8268ec76-d6c2-48b5-a0e4-a9c2538b8f48\",\r\n    \"permission\":\"1bc0e2b7-eab5-4a07-9a27-fbd6f2d0a570\",\r\n    \"resource\": \"web-app\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:7010/api/v1/auth/check-permission",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7010",
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"check-permission"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "session",
+			"item": [
+				{
+					"name": "all-sessions",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\"client_id\": \"8268ec76-d6c2-48b5-a0e4-a9c2538b8f48\",\r\n\"app_id\": 1,\r\n\"page\": 1,\r\n\"count\": 20\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:7010/api/v1/auth/all-sessions",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7010",
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"all-sessions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "sessions",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\"user_id\": \"027f7c54-deb3-4210-9fed-71b4f7271fba\",\r\n\"client_id\": \"8268ec76-d6c2-48b5-a0e4-a9c2538b8f48\",\r\n\"app_id\": 1,\r\n\"page\": 1,\r\n\"count\": 1000\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:7010/api/v1/auth/sessions",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7010",
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"sessions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "terminate",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:7010/api/v1/auth/sessions/5cdf82ea-669d-4196-8d86-a3365dc67fd7",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7010",
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"sessions",
+								"5cdf82ea-669d-4196-8d86-a3365dc67fd7"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "users",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"client_id\": \"8268ec76-d6c2-48b5-a0e4-a9c2538b8f48\",\r\n\t\"email\": \"test@mail.com\",\r\n\t\"password\": \"123@Qwerty\",\r\n\t\"full_name\": \"Test User\",\r\n\t\"phone\": \"+79093334455\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:7010/api/v1/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7010",
+							"path": [
+								"api",
+								"v1",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:7010/api/v1/users/027f7c54-deb3-4210-9fed-71b4f7271fba?client_id=8268ec76-d6c2-48b5-a0e4-a9c2538b8f48",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7010",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"027f7c54-deb3-4210-9fed-71b4f7271fba"
+							],
+							"query": [
+								{
+									"key": "client_id",
+									"value": "8268ec76-d6c2-48b5-a0e4-a9c2538b8f48"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "list",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"client_id\": \"8268ec76-d6c2-48b5-a0e4-a9c2538b8f48\",\r\n\t\"pagination\" : {\r\n\t\t\"page\": 1,\r\n\t\t\"count\": 20\r\n\t}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:7010/api/v1/users/list",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7010",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "setPassword",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"new_password\": \"Str0ngP@ssw0rd!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:7010/api/v1/users/027f7c54-deb3-4210-9fed-71b4f7271fba/password?client_id=8268ec76-d6c2-48b5-a0e4-a9c2538b8f48",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7010",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"027f7c54-deb3-4210-9fed-71b4f7271fba",
+								"password"
+							],
+							"query": [
+								{
+									"key": "client_id",
+									"value": "8268ec76-d6c2-48b5-a0e4-a9c2538b8f48"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"id\": \"027f7c54-deb3-4210-9fed-71b4f7271fba\",\r\n\t\"client_id\": \"8268ec76-d6c2-48b5-a0e4-a9c2538b8f48\",\r\n\t\"email\": \"test@mail.com\",\r\n\t\"full_name\": \"Test User\",\r\n\t\"phone\": \"+79093334455\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:7010/api/v1/users/027f7c54-deb3-4210-9fed-71b4f7271fba",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7010",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"027f7c54-deb3-4210-9fed-71b4f7271fba"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "restore",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:7010/api/v1/users/027f7c54-deb3-4210-9fed-71b4f7271fba/restore?client_id=8268ec76-d6c2-48b5-a0e4-a9c2538b8f48",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7010",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"027f7c54-deb3-4210-9fed-71b4f7271fba",
+								"restore"
+							],
+							"query": [
+								{
+									"key": "client_id",
+									"value": "8268ec76-d6c2-48b5-a0e4-a9c2538b8f48"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:7010/api/v1/users/027f7c54-deb3-4210-9fed-71b4f7271fba?client_id=8268ec76-d6c2-48b5-a0e4-a9c2538b8f48",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7010",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"027f7c54-deb3-4210-9fed-71b4f7271fba"
+							],
+							"query": [
+								{
+									"key": "client_id",
+									"value": "8268ec76-d6c2-48b5-a0e4-a9c2538b8f48"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "roles",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"client_id\": \"8268ec76-d6c2-48b5-a0e4-a9c2538b8f48\",\r\n  \"app_id\": 1,\r\n  \"name\": \"admin\",\r\n  \"description\": \"Administrator role with full access\",\r\n  \"level\": 1,\r\n  \"created_by\": \"a1b2c3d4-e5f6-7890-g1h2-i3j4k5l6m7n8\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:7010/api/v1/roles",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7010",
+							"path": [
+								"api",
+								"v1",
+								"roles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:7010/api/v1/roles/5f43769e-bb58-4120-9ec8-9caaf9409ff3?client_id=8268ec76-d6c2-48b5-a0e4-a9c2538b8f48&app_id=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7010",
+							"path": [
+								"api",
+								"v1",
+								"roles",
+								"5f43769e-bb58-4120-9ec8-9caaf9409ff3"
+							],
+							"query": [
+								{
+									"key": "client_id",
+									"value": "8268ec76-d6c2-48b5-a0e4-a9c2538b8f48"
+								},
+								{
+									"key": "app_id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "list",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"client_id\": \"8268ec76-d6c2-48b5-a0e4-a9c2538b8f48\",\r\n\t\"app_id\": 1,\r\n\t\"pagination\": {\r\n\t\t\"page\": 1,\r\n\t\t\"count\": 20\r\n\t}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:7010/api/v1/roles/list",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7010",
+							"path": [
+								"api",
+								"v1",
+								"roles",
+								"list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"client_id\": \"8268ec76-d6c2-48b5-a0e4-a9c2538b8f48\",\r\n\t\"app_id\": 1,\r\n\t\"name\": \"super admin\",\r\n\t\"description\": \"Super admin role\",\r\n\t\"level\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:7010/api/v1/roles/5f43769e-bb58-4120-9ec8-9caaf9409ff3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7010",
+							"path": [
+								"api",
+								"v1",
+								"roles",
+								"5f43769e-bb58-4120-9ec8-9caaf9409ff3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:7010/api/v1/roles/5f43769e-bb58-4120-9ec8-9caaf9409ff3?client_id=8268ec76-d6c2-48b5-a0e4-a9c2538b8f48&app_id=1&permanent=false",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7010",
+							"path": [
+								"api",
+								"v1",
+								"roles",
+								"5f43769e-bb58-4120-9ec8-9caaf9409ff3"
+							],
+							"query": [
+								{
+									"key": "client_id",
+									"value": "8268ec76-d6c2-48b5-a0e4-a9c2538b8f48"
+								},
+								{
+									"key": "app_id",
+									"value": "1"
+								},
+								{
+									"key": "permanent",
+									"value": "false"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "permission",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"code\": \"user.delete\",\r\n\t\"description\": \"Getting users\",\r\n\t\"category\": \"users\",\r\n\t\"app_id\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:7010/api/v1/permissions",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7010",
+							"path": [
+								"api",
+								"v1",
+								"permissions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:7010/api/v1/permissions/041a6cff-5d0d-4537-9f8a-2f58a2b3d429?app_id=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7010",
+							"path": [
+								"api",
+								"v1",
+								"permissions",
+								"041a6cff-5d0d-4537-9f8a-2f58a2b3d429"
+							],
+							"query": [
+								{
+									"key": "app_id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "list",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"app_id\": 1,\r\n  \"pagination\": {\r\n    \"page\": 1,\r\n    \"count\": 20\r\n  },\r\n  \"filters\": {\r\n    \"code_filter\": \"\",\r\n    \"category\": \"\",\r\n    \"active_only\": true\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:7010/api/v1/permissions/list",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7010",
+							"path": [
+								"api",
+								"v1",
+								"permissions",
+								"list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"code\": \"user.get\",\r\n\t\"description\": \"Getting users\",\r\n\t\"category\": \"users\",\r\n\t\"is_active\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:7010/api/v1/permissions/041a6cff-5d0d-4537-9f8a-2f58a2b3d429?app_id=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7010",
+							"path": [
+								"api",
+								"v1",
+								"permissions",
+								"041a6cff-5d0d-4537-9f8a-2f58a2b3d429"
+							],
+							"query": [
+								{
+									"key": "app_id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:7010/api/v1/permissions/041a6cff-5d0d-4537-9f8a-2f58a2b3d429?app_id=1&permanent=false",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7010",
+							"path": [
+								"api",
+								"v1",
+								"permissions",
+								"041a6cff-5d0d-4537-9f8a-2f58a2b3d429"
+							],
+							"query": [
+								{
+									"key": "app_id",
+									"value": "1"
+								},
+								{
+									"key": "permanent",
+									"value": "false"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "user_role",
+			"item": [
+				{
+					"name": "assign",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"user_id\": \"e540fa10-68d7-44d3-a66a-927dcba07c69\",\r\n  \"role_id\": \"f35c40f9-a321-425c-9e50-8371ee305c85\",\r\n  \"client_id\": \"8268ec76-d6c2-48b5-a0e4-a9c2538b8f48\",\r\n  \"app_id\": 1,\r\n  \"assigned_by\": \"3e3f9902-ae96-4be8-94f0-762197619e06\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:7010/api/v1/user-roles/assign",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7010",
+							"path": [
+								"api",
+								"v1",
+								"user-roles",
+								"assign"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "revoke",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user_id\": \"e540fa10-68d7-44d3-a66a-927dcba07c69\",\r\n    \"role_id\": \"f35c40f9-a321-425c-9e50-8371ee305c85\",\r\n    \"client_id\": \"8268ec76-d6c2-48b5-a0e4-a9c2538b8f48\",\r\n    \"app_id\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:7010/api/v1/user-roles/revoke",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7010",
+							"path": [
+								"api",
+								"v1",
+								"user-roles",
+								"revoke"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user_list_for_role",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"user_id\": \"027f7c54-deb3-4210-9fed-71b4f7271fba\",\r\n  \"client_id\": \"8268ec76-d6c2-48b5-a0e4-a9c2538b8f48\",\r\n  \"app_id\": 1,\r\n  \"page\": 1,\r\n  \"count\": 10\r\n}\r\n\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:7010/api/v1/user-roles/user",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7010",
+							"path": [
+								"api",
+								"v1",
+								"user-roles",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "role_list_for_user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"role_id\": \"9936aed6-680a-4f4b-a093-389a30be4a15\",\r\n  \"client_id\": \"8268ec76-d6c2-48b5-a0e4-a9c2538b8f48\",\r\n  \"app_id\": 1,\r\n  \"page\": 1,\r\n  \"count\": 10\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:7010/api/v1/user-roles/role",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7010",
+							"path": [
+								"api",
+								"v1",
+								"user-roles",
+								"role"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "role_permission",
+			"item": [
+				{
+					"name": "add_permissions_to_role",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"role_id\": \"5f43769e-bb58-4120-9ec8-9caaf9409ff3\",\r\n    \"client_id\": \"8268ec76-d6c2-48b5-a0e4-a9c2538b8f48\",\r\n    \"app_id\": 1,\r\n    \"permission_ids\": [\r\n        \"041a6cff-5d0d-4537-9f8a-2f58a2b3d429\"\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:7010/api/v1/role-permissions/add",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7010",
+							"path": [
+								"api",
+								"v1",
+								"role-permissions",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "remove_permissions_from_role",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"role_id\": \"5f43769e-bb58-4120-9ec8-9caaf9409ff3\",\r\n    \"client_id\": \"8268ec76-d6c2-48b5-a0e4-a9c2538b8f48\",\r\n    \"app_id\": 1,\r\n    \"permission_ids\": [\r\n        \"041a6cff-5d0d-4537-9f8a-2f58a2b3d429\"\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:7010/api/v1/role-permissions/remove",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7010",
+							"path": [
+								"api",
+								"v1",
+								"role-permissions",
+								"remove"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "list_permissions_for_role",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"role_id\": \"5f43769e-bb58-4120-9ec8-9caaf9409ff3\",\r\n    \"client_id\": \"8268ec76-d6c2-48b5-a0e4-a9c2538b8f48\",\r\n    \"app_id\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:7010/api/v1/role-permissions/list-permissions",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7010",
+							"path": [
+								"api",
+								"v1",
+								"role-permissions",
+								"list-permissions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "list_roles_for_permission",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"permission_id\": \"041a6cff-5d0d-4537-9f8a-2f58a2b3d429\",\r\n    \"client_id\": \"8268ec76-d6c2-48b5-a0e4-a9c2538b8f48\",\r\n    \"app_id\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:7010/api/v1/role-permissions/list-roles",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7010",
+							"path": [
+								"api",
+								"v1",
+								"role-permissions",
+								"list-roles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "check_permission",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"role_id\": \"5f43769e-bb58-4120-9ec8-9caaf9409ff3\",\r\n    \"client_id\": \"8268ec76-d6c2-48b5-a0e4-a9c2538b8f48\",\r\n\t\"permission_id\":  \"041a6cff-5d0d-4537-9f8a-2f58a2b3d429\",\r\n    \"app_id\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:7010/api/v1/role-permissions/check-permission",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "7010",
+							"path": [
+								"api",
+								"v1",
+								"role-permissions",
+								"check-permission"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

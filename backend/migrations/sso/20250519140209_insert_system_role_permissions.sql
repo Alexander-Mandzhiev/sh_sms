@@ -46,5 +46,6 @@ INSERT INTO role_permissions (role_id, permission_id) VALUES
     ('9936aed6-680a-4f4b-a093-389a30be4a15', 'fc57a6b0-9d96-47da-b9df-7745394365f5'),  -- permission.read
     ('9936aed6-680a-4f4b-a093-389a30be4a15', 'd1f0d48b-32bf-4087-9b50-443a80c0bc06'),  -- permission.list
     ('9936aed6-680a-4f4b-a093-389a30be4a15', '2fbdf044-18e9-478b-b3e1-eb9f5670ca7c'),  -- permission.update
-    ('9936aed6-680a-4f4b-a093-389a30be4a15', 'c7d12711-6d51-4156-b53e-539c517c9c97'),  -- permission.restore
+    ('9936aed6-680a-4f4b-a093-389a30be4a15', 'c7d12711-6d51-4156-b53e-539c517c9c97')   -- permission.restore
+    ON CONFLICT (role_id, permission_id) DO NOTHING;
 -- +goose StatementEnd
