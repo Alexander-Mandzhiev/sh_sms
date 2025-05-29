@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package library.books;
+option go_package = "library.v1;books";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+service BookService {
+  rpc CreateBook(CreateBookRequest) returns (Book) {}
+  rpc GetBook(GetBookRequest) returns (Book) {}
+  rpc UpdateBook(UpdateBookRequest) returns (Book) {}
+  rpc DeleteBook(DeleteBookRequest) returns (google.protobuf.Empty) {}
+  rpc ListBooks(ListBooksRequest) returns (ListBooksResponse) {}
+}
+
+message Book {
+  int64 id = 1;
+  string title = 2;
+  string author = 3;
+  string description = 4;
+  int32 subject_id = 5;
+  int32 class_id = 6;
+  google.protobuf.Timestamp created_at = 7;
+}
+
+message CreateBookRequest {
+  string title = 1;
+  string author = 2;
+  optional string description = 3;
+  int32 subject_id = 4;
+  int32 class_id = 5;
+}
+
+message GetBookRequest {
+  int64 id = 1;
+}
+
+message UpdateBookRequest {
+  int64 id = 1;
+  optional string title = 2;
+  optional string author = 3;
+  optional string description = 4;
+  optional int32 subject_id = 5;
+  optional int32 class_id = 6;
+}
+
+message DeleteBookRequest {
+  int64 id = 1;
+}
+
+message ListBooksRequest {
+  optional int32 page_size = 1;
+  optional string page_token = 2;
+  optional string filter = 3;
+}
+
+message ListBooksResponse {
+  repeated Book books = 1;
+  string next_page_token = 2;
+  int32 total_count = 3;
+}
