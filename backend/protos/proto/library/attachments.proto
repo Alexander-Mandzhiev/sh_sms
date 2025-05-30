@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+
+package library.attachments;
+option go_package = "library.v1;attachments";
+
+import "google/protobuf/empty.proto";
+
+
+service AttachmentService {
+  rpc CreateAttachment(CreateAttachmentRequest) returns (Attachment) {}
+  rpc GetAttachment(GetAttachmentRequest) returns (Attachment) {}
+  rpc UpdateAttachment(UpdateAttachmentRequest) returns (Attachment) {}
+  rpc DeleteAttachment(DeleteAttachmentRequest) returns (google.protobuf.Empty) {}
+  rpc ListAttachmentsByBook(ListAttachmentsByBookRequest) returns (ListAttachmentsResponse) {}
+}
+
+message Attachment {
+  int64 book_id = 1;
+  string format = 2;
+  string file_url = 3;
+}
+
+message CreateAttachmentRequest {
+  int64 book_id = 1;
+  string format = 2;
+  string file_url = 3;
+}
+
+message GetAttachmentRequest {
+  int64 book_id = 1;
+  string format = 2;
+}
+
+message UpdateAttachmentRequest {
+  int64 book_id = 1;
+  string format = 2;
+  string new_file_url = 3;
+}
+
+message DeleteAttachmentRequest {
+  int64 book_id = 1;
+  string format = 2;
+}
+
+message ListAttachmentsByBookRequest {
+  int64 book_id = 1;
+}
+
+message ListAttachmentsResponse {
+  repeated Attachment attachments = 1;
+}

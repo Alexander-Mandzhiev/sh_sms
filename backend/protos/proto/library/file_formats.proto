@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package library.file_formats;
+option go_package = "library.v1;file_formats";
+import "google/protobuf/empty.proto";
+
+
+service FileFormatService {
+  rpc ListFileFormats(google.protobuf.Empty) returns (ListFileFormatsResponse) {}
+  rpc FileFormatExists(FileFormatExistsRequest) returns (FileFormatExistsResponse) {}
+}
+
+message ListFileFormatsResponse {
+  repeated string formats = 1;
+}
+
+message FileFormatExistsRequest {
+  string format = 1;
+}
+
+message FileFormatExistsResponse {
+  bool exists = 1;
+}
