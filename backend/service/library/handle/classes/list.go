@@ -2,22 +2,33 @@ package classes_handle
 
 import (
 	sl "backend/pkg/logger"
-	"backend/protos/gen/go/library/classes"
+	"backend/pkg/models/library"
+	library "backend/protos/gen/go/library"
 	"context"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"log/slog"
 )
 
-func (s *serverAPI) List(ctx context.Context, req *classes.ListClassesRequest) (*classes.ListClassesResponse, error) {
-	s.logger.Debug("ListClasses called", slog.Any("filters", req))
+func (s *serverAPI) ListClasses(ctx context.Context, _ *emptypb.Empty) (*library.ListClassesResponse, error) {
+	const op = "grpc.Library.Classes.ListClasses"
+	logger := s.logger.With(slog.String("op", op))
+	logger.Debug("List classes called")
 
-	resp, err := s.service.List(ctx, req)
+	classes, err := s.service.List(ctx)
 	if err != nil {
-		s.logger.Error("Failed to list classes", sl.Err(err, true))
-		return nil, status.Errorf(codes.Internal, "list failed: %v", err)
+		logger.Error("Failed to list classes", sl.Err(err, true))
+		return nil, s.convertError(err)
 	}
 
-	s.logger.Info("Classes listed", slog.Int("count", len(resp.Items)))
+	protoClasses := make([]*library.Class, 0, len(classes))
+	for _, class := range classes {
+		protoClasses = append(protoClasses, library_models.ClassToProto(class))
+	}
+
+	resp := &library.ListClassesResponse{
+		Classes: protoClasses,
+	}
+
+	logger.Info("Classes listed", slog.Int("count", len(protoClasses)))
 	return resp, nil
 }

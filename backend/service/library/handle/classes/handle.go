@@ -1,28 +1,26 @@
 package classes_handle
 
 import (
-	"backend/protos/gen/go/library/classes"
+	"backend/pkg/models/library"
+	library "backend/protos/gen/go/library"
 	"context"
 	"google.golang.org/grpc"
 	"log/slog"
 )
 
 type ClassesService interface {
-	Create(ctx context.Context, req *classes.CreateClassRequest) (*classes.Class, error)
-	Get(ctx context.Context, req *classes.GetClassRequest) (*classes.Class, error)
-	Update(ctx context.Context, req *classes.UpdateClassRequest) (*classes.Class, error)
-	Delete(ctx context.Context, req *classes.DeleteClassRequest) error
-	List(ctx context.Context, req *classes.ListClassesRequest) (*classes.ListClassesResponse, error)
+	Get(ctx context.Context, id int) (*library_models.Class, error)
+	List(ctx context.Context) ([]*library_models.Class, error)
 }
 
 type serverAPI struct {
-	classes.UnimplementedClassesServiceServer
+	library.UnimplementedClassServiceServer
 	service ClassesService
 	logger  *slog.Logger
 }
 
 func Register(gRPCServer *grpc.Server, service ClassesService, logger *slog.Logger) {
-	classes.RegisterClassesServiceServer(gRPCServer, &serverAPI{
+	library.RegisterClassServiceServer(gRPCServer, &serverAPI{
 		service: service,
 		logger:  logger.With("module", "classes"),
 	})

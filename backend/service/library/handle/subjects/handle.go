@@ -1,28 +1,30 @@
 package subjects_handle
 
 import (
-	"backend/protos/gen/go/library/subjects"
+	"backend/pkg/models/library"
+	library "backend/protos/gen/go/library"
 	"context"
+
 	"google.golang.org/grpc"
 	"log/slog"
 )
 
 type SubjectsService interface {
-	Create(ctx context.Context, req *subjects.CreateSubjectRequest) (*subjects.Subject, error)
-	Get(ctx context.Context, req *subjects.GetSubjectRequest) (*subjects.Subject, error)
-	Update(ctx context.Context, req *subjects.UpdateSubjectRequest) (*subjects.Subject, error)
-	Delete(ctx context.Context, req *subjects.DeleteSubjectRequest) error
-	List(ctx context.Context, req *subjects.ListSubjectsRequest) (*subjects.ListSubjectsResponse, error)
+	CreateSubject(ctx context.Context, params *library_models.CreateSubjectParams) (*library_models.Subject, error)
+	GetSubject(ctx context.Context, id int32) (*library_models.Subject, error)
+	UpdateSubject(ctx context.Context, params *library_models.UpdateSubjectParams) (*library_models.Subject, error)
+	DeleteSubject(ctx context.Context, id int32) error
+	ListSubjects(ctx context.Context) ([]*library_models.Subject, error)
 }
 
 type serverAPI struct {
-	subjects.UnimplementedSubjectsServiceServer
+	library.UnimplementedSubjectServiceServer
 	service SubjectsService
 	logger  *slog.Logger
 }
 
 func Register(gRPCServer *grpc.Server, service SubjectsService, logger *slog.Logger) {
-	subjects.RegisterSubjectsServiceServer(gRPCServer, &serverAPI{
+	library.RegisterSubjectServiceServer(gRPCServer, &serverAPI{
 		service: service,
 		logger:  logger.With("module", "subjects"),
 	})

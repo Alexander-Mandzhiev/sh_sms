@@ -2,22 +2,33 @@ package subjects_handle
 
 import (
 	sl "backend/pkg/logger"
-	"backend/protos/gen/go/library/subjects"
+	library "backend/protos/gen/go/library"
 	"context"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"log/slog"
 )
 
-func (s *serverAPI) List(ctx context.Context, req *subjects.ListSubjectsRequest) (*subjects.ListSubjectsResponse, error) {
-	s.logger.Debug("ListSubjects called", slog.Any("filters", req))
+func (s *serverAPI) ListSubjects(ctx context.Context, _ *emptypb.Empty) (*library.ListSubjectsResponse, error) {
+	const op = "grpc.Library.Subjects.ListSubjects"
+	logger := s.logger.With(slog.String("op", op))
+	logger.Debug("List subjects called")
 
-	resp, err := s.service.List(ctx, req)
+	subjects, err := s.service.ListSubjects(ctx)
 	if err != nil {
-		s.logger.Error("Failed to list subjects", sl.Err(err, true))
-		return nil, status.Errorf(codes.Internal, "list failed: %v", err)
+		logger.Error("Failed to list subjects", sl.Err(err, true))
+		return nil, s.convertError(err)
 	}
 
-	s.logger.Info("Subjects listed", slog.Int("count", len(resp.Items)))
-	return resp, nil
+	protoSubjects := make([]*library.Subject, 0, len(subjects))
+	for _, subject := range subjects {
+		protoSubjects = append(protoSubjects, subject.ToProto())
+	}
+
+	response := &library.ListSubjectsResponse{
+		Subjects: protoSubjects,
+	}
+
+	logger.Info("Subjects listed successfully", slog.Int("count", len(protoSubjects)))
+
+	return response, nil
 }

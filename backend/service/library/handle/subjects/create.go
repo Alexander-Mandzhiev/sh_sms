@@ -2,22 +2,30 @@ package subjects_handle
 
 import (
 	sl "backend/pkg/logger"
-	"backend/protos/gen/go/library/subjects"
+	"backend/pkg/models/library"
+	library "backend/protos/gen/go/library"
 	"context"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"log/slog"
 )
 
-func (s *serverAPI) Create(ctx context.Context, req *subjects.CreateSubjectRequest) (*subjects.Subject, error) {
-	s.logger.Debug("CreateSubject called", slog.Any("request", req))
+func (s *serverAPI) CreateSubject(ctx context.Context, req *library.CreateSubjectRequest) (*library.Subject, error) {
+	const op = "grpc.Library.Subjects.CreateSubject"
+	logger := s.logger.With(slog.String("op", op))
+	logger.Debug("Create subject called", slog.String("name", req.GetName()))
 
-	resp, err := s.service.Create(ctx, req)
+	params, err := library_models.CreateSubjectParamsFromProto(req)
 	if err != nil {
-		s.logger.Error("Failed to create subject", sl.Err(err, true))
-		return nil, status.Errorf(codes.Internal, "failed to create subject: %v", err)
+		logger.Warn("Invalid create subject parameters", sl.Err(err, true), slog.String("name", req.GetName()))
+		return nil, s.convertError(err)
 	}
 
-	s.logger.Info("Subject created", slog.Int("id", int(resp.Id)))
-	return resp, nil
+	subject, err := s.service.CreateSubject(ctx, params)
+	if err != nil {
+		logger.Error("Failed to create subject", sl.Err(err, true), slog.String("name", params.Name))
+		return nil, s.convertError(err)
+	}
+
+	protoSubject := subject.ToProto()
+	logger.Info("Subject created successfully", slog.Int("id", int(protoSubject.GetId())), slog.String("name", protoSubject.GetName()))
+	return protoSubject, nil
 }

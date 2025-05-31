@@ -2,22 +2,31 @@ package subjects_handle
 
 import (
 	sl "backend/pkg/logger"
-	"backend/protos/gen/go/library/subjects"
+	"backend/pkg/models/library"
+	library "backend/protos/gen/go/library"
 	"context"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"log/slog"
 )
 
-func (s *serverAPI) Delete(ctx context.Context, req *subjects.DeleteSubjectRequest) (*subjects.DeleteSubjectResponse, error) {
-	s.logger.Debug("DeleteSubject called", slog.Int("id", int(req.Id)))
+func (s *serverAPI) DeleteSubject(ctx context.Context, req *library.DeleteSubjectRequest) (*emptypb.Empty, error) {
+	const op = "grpc.Library.Subjects.DeleteSubject"
+	logger := s.logger.With(slog.String("op", op))
+	logger.Debug("Delete subject called", slog.Int("id", int(req.GetId())))
 
-	err := s.service.Delete(ctx, req)
-	if err != nil {
-		s.logger.Error("Failed to delete subject", sl.Err(err, true))
-		return nil, status.Errorf(codes.Internal, "delete failed: %v", err)
+	if req.GetId() <= 0 {
+		err := library_models.ErrInvalidSubjectID
+		logger.Warn("Invalid subject ID for deletion", sl.Err(err, true), slog.Int("id", int(req.GetId())))
+		return nil, s.convertError(err)
 	}
 
-	s.logger.Info("Subject deleted", slog.Int("id", int(req.Id)))
-	return &subjects.DeleteSubjectResponse{Success: true}, nil
+	err := s.service.DeleteSubject(ctx, req.GetId())
+	if err != nil {
+		logger.Error("Failed to delete subject", sl.Err(err, true), slog.Int("id", int(req.GetId())))
+		return nil, s.convertError(err)
+	}
+
+	logger.Info("Subject deleted successfully", slog.Int("id", int(req.GetId())))
+
+	return &emptypb.Empty{}, nil
 }

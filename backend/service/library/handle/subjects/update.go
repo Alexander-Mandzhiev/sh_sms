@@ -2,22 +2,30 @@ package subjects_handle
 
 import (
 	sl "backend/pkg/logger"
-	"backend/protos/gen/go/library/subjects"
+	"backend/pkg/models/library"
+	library "backend/protos/gen/go/library"
 	"context"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"log/slog"
 )
 
-func (s *serverAPI) Update(ctx context.Context, req *subjects.UpdateSubjectRequest) (*subjects.Subject, error) {
-	s.logger.Debug("UpdateSubject called", slog.Any("request", req))
+func (s *serverAPI) UpdateSubject(ctx context.Context, req *library.UpdateSubjectRequest) (*library.Subject, error) {
+	const op = "grpc.Library.Subjects.UpdateSubject"
+	logger := s.logger.With(slog.String("op", op))
+	logger.Debug("Update subject called", slog.Int("id", int(req.GetId())), slog.String("name", req.GetName()))
 
-	resp, err := s.service.Update(ctx, req)
+	params, err := library_models.UpdateSubjectParamsFromProto(req)
 	if err != nil {
-		s.logger.Error("Failed to update subject", sl.Err(err, true))
-		return nil, status.Errorf(codes.InvalidArgument, "update failed: %v", err)
+		logger.Warn("Invalid update subject parameters", sl.Err(err, true), slog.Int("id", int(req.GetId())), slog.String("name", req.GetName()))
+		return nil, s.convertError(err)
 	}
 
-	s.logger.Info("Subject updated", slog.Int("id", int(resp.Id)))
-	return resp, nil
+	subject, err := s.service.UpdateSubject(ctx, params)
+	if err != nil {
+		logger.Error("Failed to update subject", sl.Err(err, true), slog.Int("id", int(params.ID)), slog.String("name", params.Name))
+		return nil, s.convertError(err)
+	}
+
+	protoSubject := subject.ToProto()
+	logger.Info("Subject updated successfully", slog.Int("id", int(protoSubject.GetId())), slog.String("name", protoSubject.GetName()))
+	return protoSubject, nil
 }

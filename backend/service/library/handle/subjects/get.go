@@ -2,22 +2,31 @@ package subjects_handle
 
 import (
 	sl "backend/pkg/logger"
-	"backend/protos/gen/go/library/subjects"
+	"backend/pkg/models/library"
+	library "backend/protos/gen/go/library"
 	"context"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
+
 	"log/slog"
 )
 
-func (s *serverAPI) Get(ctx context.Context, req *subjects.GetSubjectRequest) (*subjects.Subject, error) {
-	s.logger.Debug("GetSubject called", slog.Int("id", int(req.Id)))
+func (s *serverAPI) GetSubject(ctx context.Context, req *library.GetSubjectRequest) (*library.Subject, error) {
+	const op = "grpc.Library.Subjects.GetSubject"
+	logger := s.logger.With(slog.String("op", op))
+	logger.Debug("Get subject called", slog.Int("id", int(req.GetId())))
 
-	resp, err := s.service.Get(ctx, req)
-	if err != nil {
-		s.logger.Error("Failed to get subject", sl.Err(err, true))
-		return nil, status.Errorf(codes.NotFound, "subject not found: %v", err)
+	if req.GetId() <= 0 {
+		err := library_models.ErrInvalidSubjectID
+		logger.Warn("Invalid subject ID", sl.Err(err, true), slog.Int("id", int(req.GetId())))
+		return nil, s.convertError(err)
 	}
 
-	s.logger.Info("Subject retrieved", slog.Int("id", int(resp.Id)))
-	return resp, nil
+	subject, err := s.service.GetSubject(ctx, req.GetId())
+	if err != nil {
+		logger.Error("Failed to get subject", sl.Err(err, true), slog.Int("id", int(req.GetId())))
+		return nil, s.convertError(err)
+	}
+
+	protoSubject := subject.ToProto()
+	logger.Debug("Subject retrieved successfully", slog.Int("id", int(protoSubject.GetId())), slog.String("name", protoSubject.GetName()))
+	return protoSubject, nil
 }

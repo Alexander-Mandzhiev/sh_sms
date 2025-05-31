@@ -1,8 +1,8 @@
 syntax = "proto3";
 
 
-package library.attachments;
-option go_package = "library.v1;attachments";
+package library;
+option go_package = "library.v1";
 
 import "google/protobuf/empty.proto";
 

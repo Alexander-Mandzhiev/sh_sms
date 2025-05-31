@@ -1,7 +1,7 @@
 syntax = "proto3";
 
-package library.classes;
-option go_package = "library.v1;classes";
+package library;
+option go_package = "library.v1";
 
 import "google/protobuf/empty.proto";
 

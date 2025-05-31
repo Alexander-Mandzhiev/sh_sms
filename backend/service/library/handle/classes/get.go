@@ -2,22 +2,29 @@ package classes_handle
 
 import (
 	sl "backend/pkg/logger"
-	"backend/protos/gen/go/library/classes"
+	"backend/pkg/models/library"
+	library "backend/protos/gen/go/library"
 	"context"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"log/slog"
 )
 
-func (s *serverAPI) Get(ctx context.Context, req *classes.GetClassRequest) (*classes.Class, error) {
-	s.logger.Debug("GetClass called", slog.Int("id", int(req.Id)))
+func (s *serverAPI) GetClass(ctx context.Context, req *library.GetClassRequest) (*library.Class, error) {
+	const op = "grpc.Library.Classes.GetById"
+	logger := s.logger.With(slog.String("op", op), slog.Int("app_id", int(req.GetId())))
+	logger.Debug("Get class by id called")
 
-	resp, err := s.service.Get(ctx, req)
-	if err != nil {
-		s.logger.Error("Failed to get class", sl.Err(err, true))
-		return nil, status.Errorf(codes.NotFound, "class not found: %v", err)
+	if req.GetId() <= 0 {
+		logger.Warn("id validation failed", slog.Any("error", ErrInvalidId))
+		return nil, s.convertError(ErrInvalidId)
 	}
 
-	s.logger.Info("Class retrieved", slog.Int("id", int(resp.Id)))
-	return resp, nil
+	class, err := s.service.Get(ctx, int(req.GetId()))
+	if err != nil {
+		logger.Error("Failed to get class", sl.Err(err, true))
+		return nil, s.convertError(err)
+	}
+
+	protoClass := library_models.ClassToProto(class)
+	logger.Info("Class retrieved", slog.Int("id", int(protoClass.GetId())))
+	return protoClass, nil
 }
