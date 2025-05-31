@@ -10,14 +10,12 @@ import (
 
 func (s *serverAPI) convertError(err error) error {
 	switch {
-	// Общие ошибки
 	case errors.Is(err, library_models.ErrInvalidID):
 		return status.Error(codes.InvalidArgument, "invalid book id")
 	case errors.Is(err, library_models.ErrNotFound):
 		return status.Error(codes.NotFound, "book not found")
 	case errors.Is(err, library_models.ErrPermissionDenied):
 		return status.Error(codes.PermissionDenied, "permission denied")
-
 	case errors.Is(err, library_models.ErrBookInvalidClientID):
 		return status.Error(codes.InvalidArgument, "invalid client id format")
 	case errors.Is(err, library_models.ErrBookEmptyTitle):
@@ -34,7 +32,6 @@ func (s *serverAPI) convertError(err error) error {
 		return status.Error(codes.InvalidArgument, "invalid page size")
 	case errors.Is(err, library_models.ErrClientIDRequired):
 		return status.Error(codes.InvalidArgument, "client ID is required")
-
 	default:
 		s.logger.Error("Internal error", sl.Err(err, true))
 		return status.Error(codes.Internal, "internal error")

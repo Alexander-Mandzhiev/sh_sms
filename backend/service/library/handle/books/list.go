@@ -2,7 +2,7 @@ package books_handle
 
 import (
 	sl "backend/pkg/logger"
-	library_models "backend/pkg/models/library"
+	"backend/pkg/models/library"
 	library "backend/protos/gen/go/library"
 	"context"
 	"github.com/google/uuid"
