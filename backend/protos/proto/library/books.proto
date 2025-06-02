@@ -7,11 +7,22 @@ import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
 
 service BookService {
-  rpc CreateBook(CreateBookRequest) returns (Book) {}
-  rpc GetBook(GetBookRequest) returns (Book) {}
-  rpc UpdateBook(UpdateBookRequest) returns (Book) {}
+  rpc CreateBook(CreateBookRequest) returns (BookResponse) {}
+  rpc GetBook(GetBookRequest) returns (BookResponse) {}
+  rpc UpdateBook(UpdateBookRequest) returns (BookResponse) {}
   rpc DeleteBook(DeleteBookRequest) returns (google.protobuf.Empty) {}
   rpc ListBooks(ListBooksRequest) returns (ListBooksResponse) {}
+}
+
+message BookResponse {
+  int64 id = 1;
+  string client_id = 2;
+  string title = 3;
+  string author = 4;
+  string description = 5;
+  string subject_name = 6;
+  int32 grade = 7;
+  google.protobuf.Timestamp created_at = 8;
 }
 
 message Book {
@@ -56,13 +67,13 @@ message DeleteBookRequest {
 
 message ListBooksRequest {
   string client_id = 1;
-  optional int32 page_size = 2;
-  optional string page_token = 3;
+  optional int32 count = 2;
+  optional int64 cursor = 3;
   optional string filter = 4;
 }
 
 message ListBooksResponse {
-  repeated Book books = 1;
-  string next_page_token = 2;
+  repeated BookResponse books = 1;
+  int64 next_cursor = 2;
   int32 total_count = 3;
 }

@@ -13,6 +13,7 @@ type SubjectsProvider interface {
 	DeleteSubject(ctx context.Context, id int32) error
 	ListSubjects(ctx context.Context) ([]*library_models.Subject, error)
 }
+
 type Service struct {
 	logger   *slog.Logger
 	provider SubjectsProvider

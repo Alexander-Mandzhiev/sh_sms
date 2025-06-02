@@ -3,33 +3,32 @@ package books_repository
 import (
 	"context"
 	"fmt"
+	"github.com/google/uuid"
 	"log/slog"
 )
 
-func (r *Repository) CountBooks(ctx context.Context, clientID, filter string) (int32, error) {
-	const op = "repository.Library.Books.CountBooks"
-	logger := r.logger.With(slog.String("op", op))
-	logger.Debug("Counting books", slog.String("client_id", clientID), slog.String("filter", filter))
+func (r *Repository) CountBooks(ctx context.Context, clientID uuid.UUID, filter *string) (int32, error) {
+	const op = "books_repository.CountBooks"
+	logger := r.logger.With(slog.String("op", op), slog.String("client_id", clientID.String()))
+	logger.Debug("counting books")
 
-	query := `
-		SELECT COUNT(*)
-		FROM books
-		WHERE client_id = $1
-	`
+	query := `SELECT COUNT(*) FROM books WHERE client_id = $1 AND deleted_at IS NULL`
 	args := []interface{}{clientID}
+	argCounter := 2
 
-	if filter != "" {
-		query += ` AND search_vector @@ plainto_tsquery('russian', $2)`
-		args = append(args, filter)
+	if filter != nil && *filter != "" {
+		query += fmt.Sprintf(" AND (title ILIKE $%d OR author ILIKE $%d)", argCounter, argCounter)
+		args = append(args, "%"+*filter+"%")
+		argCounter++
 	}
 
 	var count int32
 	err := r.db.QueryRow(ctx, query, args...).Scan(&count)
 	if err != nil {
-		logger.Error("Failed to count books", slog.Any("error", err))
+		logger.Error("failed to count books", slog.Any("error", err))
 		return 0, fmt.Errorf("%s: %w", op, err)
 	}
 
-	logger.Debug("Books counted", slog.Int("count", int(count)))
+	logger.Debug("books counted", slog.Int("count", int(count)))
 	return count, nil
 }

@@ -10,11 +10,11 @@ import (
 )
 
 type BookService interface {
-	CreateBook(ctx context.Context, params *library_models.CreateBookParams) (*library_models.Book, error)
-	GetBook(ctx context.Context, id int64, clientID uuid.UUID) (*library_models.Book, error)
-	UpdateBook(ctx context.Context, params *library_models.UpdateBookParams) (*library_models.Book, error)
+	CreateBook(ctx context.Context, params *library_models.CreateBookParams) (*library_models.BookResponse, error)
+	GetBook(ctx context.Context, id int64, clientID uuid.UUID) (*library_models.BookResponse, error)
+	UpdateBook(ctx context.Context, params *library_models.UpdateBookRequest) (*library_models.BookResponse, error)
 	DeleteBook(ctx context.Context, id int64, clientID uuid.UUID) error
-	ListBooks(ctx context.Context, params *library_models.ListBooksParams) (*library_models.ListBooksResult, error)
+	ListBooks(ctx context.Context, params *library_models.ListBooksRequest) (*library_models.ListBooksResponse, error)
 }
 
 type serverAPI struct {

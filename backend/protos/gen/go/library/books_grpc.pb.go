@@ -31,9 +31,9 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type BookServiceClient interface {
-	CreateBook(ctx context.Context, in *CreateBookRequest, opts ...grpc.CallOption) (*Book, error)
-	GetBook(ctx context.Context, in *GetBookRequest, opts ...grpc.CallOption) (*Book, error)
-	UpdateBook(ctx context.Context, in *UpdateBookRequest, opts ...grpc.CallOption) (*Book, error)
+	CreateBook(ctx context.Context, in *CreateBookRequest, opts ...grpc.CallOption) (*BookResponse, error)
+	GetBook(ctx context.Context, in *GetBookRequest, opts ...grpc.CallOption) (*BookResponse, error)
+	UpdateBook(ctx context.Context, in *UpdateBookRequest, opts ...grpc.CallOption) (*BookResponse, error)
 	DeleteBook(ctx context.Context, in *DeleteBookRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	ListBooks(ctx context.Context, in *ListBooksRequest, opts ...grpc.CallOption) (*ListBooksResponse, error)
 }
@@ -46,9 +46,9 @@ func NewBookServiceClient(cc grpc.ClientConnInterface) BookServiceClient {
 	return &bookServiceClient{cc}
 }
 
-func (c *bookServiceClient) CreateBook(ctx context.Context, in *CreateBookRequest, opts ...grpc.CallOption) (*Book, error) {
+func (c *bookServiceClient) CreateBook(ctx context.Context, in *CreateBookRequest, opts ...grpc.CallOption) (*BookResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(Book)
+	out := new(BookResponse)
 	err := c.cc.Invoke(ctx, BookService_CreateBook_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -56,9 +56,9 @@ func (c *bookServiceClient) CreateBook(ctx context.Context, in *CreateBookReques
 	return out, nil
 }
 
-func (c *bookServiceClient) GetBook(ctx context.Context, in *GetBookRequest, opts ...grpc.CallOption) (*Book, error) {
+func (c *bookServiceClient) GetBook(ctx context.Context, in *GetBookRequest, opts ...grpc.CallOption) (*BookResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(Book)
+	out := new(BookResponse)
 	err := c.cc.Invoke(ctx, BookService_GetBook_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -66,9 +66,9 @@ func (c *bookServiceClient) GetBook(ctx context.Context, in *GetBookRequest, opt
 	return out, nil
 }
 
-func (c *bookServiceClient) UpdateBook(ctx context.Context, in *UpdateBookRequest, opts ...grpc.CallOption) (*Book, error) {
+func (c *bookServiceClient) UpdateBook(ctx context.Context, in *UpdateBookRequest, opts ...grpc.CallOption) (*BookResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(Book)
+	out := new(BookResponse)
 	err := c.cc.Invoke(ctx, BookService_UpdateBook_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -100,9 +100,9 @@ func (c *bookServiceClient) ListBooks(ctx context.Context, in *ListBooksRequest,
 // All implementations must embed UnimplementedBookServiceServer
 // for forward compatibility.
 type BookServiceServer interface {
-	CreateBook(context.Context, *CreateBookRequest) (*Book, error)
-	GetBook(context.Context, *GetBookRequest) (*Book, error)
-	UpdateBook(context.Context, *UpdateBookRequest) (*Book, error)
+	CreateBook(context.Context, *CreateBookRequest) (*BookResponse, error)
+	GetBook(context.Context, *GetBookRequest) (*BookResponse, error)
+	UpdateBook(context.Context, *UpdateBookRequest) (*BookResponse, error)
 	DeleteBook(context.Context, *DeleteBookRequest) (*emptypb.Empty, error)
 	ListBooks(context.Context, *ListBooksRequest) (*ListBooksResponse, error)
 	mustEmbedUnimplementedBookServiceServer()
@@ -115,13 +115,13 @@ type BookServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedBookServiceServer struct{}
 
-func (UnimplementedBookServiceServer) CreateBook(context.Context, *CreateBookRequest) (*Book, error) {
+func (UnimplementedBookServiceServer) CreateBook(context.Context, *CreateBookRequest) (*BookResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateBook not implemented")
 }
-func (UnimplementedBookServiceServer) GetBook(context.Context, *GetBookRequest) (*Book, error) {
+func (UnimplementedBookServiceServer) GetBook(context.Context, *GetBookRequest) (*BookResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBook not implemented")
 }
-func (UnimplementedBookServiceServer) UpdateBook(context.Context, *UpdateBookRequest) (*Book, error) {
+func (UnimplementedBookServiceServer) UpdateBook(context.Context, *UpdateBookRequest) (*BookResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateBook not implemented")
 }
 func (UnimplementedBookServiceServer) DeleteBook(context.Context, *DeleteBookRequest) (*emptypb.Empty, error) {

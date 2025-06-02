@@ -10,6 +10,14 @@ var (
 )
 
 var (
+	ErrInvalidClientID = errors.New("invalid client ID format")
+	ErrEmptyTitle      = errors.New("title cannot be empty")
+	ErrEmptyAuthor     = errors.New("author cannot be empty")
+	ErrInvalidSubject  = errors.New("subject ID must be positive")
+	ErrInvalidClass    = errors.New("class ID must be between 1 and 11")
+)
+
+var (
 	ErrBookInvalidClientID  = errors.New("invalid client id format")
 	ErrBookEmptyTitle       = errors.New("title cannot be empty")
 	ErrBookEmptyAuthor      = errors.New("author cannot be empty")

@@ -26,8 +26,7 @@ func (s *serverAPI) DeleteBook(ctx context.Context, req *library.DeleteBookReque
 		return nil, s.convertError(library_models.ErrBookInvalidClientID)
 	}
 
-	err = s.service.DeleteBook(ctx, req.GetId(), clientID)
-	if err != nil {
+	if err = s.service.DeleteBook(ctx, req.GetId(), clientID); err != nil {
 		logger.Error("Failed to delete book", sl.Err(err, true))
 		return nil, s.convertError(err)
 	}

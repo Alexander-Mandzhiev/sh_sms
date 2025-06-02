@@ -6,10 +6,11 @@ CREATE TABLE books (
     client_id UUID NOT NULL,
     title VARCHAR(255) NOT NULL,
     author VARCHAR(255) NOT NULL,
-    description TEXT,
+    description TEXT NOT NULL,
     subject_id INT NOT NULL REFERENCES subjects(id) ON DELETE RESTRICT,
     class_id INT NOT NULL REFERENCES classes(id) ON DELETE RESTRICT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP
 );
 -- +goose StatementEnd
 
