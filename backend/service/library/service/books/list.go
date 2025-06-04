@@ -7,7 +7,7 @@ import (
 )
 
 func (s *Service) ListBooks(ctx context.Context, params *library_models.ListBooksRequest) (*library_models.ListBooksResponse, error) {
-	const op = "service.Library.Books.ListBooks"
+	const op = "service.Library.Books.List"
 	logger := s.logger.With(slog.String("op", op), slog.String("client_id", params.ClientID.String()), slog.Int("count", int(params.Count)))
 	if params.Cursor != nil {
 		logger = logger.With(slog.Int64("cursor", *params.Cursor))

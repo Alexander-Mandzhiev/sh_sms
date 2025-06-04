@@ -9,7 +9,7 @@ import (
 )
 
 func (s *Service) CreateBook(ctx context.Context, params *library_models.CreateBookParams) (*library_models.BookResponse, error) {
-	const op = "books_service.CreateBook"
+	const op = "service.Library.Books.Create"
 	logger := s.logger.With(slog.String("op", op), slog.String("client_id", params.ClientID.String()), slog.String("title", params.Title))
 	logger.Debug("creating book")
 

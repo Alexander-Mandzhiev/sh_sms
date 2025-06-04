@@ -8,7 +8,7 @@ import (
 )
 
 func (s *Service) UpdateBook(ctx context.Context, req *library_models.UpdateBookRequest) (*library_models.BookResponse, error) {
-	const op = "books_service.UpdateBook"
+	const op = "service.Library.Books.Update"
 	logger := s.logger.With(slog.String("op", op), slog.Int64("book_id", req.ID), slog.String("client_id", req.ClientID.String()))
 	logger.Debug("update book request received")
 

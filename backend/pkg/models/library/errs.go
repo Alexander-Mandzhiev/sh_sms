@@ -30,6 +30,19 @@ var (
 )
 
 var (
+	ErrAttachmentNotFound         = errors.New("attachment not found")
+	ErrAttachmentAlreadyExists    = errors.New("attachment already exists")
+	ErrAttachmentExistsButDeleted = errors.New("attachment exists but deleted")
+	ErrAttachmentAlreadyActive    = errors.New("attachment is already active")
+	ErrInvalidAttachmentFormat    = errors.New("invalid attachment format")
+	ErrEmptyFileURL               = errors.New("file URL cannot be empty")
+	ErrAttachmentInvalidBookID    = errors.New("invalid book ID")
+	ErrAttachmentRestoreConflict  = errors.New("active attachment already exists, cannot restore")
+	ErrAttachmentUpdateConflict   = errors.New("conflict during attachment update")
+	ErrAttachmentAlreadyDeleted   = errors.New("attachment is already deleted")
+)
+
+var (
 	ErrEmptyName        = errors.New("subject name cannot be empty")
 	ErrInvalidSubjectID = errors.New("invalid subject ID")
 

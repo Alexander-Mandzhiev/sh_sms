@@ -13,6 +13,7 @@ const (
 	ServiceApps
 	ServiceClients
 	ServiceAuth
+	ServiceLibrary
 )
 
 func (s ServiceType) String() string {

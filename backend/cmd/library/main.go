@@ -1,18 +1,23 @@
 package main
 
 import (
-	config "backend/pkg/config/service"
+	config "backend/pkg/config/library"
 	"backend/pkg/server/grpc_server"
+	"backend/pkg/storage"
+	attachmentRepository "backend/service/library/repository/attachment"
 	booksRepository "backend/service/library/repository/books"
 	classesRepository "backend/service/library/repository/classes"
 	fileFormatRepository "backend/service/library/repository/fileFormats"
 	subjectsRepository "backend/service/library/repository/subjects"
+	"log/slog"
 
+	serviceA "backend/service/library/service/attachment"
 	serviceB "backend/service/library/service/books"
 	serviceC "backend/service/library/service/classes"
 	serviceFF "backend/service/library/service/fileFormats"
 	serviceS "backend/service/library/service/subjects"
 
+	handlerA "backend/service/library/handle/attachment"
 	handlerB "backend/service/library/handle/books"
 	handlerC "backend/service/library/handle/classes"
 	handlerFF "backend/service/library/handle/fileFormats"
@@ -46,7 +51,11 @@ func main() {
 		}
 	}()
 
-	// 4. Инициализация репозитория
+	// 4. Инициализация хранилища файлов
+	fileStorage := storage.NewLocalStorage(cfg.FileStorage)
+	logger.Info("File storage initialized", slog.String("base_dir", cfg.FileStorage.BaseDir), slog.Int("max_size_mb", cfg.FileStorage.MaxFileSizeMB), slog.String("base_url", cfg.FileStorage.BaseURL))
+
+	// 5. Инициализация репозитория
 	reposC, err := classesRepository.New(dbPool, logger)
 	if err != nil {
 		logger.Error("Failed to create user repository", sl.Err(err, true))
@@ -71,21 +80,24 @@ func main() {
 		return
 	}
 
-	// 5. Инициализация сервиса
+	reposA, err := attachmentRepository.New(dbPool, logger)
+
+	// 6. Инициализация сервиса
 	srvS := serviceS.New(reposS, logger)
 	srvC := serviceC.New(reposC, logger)
 	srvFF := serviceFF.New(reposFF, logger)
+	srvA := serviceA.New(reposA, fileStorage, logger)
 	srvB := serviceB.New(reposB, logger, reposC, reposS)
-
-	// 6. Инициализация gRPC сервера
+	// 7. Инициализация gRPC сервера
 	app := grpc_server.New()
 
-	// 7. Регистрация сервиса в gRPC сервере
+	// 8. Регистрация сервиса в gRPC сервере
 	handlerS.Register(app.GRPCServer, srvS, logger)
 	handlerFF.Register(app.GRPCServer, srvFF, logger)
 	handlerC.Register(app.GRPCServer, srvC, logger)
+	handlerA.Register(app.GRPCServer, srvA, logger)
 	handlerB.Register(app.GRPCServer, srvB, logger)
-	// 8. Запуск gRPC сервера
+	// 9. Запуск gRPC сервера
 	go func() {
 		app.MustRun(logger, cfg.GRPCServer.Port)
 	}()

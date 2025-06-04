@@ -25,6 +25,9 @@ const (
 	AttachmentService_UpdateAttachment_FullMethodName      = "/library.AttachmentService/UpdateAttachment"
 	AttachmentService_DeleteAttachment_FullMethodName      = "/library.AttachmentService/DeleteAttachment"
 	AttachmentService_ListAttachmentsByBook_FullMethodName = "/library.AttachmentService/ListAttachmentsByBook"
+	AttachmentService_RestoreAttachment_FullMethodName     = "/library.AttachmentService/RestoreAttachment"
+	AttachmentService_UploadFile_FullMethodName            = "/library.AttachmentService/UploadFile"
+	AttachmentService_DeleteFile_FullMethodName            = "/library.AttachmentService/DeleteFile"
 )
 
 // AttachmentServiceClient is the client API for AttachmentService service.
@@ -36,6 +39,9 @@ type AttachmentServiceClient interface {
 	UpdateAttachment(ctx context.Context, in *UpdateAttachmentRequest, opts ...grpc.CallOption) (*Attachment, error)
 	DeleteAttachment(ctx context.Context, in *DeleteAttachmentRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	ListAttachmentsByBook(ctx context.Context, in *ListAttachmentsByBookRequest, opts ...grpc.CallOption) (*ListAttachmentsResponse, error)
+	RestoreAttachment(ctx context.Context, in *RestoreAttachmentRequest, opts ...grpc.CallOption) (*Attachment, error)
+	UploadFile(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[UploadFileRequest, UploadFileResponse], error)
+	DeleteFile(ctx context.Context, in *DeleteFileRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type attachmentServiceClient struct {
@@ -96,6 +102,39 @@ func (c *attachmentServiceClient) ListAttachmentsByBook(ctx context.Context, in 
 	return out, nil
 }
 
+func (c *attachmentServiceClient) RestoreAttachment(ctx context.Context, in *RestoreAttachmentRequest, opts ...grpc.CallOption) (*Attachment, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Attachment)
+	err := c.cc.Invoke(ctx, AttachmentService_RestoreAttachment_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *attachmentServiceClient) UploadFile(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[UploadFileRequest, UploadFileResponse], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &AttachmentService_ServiceDesc.Streams[0], AttachmentService_UploadFile_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[UploadFileRequest, UploadFileResponse]{ClientStream: stream}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type AttachmentService_UploadFileClient = grpc.ClientStreamingClient[UploadFileRequest, UploadFileResponse]
+
+func (c *attachmentServiceClient) DeleteFile(ctx context.Context, in *DeleteFileRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, AttachmentService_DeleteFile_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AttachmentServiceServer is the server API for AttachmentService service.
 // All implementations must embed UnimplementedAttachmentServiceServer
 // for forward compatibility.
@@ -105,6 +144,9 @@ type AttachmentServiceServer interface {
 	UpdateAttachment(context.Context, *UpdateAttachmentRequest) (*Attachment, error)
 	DeleteAttachment(context.Context, *DeleteAttachmentRequest) (*emptypb.Empty, error)
 	ListAttachmentsByBook(context.Context, *ListAttachmentsByBookRequest) (*ListAttachmentsResponse, error)
+	RestoreAttachment(context.Context, *RestoreAttachmentRequest) (*Attachment, error)
+	UploadFile(grpc.ClientStreamingServer[UploadFileRequest, UploadFileResponse]) error
+	DeleteFile(context.Context, *DeleteFileRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedAttachmentServiceServer()
 }
 
@@ -129,6 +171,15 @@ func (UnimplementedAttachmentServiceServer) DeleteAttachment(context.Context, *D
 }
 func (UnimplementedAttachmentServiceServer) ListAttachmentsByBook(context.Context, *ListAttachmentsByBookRequest) (*ListAttachmentsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListAttachmentsByBook not implemented")
+}
+func (UnimplementedAttachmentServiceServer) RestoreAttachment(context.Context, *RestoreAttachmentRequest) (*Attachment, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RestoreAttachment not implemented")
+}
+func (UnimplementedAttachmentServiceServer) UploadFile(grpc.ClientStreamingServer[UploadFileRequest, UploadFileResponse]) error {
+	return status.Errorf(codes.Unimplemented, "method UploadFile not implemented")
+}
+func (UnimplementedAttachmentServiceServer) DeleteFile(context.Context, *DeleteFileRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteFile not implemented")
 }
 func (UnimplementedAttachmentServiceServer) mustEmbedUnimplementedAttachmentServiceServer() {}
 func (UnimplementedAttachmentServiceServer) testEmbeddedByValue()                           {}
@@ -241,6 +292,49 @@ func _AttachmentService_ListAttachmentsByBook_Handler(srv interface{}, ctx conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AttachmentService_RestoreAttachment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RestoreAttachmentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AttachmentServiceServer).RestoreAttachment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AttachmentService_RestoreAttachment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AttachmentServiceServer).RestoreAttachment(ctx, req.(*RestoreAttachmentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AttachmentService_UploadFile_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(AttachmentServiceServer).UploadFile(&grpc.GenericServerStream[UploadFileRequest, UploadFileResponse]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type AttachmentService_UploadFileServer = grpc.ClientStreamingServer[UploadFileRequest, UploadFileResponse]
+
+func _AttachmentService_DeleteFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteFileRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AttachmentServiceServer).DeleteFile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AttachmentService_DeleteFile_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AttachmentServiceServer).DeleteFile(ctx, req.(*DeleteFileRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AttachmentService_ServiceDesc is the grpc.ServiceDesc for AttachmentService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -268,7 +362,21 @@ var AttachmentService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "ListAttachmentsByBook",
 			Handler:    _AttachmentService_ListAttachmentsByBook_Handler,
 		},
+		{
+			MethodName: "RestoreAttachment",
+			Handler:    _AttachmentService_RestoreAttachment_Handler,
+		},
+		{
+			MethodName: "DeleteFile",
+			Handler:    _AttachmentService_DeleteFile_Handler,
+		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "UploadFile",
+			Handler:       _AttachmentService_UploadFile_Handler,
+			ClientStreams: true,
+		},
+	},
 	Metadata: "library/attachments.proto",
 }

@@ -37,7 +37,6 @@ func BookFromProto(pbBook *library.Book) (*Book, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	return &Book{
 		ID:          pbBook.GetId(),
 		ClientID:    clientID,

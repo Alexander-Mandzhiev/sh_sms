@@ -25,6 +25,7 @@ type ServicesConfig struct {
 	ClientsAddr string `yaml:"clients_addr" env:"CLIENTS_ADDR"`
 	SSOAddr     string `yaml:"sso_addr" env:"SSO_ADDR"`
 	AuthHAddr   string `yaml:"auth_addr" env:"AUTH_ADDR"`
+	LibraryAddr string `yaml:"library_addr" env:"LIBRARY_ADDR"`
 }
 
 type Frontend struct {

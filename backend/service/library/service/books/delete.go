@@ -7,7 +7,7 @@ import (
 )
 
 func (s *Service) DeleteBook(ctx context.Context, id int64, clientID uuid.UUID) error {
-	const op = "service.Library.Books.DeleteBook"
+	const op = "service.Library.Books.Delete"
 	logger := s.logger.With(slog.String("op", op), slog.Int64("id", id), slog.String("client_id", clientID.String()))
 	logger.Debug("Getting book")
 

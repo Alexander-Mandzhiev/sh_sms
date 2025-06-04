@@ -9,6 +9,7 @@ import (
 	"backend/protos/gen/go/clients/client_types"
 	"backend/protos/gen/go/clients/clients"
 	"backend/protos/gen/go/clients/contacts"
+	library "backend/protos/gen/go/library"
 	"backend/protos/gen/go/sso/permissions"
 	"backend/protos/gen/go/sso/role_permissions"
 	"backend/protos/gen/go/sso/roles"
@@ -47,6 +48,15 @@ func (p *ClientProvider) createClient(serviceType ServiceType, conn *grpc.Client
 		return &AuthClient{
 			AuthServiceClient: auth.NewAuthServiceClient(conn),
 			conn:              conn,
+		}
+	case ServiceLibrary:
+		return &LibraryClient{
+			AttachmentServiceClient: library.NewAttachmentServiceClient(conn),
+			SubjectServiceClient:    library.NewSubjectServiceClient(conn),
+			FileFormatServiceClient: library.NewFileFormatServiceClient(conn),
+			BookServiceClient:       library.NewBookServiceClient(conn),
+			ClassServiceClient:      library.NewClassServiceClient(conn),
+			conn:                    conn,
 		}
 	default:
 		panic("unknown service type")
