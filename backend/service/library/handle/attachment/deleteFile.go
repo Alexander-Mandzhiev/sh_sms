@@ -13,10 +13,7 @@ import (
 
 func (s *serverAPI) DeleteFile(ctx context.Context, req *library.DeleteFileRequest) (*emptypb.Empty, error) {
 	const op = "grpc.Attachment.DeleteFile"
-	logger := s.logger.With(
-		slog.String("op", op),
-		slog.String("file_url", req.GetFileUrl()),
-	)
+	logger := s.logger.With(slog.String("op", op), slog.String("file_url", req.GetFileUrl()))
 	logger.Debug("Delete file request received")
 
 	if req.GetFileUrl() == "" {

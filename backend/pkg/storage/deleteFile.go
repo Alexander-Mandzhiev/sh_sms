@@ -9,12 +9,18 @@ import (
 )
 
 func (s *LocalStorage) DeleteFile(ctx context.Context, fileURL string) error {
-	fullPath := filepath.Join(s.baseDir, fileURL)
-	if !strings.HasPrefix(fullPath, s.baseDir) {
+	cleanPath := filepath.Clean(fileURL)
+	fullPath := filepath.Join(s.baseDir, cleanPath)
+	relPath, err := filepath.Rel(s.baseDir, fullPath)
+	if err != nil {
+		return fmt.Errorf("invalid file path: %w", err)
+	}
+
+	if strings.HasPrefix(relPath, "..") {
 		return fmt.Errorf("invalid file path: %s", fileURL)
 	}
 
-	if err := os.Remove(fullPath); err != nil {
+	if err = os.Remove(fullPath); err != nil {
 		if os.IsNotExist(err) {
 			return nil
 		}

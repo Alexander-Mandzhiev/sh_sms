@@ -6,6 +6,7 @@ import (
 	"backend/pkg/models/library"
 	"context"
 	"fmt"
+	"github.com/google/uuid"
 	"io"
 	"os"
 )
@@ -33,8 +34,6 @@ func NewLocalStorage(cfg models.FileStorageConfig) *LocalStorage {
 	}
 }
 
-// Генерация UUID (можно заменить на github.com/google/uuid)
 func generateUUID() string {
-	// Простая реализация для примера
-	return "unique-id"
+	return uuid.New().String()
 }

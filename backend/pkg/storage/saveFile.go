@@ -8,11 +8,12 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 func (s *LocalStorage) SaveFile(ctx context.Context, meta library_models.FileMetadata, r io.Reader) (library_models.UploadedFile, error) {
-	fileName := fmt.Sprintf("book_%d_%s.%s", meta.BookID, generateUUID(), meta.Format)
-	filePath := filepath.Join(s.baseDir, fileName)
+	safeFileName := sanitizeFileName(fmt.Sprintf("book_%d_%s.%s", meta.BookID, generateUUID(), meta.Format))
+	filePath := filepath.Join(s.baseDir, safeFileName)
 
 	f, err := os.Create(filePath)
 	if err != nil {
@@ -36,8 +37,18 @@ func (s *LocalStorage) SaveFile(ctx context.Context, meta library_models.FileMet
 	}
 
 	return library_models.UploadedFile{
-		FilePath: fileName,
+		FilePath: safeFileName,
 		Size:     size,
 		Checksum: fmt.Sprintf("%x", hasher.Sum(nil)),
 	}, nil
+}
+
+func sanitizeFileName(name string) string {
+	return strings.Map(func(r rune) rune {
+		if r < 32 || r == '\\' || r == '/' || r == ':' || r == '*' ||
+			r == '?' || r == '"' || r == '<' || r == '>' || r == '|' {
+			return -1
+		}
+		return r
+	}, name)
 }
