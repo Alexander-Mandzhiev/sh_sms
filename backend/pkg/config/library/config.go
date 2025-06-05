@@ -13,10 +13,9 @@ import (
 )
 
 type Config struct {
-	Env         string                   `yaml:"env" env:"ENV" env-default:"development"`
-	GRPCServer  models.GRPCServer        `yaml:"grpc_server"`
-	DBConfig    DatabaseConfig           `yaml:"database"`
-	FileStorage models.FileStorageConfig `yaml:"file_storage"`
+	Env        string            `yaml:"env" env:"ENV" env-default:"development"`
+	GRPCServer models.GRPCServer `yaml:"grpc_server"`
+	DBConfig   DatabaseConfig    `yaml:"database"`
 }
 
 type DatabaseConfig struct {

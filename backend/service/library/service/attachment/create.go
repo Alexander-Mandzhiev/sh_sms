@@ -8,7 +8,7 @@ import (
 
 func (s *Service) CreateAttachment(ctx context.Context, params *library_models.CreateAttachmentRequest) (*library_models.Attachment, error) {
 	const op = "service.Library.Attachments.Create"
-	logger := s.logger.With(slog.String("op", op), slog.Int64("book_id", params.BookID), slog.String("format", params.Format))
+	logger := s.logger.With(slog.String("op", op), slog.Int64("book_id", params.BookId), slog.String("format", params.Format))
 	logger.Debug("Creating attachment")
 
 	if err := params.Validate(); err != nil {
@@ -17,9 +17,9 @@ func (s *Service) CreateAttachment(ctx context.Context, params *library_models.C
 	}
 
 	attachment := &library_models.Attachment{
-		BookID:  params.BookID,
-		Format:  params.Format,
-		FileURL: params.FileURL,
+		BookID: params.BookId,
+		Format: params.Format,
+		FileID: params.FileId,
 	}
 
 	if err := s.provider.CreateAttachment(ctx, attachment); err != nil {

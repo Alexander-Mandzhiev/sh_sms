@@ -8,9 +8,9 @@ import (
 	"log/slog"
 )
 
-func (s *Service) ListAttachmentsByBook(ctx context.Context, bookID int64, includeDeleted bool) ([]*library_models.Attachment, error) {
+func (s *Service) ListAttachmentsByBook(ctx context.Context, bookID int64) ([]*library_models.Attachment, error) {
 	const op = "service.Library.Attachments.ListByBook"
-	logger := s.logger.With(slog.String("op", op), slog.Int64("book_id", bookID), slog.Bool("include_deleted", includeDeleted))
+	logger := s.logger.With(slog.String("op", op), slog.Int64("book_id", bookID))
 	logger.Debug("Listing attachments")
 
 	if err := library_models.ValidateBookID(bookID); err != nil {
@@ -18,7 +18,7 @@ func (s *Service) ListAttachmentsByBook(ctx context.Context, bookID int64, inclu
 		return nil, status.Error(codes.InvalidArgument, "invalid book ID")
 	}
 
-	attachments, err := s.provider.ListByBook(ctx, bookID, includeDeleted)
+	attachments, err := s.provider.ListByBook(ctx, bookID)
 	if err != nil {
 		logger.Error("Failed to list attachments", "error", err)
 		return nil, err

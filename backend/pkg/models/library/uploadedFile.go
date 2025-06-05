@@ -1,7 +1,7 @@
 package library_models
 
 type UploadedFile struct {
-	FilePath string // Относительный путь
+	FilePath string
 	Size     int64
-	Checksum string // SHA256 хеш
+	Checksum string
 }

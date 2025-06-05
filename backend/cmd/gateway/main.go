@@ -5,11 +5,12 @@ import (
 	sl "backend/pkg/logger"
 	"backend/pkg/server/grpc_client"
 	"backend/pkg/server/http_server"
+	"backend/pkg/storage"
 	"backend/service/gateway/factory"
 	"backend/service/gateway/handle"
 	"backend/service/gateway/handle/attachments_handle"
 	"backend/service/gateway/handle/auth_handle"
-	books_handle "backend/service/gateway/handle/books"
+	"backend/service/gateway/handle/books"
 	"backend/service/gateway/handle/classes_handle"
 	"backend/service/gateway/handle/file_formats_handle"
 	"backend/service/gateway/handle/permissions_handle"
@@ -19,20 +20,21 @@ import (
 	"backend/service/gateway/handle/user_roles_handle"
 	"backend/service/gateway/handle/users_handle"
 	"backend/service/gateway/service/appManager"
-	attachments_service "backend/service/gateway/service/attachments"
+	"backend/service/gateway/service/attachments"
 	"backend/service/gateway/service/auth"
-	books_service "backend/service/gateway/service/books"
-	classes_service "backend/service/gateway/service/classes"
+	"backend/service/gateway/service/books"
+	"backend/service/gateway/service/classes"
 	"backend/service/gateway/service/clientApps"
-	file_formats_service "backend/service/gateway/service/fileFormats"
+	"backend/service/gateway/service/fileFormats"
 	"backend/service/gateway/service/permissions"
 	"backend/service/gateway/service/rolePermissions"
 	"backend/service/gateway/service/roles"
 	"backend/service/gateway/service/secrets"
-	subjects_service "backend/service/gateway/service/subjects"
+	"backend/service/gateway/service/subjects"
 	"backend/service/gateway/service/userRoles"
 	"backend/service/gateway/service/users"
 	"context"
+	"log/slog"
 	"os"
 	"os/signal"
 	"syscall"
@@ -89,6 +91,11 @@ func main() {
 		return
 	}
 
+	// файловое хранилище
+	fileStorage := storage.NewLocalStorage(cfg.FileStorage)
+	logger.Info("File storage initialized", slog.String("base_dir", cfg.FileStorage.BaseDir),
+		slog.Int("max_size_mb", cfg.FileStorage.MaxFileSizeMB), slog.String("base_url", cfg.FileStorage.BaseURL))
+
 	// clients
 	_ = client_app_service.NewClientAppsService(appsClient, logger)
 	_ = app_manager_service.NewAppService(appsClient, logger)
@@ -128,10 +135,10 @@ func main() {
 	booksHandle := books_handle.New(booksSRV, logger)
 
 	attachmentSRV := attachments_service.NewAttachmentsService(libraryClient, logger)
-	attachmentHandle := attachments_handle.New(attachmentSRV, logger)
+	attachmentHandle := attachments_handle.New(attachmentSRV, fileStorage, logger)
 
 	// server
-	handler := handle.New(logger, cfg.MediaDir, cfg.Env, cfg.Frontend.Addr)
+	handler := handle.New(logger, cfg.Env, cfg.Frontend.Addr)
 	handler.RegisterHandlers(
 		userHandle, roleHandle, permissionHandle, rolePermissionHandle, userRoleHandle, authHandle,
 		classesHandle, subjectsHandle, fileFormatsHandle, booksHandle, attachmentHandle)

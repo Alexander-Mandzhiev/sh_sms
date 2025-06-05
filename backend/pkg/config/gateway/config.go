@@ -12,12 +12,12 @@ import (
 )
 
 type Config struct {
-	Env        string            `yaml:"env" env:"ENV" env-default:"development"`
-	MediaDir   string            `yaml:"media_dir" env:"MEDIA_DIR"`
-	TokensTTL  models.TokensTTL  `yaml:"tokes_ttl" env:"TOKENS_TTL"`
-	HTTPServer models.HTTPServer `yaml:"http_server"`
-	Services   ServicesConfig    `yaml:"services"`
-	Frontend   Frontend          `yaml:"frontend"`
+	Env         string                   `yaml:"env" env:"ENV" env-default:"development"`
+	TokensTTL   models.TokensTTL         `yaml:"tokes_ttl" env:"TOKENS_TTL"`
+	HTTPServer  models.HTTPServer        `yaml:"http_server"`
+	FileStorage models.FileStorageConfig `yaml:"file_storage"`
+	Services    ServicesConfig           `yaml:"services"`
+	Frontend    Frontend                 `yaml:"frontend"`
 }
 
 type ServicesConfig struct {
@@ -70,9 +70,16 @@ func loadingDataInEnv() *Config {
 		log.Printf("Warning: Invalid PORT value in environment variables, using default value %d.", 6000)
 		port = 6000
 	}
+
+	maxFileSizeStr := os.Getenv("MAX_FILE_SIZE")
+	maxFileSize, err := strconv.Atoi(maxFileSizeStr)
+	if err != nil || maxFileSize <= 0 {
+		log.Printf("Warning: Invalid MAX_FILE_SIZE value in environment variables, using default value %d.", 50)
+		maxFileSize = 50
+	}
+
 	return &Config{
-		Env:      os.Getenv("ENV"),
-		MediaDir: os.Getenv("MEDIA_DIR"),
+		Env: os.Getenv("ENV"),
 		TokensTTL: models.TokensTTL{
 			AccessTokenDuration:  parseDuration("ACCESS_TOKEN_DURATION", 15*time.Minute),
 			RefreshTokenDuration: parseDuration("REFRESH_TOKEN_DURATION", 168*time.Hour),
@@ -90,6 +97,11 @@ func loadingDataInEnv() *Config {
 		},
 		Frontend: Frontend{
 			Addr: os.Getenv("FRONTEND_ADDR"),
+		},
+		FileStorage: models.FileStorageConfig{
+			BaseDir:       os.Getenv("FILE_STORAGE_BASE_DIR"),
+			MaxFileSizeMB: maxFileSize,
+			BaseURL:       os.Getenv("FILE_STORAGE_BASE_URL"),
 		},
 	}
 }

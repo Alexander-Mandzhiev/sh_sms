@@ -17,28 +17,22 @@ type RouteInitializer interface {
 type ServerAPI struct {
 	router   *gin.Engine
 	logger   *slog.Logger
-	mediaDir string
 	env      string
 	frontend string
 }
 
-func New(logger *slog.Logger, mediaDir string, env string, frontendAddr string) *ServerAPI {
+func New(logger *slog.Logger, env string, frontendAddr string) *ServerAPI {
 	router := gin.New()
 	router.Use(ginLoggerMiddleware(logger), gin.Recovery())
 
 	server := &ServerAPI{
 		router:   router,
 		logger:   logger,
-		mediaDir: mediaDir,
 		env:      env,
 		frontend: frontendAddr,
 	}
 
 	server.setupCORS()
-
-	if mediaDir != "" {
-		router.Static("/media", mediaDir)
-	}
 
 	return server
 }

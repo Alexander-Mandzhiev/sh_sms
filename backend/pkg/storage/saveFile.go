@@ -12,7 +12,7 @@ import (
 )
 
 func (s *LocalStorage) SaveFile(ctx context.Context, meta library_models.FileMetadata, r io.Reader) (library_models.UploadedFile, error) {
-	safeFileName := sanitizeFileName(fmt.Sprintf("book_%d_%s.%s", meta.BookID, generateUUID(), meta.Format))
+	safeFileName := sanitizeFileName(fmt.Sprintf("book_%s.%s", generateUUID(), meta.Format))
 	filePath := filepath.Join(s.baseDir, safeFileName)
 
 	f, err := os.Create(filePath)

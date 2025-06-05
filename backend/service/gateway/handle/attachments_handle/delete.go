@@ -1,7 +1,6 @@
 package attachments_handle
 
 import (
-	library "backend/protos/gen/go/library"
 	"github.com/gin-gonic/gin"
 	"log/slog"
 	"net/http"
@@ -26,7 +25,7 @@ func (h *Handler) delete(c *gin.Context) {
 		return
 	}
 
-	_, err = h.service.DeleteAttachment(c.Request.Context(), &library.DeleteAttachmentRequest{BookId: bookID, Format: format})
+	_, err = h.service.DeleteAttachment(c.Request.Context(), bookID, format)
 	if err != nil {
 		logger.Error("Failed to delete attachment", "error", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete attachment"})

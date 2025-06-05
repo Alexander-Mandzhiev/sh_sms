@@ -7,9 +7,9 @@ import (
 )
 
 type CreateAttachmentRequest struct {
-	BookID  int64  `json:"book_id"`
-	Format  string `json:"format"`
-	FileURL string `json:"file_url"`
+	BookId int64  `json:"book_id"`
+	Format string `json:"format"`
+	FileId string `json:"file_id"`
 }
 
 func (a *CreateAttachmentRequest) CreateAttachmentRequestToProto() (*library.CreateAttachmentRequest, error) {
@@ -17,29 +17,29 @@ func (a *CreateAttachmentRequest) CreateAttachmentRequestToProto() (*library.Cre
 		return nil, err
 	}
 	return &library.CreateAttachmentRequest{
-		BookId:  a.BookID,
-		Format:  a.Format,
-		FileUrl: a.FileURL,
+		BookId: a.BookId,
+		Format: a.Format,
+		FileId: a.FileId,
 	}, nil
 }
 
 func CreateAttachmentRequestFromProto(a *library.CreateAttachmentRequest) *CreateAttachmentRequest {
 	return &CreateAttachmentRequest{
-		BookID:  a.BookId,
-		Format:  a.Format,
-		FileURL: a.FileUrl,
+		BookId: a.BookId,
+		Format: a.Format,
+		FileId: a.FileId,
 	}
 }
 
 func (a *CreateAttachmentRequest) Validate() error {
-	if err := ValidateBookID(a.BookID); err != nil {
+	if err := ValidateBookID(a.BookId); err != nil {
 		return status.Error(codes.InvalidArgument, "invalid book ID")
 	}
 	if err := ValidateAttachmentFormat(a.Format); err != nil {
 		return status.Error(codes.InvalidArgument, "file URL is required")
 	}
 
-	if err := ValidateFileURL(a.FileURL); err != nil {
+	if err := ValidateFileID(a.FileId); err != nil {
 		return status.Error(codes.InvalidArgument, "file URL is required")
 	}
 
@@ -63,8 +63,8 @@ func ValidateAttachmentFormat(format string) error {
 	return nil
 }
 
-func ValidateFileURL(url string) error {
-	if url == "" {
+func ValidateFileID(fileId string) error {
+	if fileId == "" {
 		return status.Error(codes.InvalidArgument, "file URL is required")
 	}
 	return nil

@@ -25,8 +25,6 @@ var (
 	ErrBookInvalidClassID   = errors.New("class ID must be between 1 and 11")
 	ErrBookDescriptionLong  = errors.New("description too long")
 	ErrInvalidPageSize      = errors.New("invalid page size")
-	ErrBookInvalidTitle     = errors.New("invalid title")
-	ErrBookInvalidAuthor    = errors.New("invalid author")
 )
 
 var (
@@ -34,12 +32,9 @@ var (
 	ErrAttachmentAlreadyExists    = errors.New("attachment already exists")
 	ErrAttachmentExistsButDeleted = errors.New("attachment exists but deleted")
 	ErrAttachmentAlreadyActive    = errors.New("attachment is already active")
-	ErrInvalidAttachmentFormat    = errors.New("invalid attachment format")
 	ErrEmptyFileURL               = errors.New("file URL cannot be empty")
-	ErrAttachmentInvalidBookID    = errors.New("invalid book ID")
 	ErrAttachmentRestoreConflict  = errors.New("active attachment already exists, cannot restore")
 	ErrAttachmentUpdateConflict   = errors.New("conflict during attachment update")
-	ErrAttachmentAlreadyDeleted   = errors.New("attachment is already deleted")
 )
 
 var (
@@ -48,8 +43,4 @@ var (
 
 	ErrDuplicateName  = errors.New("subject name already exists")
 	ErrDeleteConflict = errors.New("subject cannot be deleted due to existing references")
-)
-
-var (
-	ErrClassInvalidGrade = errors.New("invalid class grade (must be 1-11)")
 )

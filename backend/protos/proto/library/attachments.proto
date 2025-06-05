@@ -10,43 +10,27 @@ import "google/protobuf/timestamp.proto";
 service AttachmentService {
   rpc CreateAttachment(CreateAttachmentRequest) returns (Attachment) {}
   rpc GetAttachment(GetAttachmentRequest) returns (Attachment) {}
-  rpc UpdateAttachment(UpdateAttachmentRequest) returns (Attachment) {}
   rpc DeleteAttachment(DeleteAttachmentRequest) returns (google.protobuf.Empty) {}
   rpc ListAttachmentsByBook(ListAttachmentsByBookRequest) returns (ListAttachmentsResponse) {}
-  rpc RestoreAttachment(RestoreAttachmentRequest) returns (Attachment) {}
-  rpc UploadFile(stream UploadFileRequest) returns (UploadFileResponse) {}
-  rpc DeleteFile(DeleteFileRequest) returns (google.protobuf.Empty) {}
 }
 
 message Attachment {
   int64 book_id = 1;
   string format = 2;
-  string file_url = 3;
-  google.protobuf.Timestamp deleted_at = 4;
-  google.protobuf.Timestamp created_at = 5;
-  google.protobuf.Timestamp updated_at = 6;
-}
-
-message RestoreAttachmentRequest {
-  int64 book_id = 1;
-  string format = 2;
+  string file_id = 3;
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp updated_at = 5;
 }
 
 message CreateAttachmentRequest {
   int64 book_id = 1;
   string format = 2;
-  string file_url = 3;
+  string file_id = 3;
 }
 
 message GetAttachmentRequest {
   int64 book_id = 1;
   string format = 2;
-}
-
-message UpdateAttachmentRequest {
-  int64 book_id = 1;
-  string format = 2;
-  string new_file_url = 3;
 }
 
 message DeleteAttachmentRequest {
@@ -56,31 +40,8 @@ message DeleteAttachmentRequest {
 
 message ListAttachmentsByBookRequest {
   int64 book_id = 1;
-  bool include_deleted = 2;
 }
 
 message ListAttachmentsResponse {
   repeated Attachment attachments = 1;
-}
-
-message FileMetadata {
-  int64 book_id = 1;
-  string format = 2;
-}
-
-message UploadFileRequest {
-  oneof request {
-    FileMetadata metadata = 1;
-    bytes chunk_data = 2;
-  }
-}
-
-message UploadFileResponse {
-  string file_url = 1;
-  int64 size = 2;
-  string checksum = 3;
-}
-
-message DeleteFileRequest {
-  string file_url = 1;
 }

@@ -13,6 +13,7 @@ import (
 
 type FileStorage interface {
 	SaveFile(ctx context.Context, meta library_models.FileMetadata, r io.Reader) (library_models.UploadedFile, error)
+	GetFile(ctx context.Context, fileURL string) (io.ReadSeeker, string, int64, error)
 	DeleteFile(ctx context.Context, fileURL string) error
 }
 

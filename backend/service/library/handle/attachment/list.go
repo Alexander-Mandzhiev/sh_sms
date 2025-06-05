@@ -19,7 +19,7 @@ func (s *serverAPI) ListAttachmentsByBook(ctx context.Context, req *library.List
 		return nil, err
 	}
 
-	attachments, err := s.service.ListAttachmentsByBook(ctx, req.BookId, req.IncludeDeleted)
+	attachments, err := s.service.ListAttachmentsByBook(ctx, req.BookId)
 	if err != nil {
 		logger.Error("Failed to list attachments", slog.String("error", err.Error()), sl.Err(err, true))
 		return nil, s.convertError(err)
@@ -30,6 +30,6 @@ func (s *serverAPI) ListAttachmentsByBook(ctx context.Context, req *library.List
 		pbAttachments = append(pbAttachments, a.AttachmentToProto())
 	}
 
-	logger.Info("Attachments successfully listed", slog.Int("count", len(pbAttachments)), slog.Bool("include_deleted", req.IncludeDeleted))
+	logger.Info("Attachments successfully listed", slog.Int("count", len(pbAttachments)))
 	return &library.ListAttachmentsResponse{Attachments: pbAttachments}, nil
 }

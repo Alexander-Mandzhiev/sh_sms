@@ -3,14 +3,11 @@ package main
 import (
 	config "backend/pkg/config/library"
 	"backend/pkg/server/grpc_server"
-	"backend/pkg/storage"
 	attachmentRepository "backend/service/library/repository/attachment"
 	booksRepository "backend/service/library/repository/books"
 	classesRepository "backend/service/library/repository/classes"
 	fileFormatRepository "backend/service/library/repository/fileFormats"
 	subjectsRepository "backend/service/library/repository/subjects"
-	"log/slog"
-
 	serviceA "backend/service/library/service/attachment"
 	serviceB "backend/service/library/service/books"
 	serviceC "backend/service/library/service/classes"
@@ -51,11 +48,7 @@ func main() {
 		}
 	}()
 
-	// 4. Инициализация хранилища файлов
-	fileStorage := storage.NewLocalStorage(cfg.FileStorage)
-	logger.Info("File storage initialized", slog.String("base_dir", cfg.FileStorage.BaseDir), slog.Int("max_size_mb", cfg.FileStorage.MaxFileSizeMB), slog.String("base_url", cfg.FileStorage.BaseURL))
-
-	// 5. Инициализация репозитория
+	// 4. Инициализация репозитория
 	reposC, err := classesRepository.New(dbPool, logger)
 	if err != nil {
 		logger.Error("Failed to create user repository", sl.Err(err, true))
@@ -82,22 +75,22 @@ func main() {
 
 	reposA, err := attachmentRepository.New(dbPool, logger)
 
-	// 6. Инициализация сервиса
+	// 5. Инициализация сервиса
 	srvS := serviceS.New(reposS, logger)
 	srvC := serviceC.New(reposC, logger)
 	srvFF := serviceFF.New(reposFF, logger)
-	srvA := serviceA.New(reposA, fileStorage, logger)
+	srvA := serviceA.New(reposA, logger)
 	srvB := serviceB.New(reposB, logger, reposC, reposS)
-	// 7. Инициализация gRPC сервера
+	// 6. Инициализация gRPC сервера
 	app := grpc_server.New()
 
-	// 8. Регистрация сервиса в gRPC сервере
+	// 7. Регистрация сервиса в gRPC сервере
 	handlerS.Register(app.GRPCServer, srvS, logger)
 	handlerFF.Register(app.GRPCServer, srvFF, logger)
 	handlerC.Register(app.GRPCServer, srvC, logger)
 	handlerA.Register(app.GRPCServer, srvA, logger)
 	handlerB.Register(app.GRPCServer, srvB, logger)
-	// 9. Запуск gRPC сервера
+	// 8. Запуск gRPC сервера
 	go func() {
 		app.MustRun(logger, cfg.GRPCServer.Port)
 	}()

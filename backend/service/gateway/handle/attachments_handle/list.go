@@ -2,7 +2,6 @@ package attachments_handle
 
 import (
 	library_models "backend/pkg/models/library"
-	library "backend/protos/gen/go/library"
 	"github.com/gin-gonic/gin"
 	"log/slog"
 	"net/http"
@@ -20,9 +19,7 @@ func (h *Handler) listByBook(c *gin.Context) {
 		return
 	}
 
-	includeDeleted := c.Query("include_deleted") == "true"
-
-	res, err := h.service.ListAttachmentsByBook(c.Request.Context(), &library.ListAttachmentsByBookRequest{BookId: bookID, IncludeDeleted: includeDeleted})
+	res, err := h.service.ListAttachmentsByBook(c.Request.Context(), bookID)
 	if err != nil {
 		logger.Error("Failed to list attachments", "error", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to list attachments"})

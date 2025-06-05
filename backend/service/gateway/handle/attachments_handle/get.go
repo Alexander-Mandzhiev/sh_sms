@@ -2,7 +2,6 @@ package attachments_handle
 
 import (
 	library_models "backend/pkg/models/library"
-	library "backend/protos/gen/go/library"
 	"github.com/gin-gonic/gin"
 	"log/slog"
 	"net/http"
@@ -27,10 +26,7 @@ func (h *Handler) get(c *gin.Context) {
 		return
 	}
 
-	res, err := h.service.GetAttachment(c.Request.Context(), &library.GetAttachmentRequest{
-		BookId: bookID,
-		Format: format,
-	})
+	res, err := h.service.GetAttachment(c.Request.Context(), bookID, format)
 	if err != nil {
 		logger.Error("Failed to get attachment", "error", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get attachment"})
@@ -38,7 +34,6 @@ func (h *Handler) get(c *gin.Context) {
 	}
 
 	response := library_models.AttachmentFromProto(res)
-
 	logger.Info("Attachment retrieved successfully")
 	c.JSON(http.StatusOK, response)
 }

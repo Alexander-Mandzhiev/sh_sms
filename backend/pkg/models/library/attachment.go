@@ -7,25 +7,20 @@ import (
 )
 
 type Attachment struct {
-	BookID    int64      `json:"book_id"`
-	Format    string     `json:"format"`
-	FileURL   string     `json:"file_url"`
-	DeletedAt *time.Time `json:"deleted_at"`
-	CreatedAt time.Time  `json:"created_at"`
-	UpdatedAt time.Time  `json:"updated_at"`
+	BookID    int64     `json:"book_id"`
+	Format    string    `json:"format"`
+	FileID    string    `json:"file_id"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 func (a *Attachment) AttachmentToProto() *library.Attachment {
 	att := &library.Attachment{
 		BookId:    a.BookID,
 		Format:    a.Format,
-		FileUrl:   a.FileURL,
+		FileId:    a.FileID,
 		UpdatedAt: timestamppb.New(a.UpdatedAt),
 		CreatedAt: timestamppb.New(a.CreatedAt),
-	}
-
-	if a.DeletedAt != nil {
-		att.DeletedAt = timestamppb.New(*a.DeletedAt)
 	}
 	return att
 }
@@ -34,15 +29,9 @@ func AttachmentFromProto(a *library.Attachment) *Attachment {
 	att := &Attachment{
 		BookID:    a.BookId,
 		Format:    a.Format,
-		FileURL:   a.FileUrl,
+		FileID:    a.FileId,
 		CreatedAt: a.CreatedAt.AsTime(),
 		UpdatedAt: a.UpdatedAt.AsTime(),
 	}
-
-	if a.DeletedAt != nil {
-		deletedAt := a.DeletedAt.AsTime()
-		att.DeletedAt = &deletedAt
-	}
-
 	return att
 }

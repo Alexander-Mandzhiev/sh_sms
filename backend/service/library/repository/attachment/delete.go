@@ -14,7 +14,7 @@ func (r *Repository) DeleteAttachment(ctx context.Context, bookID int64, format 
 	const op = "repository.Library.Attachments.Delete"
 	logger := r.logger.With(slog.String("op", op), slog.Int64("book_id", bookID), slog.String("format", format))
 
-	const query = `UPDATE attachments SET deleted_at = NOW(), updated_at = NOW() WHERE book_id = $1 AND format = $2 AND deleted_at IS NULL RETURNING book_id`
+	const query = `DELETE FROM attachments WHERE book_id = $1 AND format = $2 RETURNING book_id`
 	var deletedBookID int64
 	err := r.db.QueryRow(ctx, query, bookID, format).Scan(&deletedBookID)
 	if err != nil {
