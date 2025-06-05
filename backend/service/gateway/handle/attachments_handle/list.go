@@ -1,7 +1,6 @@
 package attachments_handle
 
 import (
-	library_models "backend/pkg/models/library"
 	"github.com/gin-gonic/gin"
 	"log/slog"
 	"net/http"
@@ -19,17 +18,11 @@ func (h *Handler) listByBook(c *gin.Context) {
 		return
 	}
 
-	res, err := h.service.ListAttachmentsByBook(c.Request.Context(), bookID)
+	attachments, err := h.service.ListAttachmentsByBook(c.Request.Context(), bookID)
 	if err != nil {
 		logger.Error("Failed to list attachments", "error", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to list attachments"})
 		return
-	}
-
-	var attachments []*library_models.Attachment
-	for _, attachment := range res.Attachments {
-		att := library_models.AttachmentFromProto(attachment)
-		attachments = append(attachments, att)
 	}
 
 	logger.Info("Attachments listed successfully")

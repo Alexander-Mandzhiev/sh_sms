@@ -134,7 +134,7 @@ func main() {
 	booksSRV := books_service.NewBooksService(libraryClient, logger)
 	booksHandle := books_handle.New(booksSRV, logger)
 
-	attachmentSRV := attachments_service.NewAttachmentsService(libraryClient, logger)
+	attachmentSRV := attachments_service.NewAttachmentsService(libraryClient, fileStorage, logger)
 	attachmentHandle := attachments_handle.New(attachmentSRV, fileStorage, logger)
 
 	// server

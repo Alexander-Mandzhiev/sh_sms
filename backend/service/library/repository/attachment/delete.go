@@ -10,13 +10,13 @@ import (
 	"log/slog"
 )
 
-func (r *Repository) DeleteAttachment(ctx context.Context, bookID int64, format string) error {
+func (r *Repository) DeleteAttachment(ctx context.Context, fileId string) error {
 	const op = "repository.Library.Attachments.Delete"
-	logger := r.logger.With(slog.String("op", op), slog.Int64("book_id", bookID), slog.String("format", format))
+	logger := r.logger.With(slog.String("op", op), slog.String("file_id", fileId))
 
-	const query = `DELETE FROM attachments WHERE book_id = $1 AND format = $2 RETURNING book_id`
+	const query = `DELETE FROM attachments WHERE file_id = $1 RETURNING book_id`
 	var deletedBookID int64
-	err := r.db.QueryRow(ctx, query, bookID, format).Scan(&deletedBookID)
+	err := r.db.QueryRow(ctx, query, fileId).Scan(&deletedBookID)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			logger.Warn("No active attachment found to delete")
@@ -31,6 +31,6 @@ func (r *Repository) DeleteAttachment(ctx context.Context, bookID int64, format 
 		return fmt.Errorf("failed to delete attachment: %w", err)
 	}
 
-	logger.Info("Attachment soft deleted", slog.Int64("book_id", deletedBookID))
+	logger.Info("Attachment deleted", slog.Int64("book_id", deletedBookID))
 	return nil
 }

@@ -6,26 +6,19 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"strings"
 )
 
-func (s *LocalStorage) GetFile(ctx context.Context, fileURL string) (io.ReadSeeker, string, int64, error) {
-	cleanPath := filepath.Clean(fileURL)
-	fullPath := filepath.Join(s.baseDir, cleanPath)
-
-	if !strings.HasPrefix(fullPath, s.baseDir) {
-		return nil, "", 0, fmt.Errorf("invalid file path")
-	}
-
+func (s *LocalStorage) GetFile(ctx context.Context, fileID string) (io.ReadSeekCloser, string, int64, error) {
+	fullPath := filepath.Join(s.baseDir, fileID)
 	file, err := os.Open(fullPath)
 	if err != nil {
-		return nil, "", 0, err
+		return nil, "", 0, fmt.Errorf("failed to open file: %w", err)
 	}
 
 	stat, err := file.Stat()
 	if err != nil {
 		file.Close()
-		return nil, "", 0, err
+		return nil, "", 0, fmt.Errorf("failed to get file info: %w", err)
 	}
 
 	return file, fullPath, stat.Size(), nil

@@ -3,18 +3,18 @@ package attachments_handle
 import (
 	"backend/pkg/models/library"
 	"backend/pkg/storage"
-	library "backend/protos/gen/go/library"
 	"context"
 	"github.com/gin-gonic/gin"
-	"google.golang.org/protobuf/types/known/emptypb"
+	"io"
 	"log/slog"
+	"mime/multipart"
 )
 
 type AttachmentsService interface {
-	CreateAttachment(ctx context.Context, req *library_models.CreateAttachmentRequest) (*library.Attachment, error)
-	GetAttachment(ctx context.Context, bookId int64, format string) (*library.Attachment, error)
-	DeleteAttachment(ctx context.Context, bookId int64, format string) (*emptypb.Empty, error)
-	ListAttachmentsByBook(ctx context.Context, bookId int64) (*library.ListAttachmentsResponse, error)
+	CreateAttachment(ctx context.Context, meta library_models.FileMetadata, file multipart.File) (*library_models.Attachment, error)
+	GetAttachment(ctx context.Context, bookId int64, format string) (io.ReadSeekCloser, string, int64, error)
+	DeleteAttachment(ctx context.Context, fileId string) error
+	ListAttachmentsByBook(ctx context.Context, bookId int64) ([]*library_models.Attachment, error)
 }
 
 type Handler struct {
@@ -30,11 +30,9 @@ func New(service AttachmentsService, storage storage.FileStorage, logger *slog.L
 func (h *Handler) InitRoutes(router *gin.RouterGroup) {
 	attachment := router.Group("/attachments")
 	{
-		attachment.POST("/upload", h.uploadFile)
-		attachment.GET("/:book_id", h.get)
-		attachment.DELETE("/:book_id", h.delete)
-		attachment.GET("/books/:book_id", h.listByBook)
-		attachment.GET("/file/:file_id", h.downloadFile)
-		attachment.DELETE("/file/:file_id", h.deleteFile)
+		attachment.POST("/", h.uploadFile)
+		attachment.GET("/:book_id", h.listByBook)
+		attachment.GET("/file/:book_id", h.get)
+		attachment.DELETE("/:file_id", h.delete)
 	}
 }

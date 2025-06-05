@@ -9,7 +9,7 @@ import (
 type AttachmentsProvider interface {
 	CreateAttachment(ctx context.Context, attachment *library_models.Attachment) error
 	GetAttachment(ctx context.Context, bookID int64, format string) (*library_models.Attachment, error)
-	DeleteAttachment(ctx context.Context, bookID int64, format string) error
+	DeleteAttachment(ctx context.Context, fileId string) error
 	ListByBook(ctx context.Context, bookID int64) ([]*library_models.Attachment, error)
 }
 

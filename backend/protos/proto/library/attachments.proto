@@ -34,8 +34,7 @@ message GetAttachmentRequest {
 }
 
 message DeleteAttachmentRequest {
-  int64 book_id = 1;
-  string format = 2;
+  string file_id = 1;
 }
 
 message ListAttachmentsByBookRequest {

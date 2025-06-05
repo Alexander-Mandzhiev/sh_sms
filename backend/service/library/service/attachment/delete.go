@@ -6,21 +6,17 @@ import (
 	"log/slog"
 )
 
-func (s *Service) DeleteAttachment(ctx context.Context, bookID int64, format string) error {
+func (s *Service) DeleteAttachment(ctx context.Context, fileId string) error {
 	const op = "service.Library.Attachments.Delete"
-	logger := s.logger.With(slog.String("op", op), slog.Int64("book_id", bookID), slog.String("format", format))
+	logger := s.logger.With(slog.String("op", op), slog.String("file_id", fileId))
 	logger.Debug("Delete attachment")
 
-	if err := library_models.ValidateBookID(bookID); err != nil {
-		logger.Warn("Invalid book ID", "error", err)
-		return err
-	}
-	if err := library_models.ValidateAttachmentFormat(format); err != nil {
-		logger.Warn("Invalid format", "error", err)
+	if err := library_models.ValidateFileID(fileId); err != nil {
+		logger.Warn("Invalid file ID", "error", err)
 		return err
 	}
 
-	if err := s.provider.DeleteAttachment(ctx, bookID, format); err != nil {
+	if err := s.provider.DeleteAttachment(ctx, fileId); err != nil {
 		logger.Error("Failed to deleting attachment", "error", err)
 		return err
 	}
