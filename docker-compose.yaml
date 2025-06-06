@@ -1,24 +1,24 @@
 services:
-  sso_database:
-    container_name: sso_database
-    image: postgres:17-alpine
-    environment:
-      POSTGRES_DB: ${SSO_DB_NAME}
-      POSTGRES_USER: ${SSO_DB_USER}
-      POSTGRES_PASSWORD: ${SSO_DB_PASSWORD}
-    volumes:
-      - sso_init:/docker-entrypoint-initdb.d
-      - sso_data:/var/lib/postgresql/data
+  gateway:
+    container_name: gateway
+    build:
+      context: ./backend
+      dockerfile: ./cmd/gateway/Dockerfile
     ports:
-      - "5433:5432"
+      - "7010:7010"
+    environment:
+      - CONFIG_PATH=config/gateway/production.yaml
+    volumes:
+      - media-data:/data/uploads
+    depends_on:
+      - sso
+      - apps
+      - clients
+      - auth
+      - library
     networks:
       - app-network
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${SSO_DB_USER} -d ${SSO_DB_NAME}"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
+    restart: always
 
   apps_database:
     container_name: apps_database
@@ -30,8 +30,6 @@ services:
     volumes:
       - apps_init:/docker-entrypoint-initdb.d
       - apps_data:/var/lib/postgresql/data
-    ports:
-      - "5434:5432"
     networks:
       - app-network
     restart: unless-stopped
@@ -40,6 +38,25 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+
+  apps:
+    container_name: apps
+    build:
+      context: ./backend
+      dockerfile: ./cmd/apps/Dockerfile
+    ports:
+      - "7111:7111"
+    environment:
+      - CONFIG_PATH=config/apps/production.yaml
+      - APPS_DB_USER=${APPS_DB_USER}
+      - APPS_DB_PASSWORD=${APPS_DB_PASSWORD}
+      - APPS_DB_NAME=${APPS_DB_NAME}
+    depends_on:
+      apps_database:
+        condition: service_healthy
+    networks:
+      - app-network
+    restart: always
 
   client_database:
     container_name: client_database
@@ -51,8 +68,6 @@ services:
     volumes:
       - clients_init:/docker-entrypoint-initdb.d
       - clients_data:/var/lib/postgresql/data
-    ports:
-      - "5435:5432"
     networks:
       - app-network
     restart: unless-stopped
@@ -61,6 +76,64 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+
+  clients:
+    container_name: clients
+    build:
+      context: ./backend
+      dockerfile: ./cmd/clients/Dockerfile
+    ports:
+      - "7113:7113"
+    environment:
+      - CONFIG_PATH=config/clients/production.yaml
+      - CLIENTS_DB_USER=${CLIENTS_DB_USER}
+      - CLIENTS_DB_PASSWORD=${CLIENTS_DB_PASSWORD}
+      - CLIENTS_DB_NAME=${CLIENTS_DB_NAME}
+    depends_on:
+      client_database:
+        condition: service_healthy
+    networks:
+      - app-network
+    restart: always
+
+  sso_database:
+    container_name: sso_database
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${SSO_DB_NAME}
+      POSTGRES_USER: ${SSO_DB_USER}
+      POSTGRES_PASSWORD: ${SSO_DB_PASSWORD}
+    volumes:
+      - sso_init:/docker-entrypoint-initdb.d
+      - sso_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${SSO_DB_USER} -d ${SSO_DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  sso:
+    container_name: sso
+    build:
+      context: ./backend
+      dockerfile: ./cmd/sso/Dockerfile
+    ports:
+      - "7115:7115"
+    environment:
+      - CONFIG_PATH=config/sso/production.yaml
+      - SSO_DB_USER=${SSO_DB_USER}
+      - SSO_DB_PASSWORD=${SSO_DB_PASSWORD}
+      - SSO_DB_NAME=${SSO_DB_NAME}
+    depends_on:
+      - apps
+      - clients
+      - sso_database
+    networks:
+      - app-network
+    restart: always
 
   auth_database:
     container_name: auth_database
@@ -72,8 +145,6 @@ services:
     volumes:
       - auth_init:/docker-entrypoint-initdb.d
       - auth_data:/var/lib/postgresql/data
-    ports:
-      - "5436:5432"
     networks:
       - app-network
     restart: unless-stopped
@@ -82,6 +153,27 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+
+  auth:
+    container_name: auth
+    build:
+      context: ./backend
+      dockerfile: ./cmd/auth/Dockerfile
+    ports:
+      - "7117:7117"
+    environment:
+      - CONFIG_PATH=config/auth/production.yaml
+      - AUTH_DB_USER=${AUTH_DB_USER}
+      - AUTH_DB_PASSWORD=${AUTH_DB_PASSWORD}
+      - AUTH_DB_NAME=${AUTH_DB_NAME}
+    depends_on:
+      - apps
+      - clients
+      - sso
+      - auth_database
+    networks:
+      - app-network
+    restart: always
 
   library_database:
     container_name: library_database
@@ -93,8 +185,6 @@ services:
     volumes:
       - lib_init:/docker-entrypoint-initdb.d
       - lib_data:/var/lib/postgresql/data
-    ports:
-      - "5437:5432"
     networks:
       - app-network
     restart: unless-stopped
@@ -103,6 +193,25 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+
+  library:
+    container_name: library
+    build:
+      context: ./backend
+      dockerfile: ./cmd/library/Dockerfile
+    ports:
+      - "7119:7119"
+    environment:
+      - CONFIG_PATH=config/library/production.yaml
+      - LIB_DB_USER=${LIB_DB_USER}
+      - LIB_DB_PASSWORD=${LIB_DB_PASSWORD}
+      - LIB_DB_NAME=${LIB_DB_NAME}
+    depends_on:
+      library_database:
+        condition: service_healthy
+    networks:
+      - app-network
+    restart: always
 
   prometheus:
     image: prom/prometheus
@@ -150,7 +259,6 @@ volumes:
   lib_data:
   media-data:
   grafana-storage:
-
 networks:
   app-network:
     driver: bridge

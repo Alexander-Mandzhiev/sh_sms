@@ -94,6 +94,7 @@ func loadingDataInEnv() *Config {
 			AppsAddr:    os.Getenv("APPS_ADDR"),
 			ClientsAddr: os.Getenv("CLIENTS_ADDR"),
 			SSOAddr:     os.Getenv("SSO_ADDR"),
+			LibraryAddr: os.Getenv("LIBRARY_ADDR"),
 		},
 		Frontend: Frontend{
 			Addr: os.Getenv("FRONTEND_ADDR"),

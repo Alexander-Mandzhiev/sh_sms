@@ -1,0 +1,4 @@
+syntax = "proto3";
+
+package private_school;
+option go_package = "private_school.v1";

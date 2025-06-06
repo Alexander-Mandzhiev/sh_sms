@@ -245,8 +245,19 @@
 								"method": "POST",
 								"header": [],
 								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"book_id\": 2,\r\n    \"format\": \"txt\",\r\n    \"file_url\": \"book_2_unique-id.txt\"\r\n}"
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "book_id",
+											"value": "4",
+											"type": "text"
+										},
+										{
+											"key": "file",
+											"type": "file",
+											"src": "/C:/Users/a.mandzhiev/Downloads/sfery_-8-klass_-bunimovich-e_-a_-i-dr-2022.pdf"
+										}
+									]
 								},
 								"url": {
 									"raw": "http://localhost:7010/api/v1/attachments",
@@ -270,7 +281,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:7010/api/v1/attachments/2?format=fb2",
+									"raw": "http://localhost:7010/api/v1/attachments/file/2?format=PDF",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -280,13 +291,36 @@
 										"api",
 										"v1",
 										"attachments",
+										"file",
 										"2"
 									],
 									"query": [
 										{
 											"key": "format",
-											"value": "fb2"
+											"value": "PDF"
 										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:7010/api/v1/attachments/book_593f18c2-6382-46d6-ad3f-9ce1fb83a63f.pdf",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "7010",
+									"path": [
+										"api",
+										"v1",
+										"attachments",
+										"book_593f18c2-6382-46d6-ad3f-9ce1fb83a63f.pdf"
 									]
 								}
 							},
@@ -298,48 +332,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:7010/api/v1/attachments",
-									"protocol": "http",
-									"host": [
-										"localhost"
-									],
-									"port": "7010",
-									"path": [
-										"api",
-										"v1",
-										"attachments"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "upload",
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "format",
-											"value": "txt",
-											"type": "text"
-										},
-										{
-											"key": "book_id",
-											"value": "2",
-											"type": "text"
-										},
-										{
-											"key": "file",
-											"type": "file",
-											"src": "/C:/Users/a.mandzhiev/Desktop/микросервисы.txt"
-										}
-									]
-								},
-								"url": {
-									"raw": "http://localhost:7010/api/v1/attachments/upload",
+									"raw": "http://localhost:7010/api/v1/attachments/4",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -349,7 +342,7 @@
 										"api",
 										"v1",
 										"attachments",
-										"upload"
+										"4"
 									]
 								}
 							},
@@ -1400,7 +1393,7 @@
 								"header": [
 									{
 										"key": "Cookie",
-										"value": "refresh_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMDI3ZjdjNTQtZGViMy00MjEwLTlmZWQtNzFiNGY3MjcxZmJhIiwiY2xpZW50X2lkIjoiODI2OGVjNzYtZDZjMi00OGI1LWEwZTQtYTljMjUzOGI4ZjQ4IiwiYXBwX2lkIjoxLCJyb2xlcyI6WyI5OTM2YWVkNi02ODBhLTRmNGItYTA5My0zODlhMzBiZTRhMTUiXSwicGVybWlzc2lvbnMiOlsiZGEzY2EyODUtODAwMS00ZGNhLTg0ODYtYWQ2NjdiZDVjNGE4IiwiYTZmZWFjMzYtM2Q2Ny00NWY4LWI3ODctOWUxZTZjMzIyMDk2IiwiYWRhYTk3N2EtNjU3My00NDM3LWExNWMtMmI5NTExMTkzMDIyIiwiYzdkMTI3MTEtNmQ1MS00MTU2LWI1M2UtNTM5YzUxN2M5Yzk3IiwiMDQxYTZjZmYtNWQwZC00NTM3LTlmOGEtMmY1OGEyYjNkNDI5IiwiZGRjOGJhMWEtODFlYy00N2M0LThlMmMtYzg2ODE4YjQwZDRjIiwiODU0ODY5YmYtNDQ1NS00Yzk3LWExOWUtNTNhNWE1MzFkYzc3IiwiY2EyNDQ4N2EtZGZkNi00Y2E0LTgyYjctYTg2ZGJjMGE4OTkyIiwiZmM1N2E2YjAtOWQ5Ni00N2RhLWI5ZGYtNzc0NTM5NDM2NWY1IiwiZDFmMGQ0OGItMzJiZi00MDg3LTliNTAtNDQzYTgwYzBiYzA2IiwiMWJjMGUyYjctZWFiNS00YTA3LTlhMjctZmJkNmYyZDBhNTcwIiwiMTQ3ZjViYzUtZjA3MS00N2EzLWIyM2ItYjZkMDc2ZjUxNjc2IiwiMmU2MmU2ZGUtMTc2NC00ZDc0LWJlNTAtZDA4YmU2NzNiYzY2IiwiZmMyNTdlMjgtMTRkYi00MDMwLThiYzYtNzQxMjg3YWFiM2YzIiwiZmY3MWQzODktZTBmNy00Y2JhLTlkZjgtMGVhOTVmYjE4ZTFmIiwiZDdmZGZhY2QtNTViNS00YzllLWJiMzktOTMyNDBhZDU1NTQ2IiwiMTFkYTRjMTMtODI1Mi00MzlmLWE1ZDgtZjg1YzE2N2IyMTQxIiwiMmZiZGYwNDQtMThlOS00NzhiLWIzZTEtZWI5ZjU2NzBjYTdjIl0sInRva2VuX3R5cGUiOiJyZWZyZXNoIiwiZXhwIjoxNzQ4NjczMDYwLCJpYXQiOjE3NDgwNjgyNjB9.9xPRPL4juvDiafx03zByB23rIKqv-_Qc6vU-PpzNtMA; Path=/; Domain=localhost; Expires=Sat, 24 May 2025 06:31:00 GMT; HttpOnly; SameSite=None",
+										"value": "refresh_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMDI3ZjdjNTQtZGViMy00MjEwLTlmZWQtNzFiNGY3MjcxZmJhIiwiY2xpZW50X2lkIjoiODI2OGVjNzYtZDZjMi00OGI1LWEwZTQtYTljMjUzOGI4ZjQ4IiwiYXBwX2lkIjoxLCJyb2xlcyI6WyI5OTM2YWVkNi02ODBhLTRmNGItYTA5My0zODlhMzBiZTRhMTUiXSwicGVybWlzc2lvbnMiOlsiMmZiZGYwNDQtMThlOS00NzhiLWIzZTEtZWI5ZjU2NzBjYTdjIiwiYzdkMTI3MTEtNmQ1MS00MTU2LWI1M2UtNTM5YzUxN2M5Yzk3IiwiMDQxYTZjZmYtNWQwZC00NTM3LTlmOGEtMmY1OGEyYjNkNDI5IiwiMWJjMGUyYjctZWFiNS00YTA3LTlhMjctZmJkNmYyZDBhNTcwIiwiODU0ODY5YmYtNDQ1NS00Yzk3LWExOWUtNTNhNWE1MzFkYzc3IiwiMTQ3ZjViYzUtZjA3MS00N2EzLWIyM2ItYjZkMDc2ZjUxNjc2IiwiYTZmZWFjMzYtM2Q2Ny00NWY4LWI3ODctOWUxZTZjMzIyMDk2IiwiZGRjOGJhMWEtODFlYy00N2M0LThlMmMtYzg2ODE4YjQwZDRjIiwiMTFkYTRjMTMtODI1Mi00MzlmLWE1ZDgtZjg1YzE2N2IyMTQxIiwiY2EyNDQ4N2EtZGZkNi00Y2E0LTgyYjctYTg2ZGJjMGE4OTkyIiwiZmM1N2E2YjAtOWQ5Ni00N2RhLWI5ZGYtNzc0NTM5NDM2NWY1IiwiZmMyNTdlMjgtMTRkYi00MDMwLThiYzYtNzQxMjg3YWFiM2YzIiwiZGEzY2EyODUtODAwMS00ZGNhLTg0ODYtYWQ2NjdiZDVjNGE4IiwiYWRhYTk3N2EtNjU3My00NDM3LWExNWMtMmI5NTExMTkzMDIyIiwiZDdmZGZhY2QtNTViNS00YzllLWJiMzktOTMyNDBhZDU1NTQ2IiwiMmU2MmU2ZGUtMTc2NC00ZDc0LWJlNTAtZDA4YmU2NzNiYzY2IiwiZmY3MWQzODktZTBmNy00Y2JhLTlkZjgtMGVhOTVmYjE4ZTFmIiwiZDFmMGQ0OGItMzJiZi00MDg3LTliNTAtNDQzYTgwYzBiYzA2Il0sInRva2VuX3R5cGUiOiJyZWZyZXNoIiwiZXhwIjoxNzQ5Nzg4NzA2LCJpYXQiOjE3NDkxODM5MDZ9.3vjDP-vLcfkszEgLzkEyRKJa7-Fp_wtfxCUDUYARXO0; Path=/; Domain=localhost; Expires=Fri, 06 Jun 2025 04:25:06 GMT; HttpOnly; SameSite=None",
 										"type": "text"
 									}
 								],
@@ -1437,7 +1430,7 @@
 								"header": [
 									{
 										"key": "Cookie",
-										"value": "refresh_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMDI3ZjdjNTQtZGViMy00MjEwLTlmZWQtNzFiNGY3MjcxZmJhIiwiY2xpZW50X2lkIjoiODI2OGVjNzYtZDZjMi00OGI1LWEwZTQtYTljMjUzOGI4ZjQ4IiwiYXBwX2lkIjoxLCJyb2xlcyI6WyI5OTM2YWVkNi02ODBhLTRmNGItYTA5My0zODlhMzBiZTRhMTUiXSwicGVybWlzc2lvbnMiOlsiMTQ3ZjViYzUtZjA3MS00N2EzLWIyM2ItYjZkMDc2ZjUxNjc2IiwiZGEzY2EyODUtODAwMS00ZGNhLTg0ODYtYWQ2NjdiZDVjNGE4IiwiY2EyNDQ4N2EtZGZkNi00Y2E0LTgyYjctYTg2ZGJjMGE4OTkyIiwiZDFmMGQ0OGItMzJiZi00MDg3LTliNTAtNDQzYTgwYzBiYzA2IiwiYzdkMTI3MTEtNmQ1MS00MTU2LWI1M2UtNTM5YzUxN2M5Yzk3IiwiYWRhYTk3N2EtNjU3My00NDM3LWExNWMtMmI5NTExMTkzMDIyIiwiZDdmZGZhY2QtNTViNS00YzllLWJiMzktOTMyNDBhZDU1NTQ2IiwiZmM1N2E2YjAtOWQ5Ni00N2RhLWI5ZGYtNzc0NTM5NDM2NWY1IiwiZGRjOGJhMWEtODFlYy00N2M0LThlMmMtYzg2ODE4YjQwZDRjIiwiYTZmZWFjMzYtM2Q2Ny00NWY4LWI3ODctOWUxZTZjMzIyMDk2IiwiZmY3MWQzODktZTBmNy00Y2JhLTlkZjgtMGVhOTVmYjE4ZTFmIiwiMTFkYTRjMTMtODI1Mi00MzlmLWE1ZDgtZjg1YzE2N2IyMTQxIiwiZmMyNTdlMjgtMTRkYi00MDMwLThiYzYtNzQxMjg3YWFiM2YzIiwiMDQxYTZjZmYtNWQwZC00NTM3LTlmOGEtMmY1OGEyYjNkNDI5IiwiMmU2MmU2ZGUtMTc2NC00ZDc0LWJlNTAtZDA4YmU2NzNiYzY2IiwiMmZiZGYwNDQtMThlOS00NzhiLWIzZTEtZWI5ZjU2NzBjYTdjIiwiMWJjMGUyYjctZWFiNS00YTA3LTlhMjctZmJkNmYyZDBhNTcwIiwiODU0ODY5YmYtNDQ1NS00Yzk3LWExOWUtNTNhNWE1MzFkYzc3Il0sInRva2VuX3R5cGUiOiJyZWZyZXNoIiwiZXhwIjoxNzQ5NjI3MjI1LCJpYXQiOjE3NDkwMjI0MjV9.hhaoWK_Z_9Abj7JIl2BjbzMoU2Zk8L_JFGwJue_8QWA; Path=/; Domain=localhost; Expires=Wed, 04 Jun 2025 07:33:45 GMT; HttpOnly; SameSite=None",
+										"value": "refresh_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMDI3ZjdjNTQtZGViMy00MjEwLTlmZWQtNzFiNGY3MjcxZmJhIiwiY2xpZW50X2lkIjoiODI2OGVjNzYtZDZjMi00OGI1LWEwZTQtYTljMjUzOGI4ZjQ4IiwiYXBwX2lkIjoxLCJyb2xlcyI6WyI5OTM2YWVkNi02ODBhLTRmNGItYTA5My0zODlhMzBiZTRhMTUiXSwicGVybWlzc2lvbnMiOlsiMmZiZGYwNDQtMThlOS00NzhiLWIzZTEtZWI5ZjU2NzBjYTdjIiwiYzdkMTI3MTEtNmQ1MS00MTU2LWI1M2UtNTM5YzUxN2M5Yzk3IiwiMDQxYTZjZmYtNWQwZC00NTM3LTlmOGEtMmY1OGEyYjNkNDI5IiwiMWJjMGUyYjctZWFiNS00YTA3LTlhMjctZmJkNmYyZDBhNTcwIiwiODU0ODY5YmYtNDQ1NS00Yzk3LWExOWUtNTNhNWE1MzFkYzc3IiwiMTQ3ZjViYzUtZjA3MS00N2EzLWIyM2ItYjZkMDc2ZjUxNjc2IiwiYTZmZWFjMzYtM2Q2Ny00NWY4LWI3ODctOWUxZTZjMzIyMDk2IiwiZGRjOGJhMWEtODFlYy00N2M0LThlMmMtYzg2ODE4YjQwZDRjIiwiMTFkYTRjMTMtODI1Mi00MzlmLWE1ZDgtZjg1YzE2N2IyMTQxIiwiY2EyNDQ4N2EtZGZkNi00Y2E0LTgyYjctYTg2ZGJjMGE4OTkyIiwiZmM1N2E2YjAtOWQ5Ni00N2RhLWI5ZGYtNzc0NTM5NDM2NWY1IiwiZmMyNTdlMjgtMTRkYi00MDMwLThiYzYtNzQxMjg3YWFiM2YzIiwiZGEzY2EyODUtODAwMS00ZGNhLTg0ODYtYWQ2NjdiZDVjNGE4IiwiYWRhYTk3N2EtNjU3My00NDM3LWExNWMtMmI5NTExMTkzMDIyIiwiZDdmZGZhY2QtNTViNS00YzllLWJiMzktOTMyNDBhZDU1NTQ2IiwiMmU2MmU2ZGUtMTc2NC00ZDc0LWJlNTAtZDA4YmU2NzNiYzY2IiwiZmY3MWQzODktZTBmNy00Y2JhLTlkZjgtMGVhOTVmYjE4ZTFmIiwiZDFmMGQ0OGItMzJiZi00MDg3LTliNTAtNDQzYTgwYzBiYzA2Il0sInRva2VuX3R5cGUiOiJyZWZyZXNoIiwiZXhwIjoxNzQ5Nzg4NzA2LCJpYXQiOjE3NDkxODM5MDZ9.3vjDP-vLcfkszEgLzkEyRKJa7-Fp_wtfxCUDUYARXO0; Path=/; Domain=localhost; Expires=Fri, 06 Jun 2025 04:25:06 GMT; HttpOnly; SameSite=None",
 										"type": "text"
 									}
 								],

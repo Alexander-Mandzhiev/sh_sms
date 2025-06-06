@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package private_school;
+option go_package = "private_school.v1";
+
+import "google/protobuf/empty.proto";
+
+service SubjectService {
+  rpc CreateSubject(CreateSubjectRequest) returns (Subject) {}
+  rpc GetSubject(GetSubjectRequest) returns (Subject) {}
+  rpc UpdateSubject(UpdateSubjectRequest) returns (Subject) {}
+  rpc DeleteSubject(DeleteSubjectRequest) returns (google.protobuf.Empty) {}
+  rpc ListSubjects(google.protobuf.Empty) returns (ListSubjectsResponse) {}
+}
+
+message Subject {
+  int32 id = 1;
+  string name = 2;
+}
+
+message CreateSubjectRequest {
+  string name = 1;
+}
+
+message GetSubjectRequest {
+  int32 id = 1;
+}
+
+message UpdateSubjectRequest {
+  int32 id = 1;
+  string name = 2;
+}
+
+message DeleteSubjectRequest {
+  int32 id = 1;
+}
+
+message ListSubjectsResponse {
+  repeated Subject subjects = 1;
+}
