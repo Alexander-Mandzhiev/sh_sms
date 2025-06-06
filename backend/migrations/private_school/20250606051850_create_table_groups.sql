@@ -1,19 +1,19 @@
 -- +goose Up
 -- +goose StatementBegin
--- Таблица преподавателей
-CREATE TABLE teachers (
+-- таблица группы
+CREATE TABLE groups (
     id UUID PRIMARY KEY,
-    full_name VARCHAR(150) NOT NULL,
-    phone VARCHAR(20) NOT NULL,
-    email VARCHAR(255),
-    additional_info TEXT,
+    name VARCHAR(100) NOT NULL UNIQUE,
+    curator_id UUID REFERENCES teachers(id),
     deleted_at TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE INDEX idx_groups_curator ON groups(curator_id);
 -- +goose StatementEnd
 
 -- +goose Down
 -- +goose StatementBegin
-DROP TABLE IF EXISTS teachers;
+DROP TABLE IF EXISTS groups;
 -- +goose StatementEnd
