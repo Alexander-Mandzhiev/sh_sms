@@ -8,6 +8,7 @@ CREATE TABLE student_groups (
 );
 
 CREATE INDEX idx_student_groups_group ON student_groups(group_id);
+CREATE INDEX idx_student_groups_student_id ON student_groups(student_id);
 -- +goose StatementEnd
 
 -- +goose Down

@@ -7,6 +7,7 @@ CREATE TABLE teacher_groups (
     PRIMARY KEY (teacher_id, group_id)
 );
 
+CREATE INDEX idx_teacher_groups_teacher_id ON teacher_groups(teacher_id);
 CREATE INDEX idx_teacher_groups_group ON teacher_groups(group_id);
 -- +goose StatementEnd
 

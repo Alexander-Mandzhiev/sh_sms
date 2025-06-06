@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package private_school;
+option go_package = "private_school.v1";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+service GroupService {
+  rpc CreateGroup(CreateGroupRequest) returns (GroupResponse);
+  rpc GetGroup(GetGroupRequest) returns (GroupResponse);
+  rpc UpdateGroup(UpdateGroupRequest) returns (GroupResponse);
+  rpc DeleteGroup(DeleteGroupRequest) returns (google.protobuf.Empty);
+  rpc ListGroups(ListGroupsRequest) returns (ListGroupsResponse);
+}
+
+message GroupResponse {
+  string id = 1;
+  string client_id = 2;
+  string name = 3;
+  optional string curator_id = 4;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
+}
+
+message CreateGroupRequest {
+  string client_id = 1;
+  string name = 2;
+  optional string curator_id = 3;
+}
+
+message GetGroupRequest {
+  string id = 1;
+  string client_id = 2;
+}
+
+message DeleteGroupRequest {
+  string id = 1;
+  string client_id = 2;
+}
+
+message UpdateGroupRequest {
+  string id = 1;
+  string client_id = 2;
+  optional string name = 3;
+  optional string curator_id = 4;
+}
+
+message ListGroupsRequest {
+  string client_id = 1;
+  optional int32 count = 2;
+  optional int64 cursor = 3;
+  optional string filter = 4;
+}
+
+message ListGroupsResponse {
+  repeated GroupResponse groups = 1;
+  optional int64 next_cursor = 2;
+}

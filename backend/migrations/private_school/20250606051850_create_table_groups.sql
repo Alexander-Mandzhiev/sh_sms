@@ -3,14 +3,17 @@
 -- таблица группы
 CREATE TABLE groups (
     id UUID PRIMARY KEY,
-    name VARCHAR(100) NOT NULL UNIQUE,
+    client_id UUID NOT NULL,
+    name VARCHAR(100) NOT NULL,
     curator_id UUID REFERENCES teachers(id),
-    deleted_at TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (client_id, name)
 );
 
 CREATE INDEX idx_groups_curator ON groups(curator_id);
+CREATE INDEX idx_groups_client ON groups(client_id);
+
 -- +goose StatementEnd
 
 -- +goose Down

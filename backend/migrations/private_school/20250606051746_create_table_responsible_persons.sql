@@ -3,6 +3,7 @@
 -- ответственные лица учеников
 CREATE TABLE responsible_persons (
     id UUID PRIMARY KEY,
+    client_id UUID NOT NULL,
     student_id UUID NOT NULL REFERENCES students(id) ON DELETE CASCADE,
     full_name VARCHAR(150) NOT NULL,
     phone VARCHAR(20),

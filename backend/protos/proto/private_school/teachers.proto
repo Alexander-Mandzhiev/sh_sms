@@ -2,3 +2,63 @@ syntax = "proto3";
 
 package private_school;
 option go_package = "private_school.v1";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+service TeacherService {
+  rpc CreateTeacher(CreateTeacherRequest) returns (TeacherResponse);
+  rpc GetTeacher(GetTeacherRequest) returns (TeacherResponse);
+  rpc UpdateTeacher(UpdateTeacherRequest) returns (TeacherResponse);
+  rpc DeleteTeacher(DeleteTeacherRequest) returns (google.protobuf.Empty);
+  rpc ListTeachers(ListTeachersRequest) returns (ListTeachersResponse);
+}
+
+message CreateTeacherRequest {
+  string id = 1;
+  string full_name = 2;
+  string phone = 3;
+  optional string email = 4;
+  optional string additional_info = 5;
+}
+
+message GetTeacherRequest {
+  string id = 1;
+}
+
+message UpdateTeacherRequest {
+  string id = 1;
+  optional string full_name = 2;
+  optional string phone = 3;
+  optional string email = 4;
+  optional string additional_info = 5;
+}
+
+message DeleteTeacherRequest {
+  string id = 1;
+}
+
+message ListTeachersRequest {
+  int32 page = 1;
+  int32 count = 2;
+
+  bool include_deleted = 3;
+}
+
+message TeacherResponse {
+  string id = 1;
+  string full_name = 2;
+  string phone = 3;
+  string email = 4;
+  string additional_info = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+  google.protobuf.Timestamp deleted_at = 8;
+}
+
+message ListTeachersResponse {
+  repeated TeacherResponse teachers = 1;
+  int32 total_count = 2;
+  int32 current_page = 3;
+  int32 total_pages = 4;
+}

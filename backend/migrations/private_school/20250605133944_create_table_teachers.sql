@@ -3,6 +3,7 @@
 -- Таблица преподавателей
 CREATE TABLE teachers (
     id UUID PRIMARY KEY,
+    client_id UUID NOT NULL,
     full_name VARCHAR(150) NOT NULL,
     phone VARCHAR(20) NOT NULL,
     email VARCHAR(255),
@@ -11,6 +12,8 @@ CREATE TABLE teachers (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE INDEX idx_teachers_client ON teachers(client_id);
 -- +goose StatementEnd
 
 -- +goose Down

@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package private_school;
+option go_package = "private_school.v1";
+
+import "google/protobuf/empty.proto";
+
+service TeacherSubjectService {
+  rpc AddSubjectToTeacher(AddSubjectToTeacherRequest) returns (google.protobuf.Empty);
+  rpc RemoveSubjectFromTeacher(RemoveSubjectFromTeacherRequest) returns (google.protobuf.Empty);
+  rpc ListTeacherSubjects(ListTeacherSubjectsRequest) returns (ListTeacherSubjectsResponse);
+  rpc ListTeachersBySubject(ListTeachersBySubjectRequest) returns (ListTeachersBySubjectResponse);
+}
+
+message AddSubjectToTeacherRequest {
+  string client_id = 1;
+  string teacher_id = 2;
+  int32 subject_id = 3;
+}
+
+message RemoveSubjectFromTeacherRequest {
+  string client_id = 1;
+  string teacher_id = 2;
+  int32 subject_id = 3;
+}
+
+message ListTeacherSubjectsRequest {
+  string client_id = 1;
+  string teacher_id = 2;
+}
+
+message ListTeacherSubjectsResponse {
+  repeated int32 subject_ids = 1;
+}
+
+message ListTeachersBySubjectRequest {
+  string client_id = 1;
+  int32 subject_id = 2;
+}
+
+message ListTeachersBySubjectResponse {
+  repeated string teacher_ids = 1;
+}

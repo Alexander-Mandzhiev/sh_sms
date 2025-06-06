@@ -3,7 +3,7 @@
 -- таблица связи учителей с предметами
 CREATE TABLE teacher_subjects (
     teacher_id UUID NOT NULL REFERENCES teachers(id) ON DELETE CASCADE,
-    subject_id UUID NOT NULL REFERENCES subjects(id) ON DELETE CASCADE,
+    subject_id INT NOT NULL REFERENCES subjects(id) ON DELETE CASCADE,
     PRIMARY KEY (teacher_id, subject_id)
 );
 
