@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package private_school;
+option go_package = "private_school.v1";
+
+import "google/protobuf/empty.proto";
+
+service TeacherGroupService {
+  // Добавить учителя в группу
+  rpc AddTeacherToGroup(AddTeacherToGroupRequest) returns (google.protobuf.Empty);
+
+  // Удалить учителя из группы
+  rpc RemoveTeacherFromGroup(RemoveTeacherFromGroupRequest) returns (google.protobuf.Empty);
+
+  // Получить все группы учителя
+  rpc ListTeacherGroups(ListTeacherGroupsRequest) returns (ListTeacherGroupsResponse);
+
+  // Получить всех учителей группы
+  rpc ListGroupTeachers(ListGroupTeachersRequest) returns (ListGroupTeachersResponse);
+}
+
+// Запрос на добавление учителя в группу
+message AddTeacherToGroupRequest {
+  string client_id = 1;    // Для проверки принадлежности
+  string teacher_id = 2;   // ID учителя
+  string group_id = 3;     // ID группы
+}
+
+// Запрос на удаление учителя из группы
+message RemoveTeacherFromGroupRequest {
+  string client_id = 1;    // Для проверки принадлежности
+  string teacher_id = 2;   // ID учителя
+  string group_id = 3;     // ID группы
+}
+
+// Запрос списка групп учителя
+message ListTeacherGroupsRequest {
+  string client_id = 1;    // Для проверки принадлежности
+  string teacher_id = 2;   // ID учителя
+}
+
+// Ответ со списком групп учителя
+message ListTeacherGroupsResponse {
+  repeated string group_ids = 1;  // Список ID групп
+}
+
+// Запрос списка учителей группы
+message ListGroupTeachersRequest {
+  string client_id = 1;    // Для проверки принадлежности
+  string group_id = 2;     // ID группы
+}
+
+// Ответ со списком учителей группы
+message ListGroupTeachersResponse {
+  repeated string teacher_ids = 1;  // Список ID учителей
+}

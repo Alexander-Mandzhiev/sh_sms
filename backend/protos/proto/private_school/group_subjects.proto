@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package private_school;
+option go_package = "private_school.v1";
+
+import "google/protobuf/empty.proto";
+
+service GroupSubjectService {
+  // Добавить предмет группе
+  rpc AddSubjectToGroup(AddSubjectToGroupRequest) returns (google.protobuf.Empty);
+
+  // Удалить предмет у группы
+  rpc RemoveSubjectFromGroup(RemoveSubjectFromGroupRequest) returns (google.protobuf.Empty);
+
+  // Получить все предметы группы
+  rpc ListGroupSubjects(ListGroupSubjectsRequest) returns (ListGroupSubjectsResponse);
+
+  // Получить все группы по предмету
+  rpc ListGroupsBySubject(ListGroupsBySubjectRequest) returns (ListGroupsBySubjectResponse);
+}
+
+// Запрос на добавление предмета группе
+message AddSubjectToGroupRequest {
+  string client_id = 1;    // Для проверки принадлежности
+  string group_id = 2;     // ID группы
+  int32 subject_id = 3;    // ID предмета
+}
+
+// Запрос на удаление предмета у группы
+message RemoveSubjectFromGroupRequest {
+  string client_id = 1;    // Для проверки принадлежности
+  string group_id = 2;     // ID группы
+  int32 subject_id = 3;    // ID предмета
+}
+
+// Запрос списка предметов группы
+message ListGroupSubjectsRequest {
+  string client_id = 1;    // Для проверки принадлежности
+  string group_id = 2;     // ID группы
+}
+
+// Ответ со списком предметов группы
+message ListGroupSubjectsResponse {
+  repeated int32 subject_ids = 1;  // Список ID предметов
+}
+
+// Запрос списка групп по предмету
+message ListGroupsBySubjectRequest {
+  string client_id = 1;    // Для проверки принадлежности
+  int32 subject_id = 2;    // ID предмета
+}
+
+// Ответ со списком групп по предмету
+message ListGroupsBySubjectResponse {
+  repeated string group_ids = 1;  // Список ID групп
+}
