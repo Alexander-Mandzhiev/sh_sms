@@ -16,49 +16,57 @@ service TeacherService {
 
 message CreateTeacherRequest {
   string id = 1;
-  string full_name = 2;
-  string phone = 3;
-  optional string email = 4;
-  optional string additional_info = 5;
+  string client_id = 2;
+  string full_name = 3;
+  string phone = 4;
+  optional string email = 5;
+  optional string additional_info = 6;
 }
 
 message GetTeacherRequest {
   string id = 1;
+  string client_id = 2;
 }
 
 message UpdateTeacherRequest {
   string id = 1;
-  optional string full_name = 2;
-  optional string phone = 3;
-  optional string email = 4;
-  optional string additional_info = 5;
+  string client_id = 2;
+  optional string full_name = 3;
+  optional string phone = 4;
+  optional string email = 5;
+  optional string additional_info = 6;
 }
 
 message DeleteTeacherRequest {
   string id = 1;
+  string client_id = 2;
+}
+
+message Cursor {
+  string last_id = 1;
+  google.protobuf.Timestamp created_at = 2;
 }
 
 message ListTeachersRequest {
-  int32 page = 1;
-  int32 count = 2;
-
-  bool include_deleted = 3;
+  int32 limit = 1;
+  string client_id = 2;
+  optional Cursor cursor = 3;
+  bool include_deleted = 4;
 }
 
 message TeacherResponse {
   string id = 1;
-  string full_name = 2;
-  string phone = 3;
-  string email = 4;
-  string additional_info = 5;
-  google.protobuf.Timestamp created_at = 6;
-  google.protobuf.Timestamp updated_at = 7;
-  google.protobuf.Timestamp deleted_at = 8;
+  string client_id = 2;
+  string full_name = 3;
+  string phone = 4;
+  string email = 5;
+  string additional_info = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+  google.protobuf.Timestamp deleted_at = 9;
 }
 
 message ListTeachersResponse {
   repeated TeacherResponse teachers = 1;
-  int32 total_count = 2;
-  int32 current_page = 3;
-  int32 total_pages = 4;
+  optional Cursor next_cursor = 2;
 }

@@ -2,53 +2,66 @@ package private_school_models
 
 import (
 	"backend/protos/gen/go/private_school"
+	"github.com/google/uuid"
 	"time"
 
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type Teacher struct {
-	ID             string     `db:"id"`
-	FullName       string     `db:"full_name"`
-	Phone          string     `db:"phone"`
-	Email          *string    `db:"email"`
-	AdditionalInfo *string    `db:"additional_info"`
-	DeletedAt      *time.Time `db:"deleted_at"`
-	CreatedAt      time.Time  `db:"created_at"`
-	UpdatedAt      time.Time  `db:"updated_at"`
+	ID             uuid.UUID  `json:"id" db:"id"`
+	ClientID       uuid.UUID  `json:"client_id" db:"client_id"`
+	FullName       string     `json:"full_name" db:"full_name"`
+	Phone          string     `json:"phone" db:"phone"`
+	Email          *string    `json:"email" db:"email"`
+	AdditionalInfo *string    `json:"additional_info" db:"additional_info"`
+	DeletedAt      *time.Time `json:"deleted_at" db:"deleted_at"`
+	CreatedAt      time.Time  `json:"created_at" db:"created_at"`
+	UpdatedAt      time.Time  `json:"updated_at" db:"updated_at"`
 }
 
 func (t *Teacher) IsActive() bool {
 	return t.DeletedAt == nil
 }
 
-func TeacherToProto(teacher *Teacher) *private_school_v1.TeacherResponse {
+func (t *Teacher) TeacherToProto() *private_school_v1.TeacherResponse {
 	response := &private_school_v1.TeacherResponse{
-		Id:        teacher.ID,
-		FullName:  teacher.FullName,
-		Phone:     teacher.Phone,
-		CreatedAt: timestamppb.New(teacher.CreatedAt),
-		UpdatedAt: timestamppb.New(teacher.UpdatedAt),
+		Id:        t.ID.String(),
+		ClientId:  t.ClientID.String(),
+		FullName:  t.FullName,
+		Phone:     t.Phone,
+		CreatedAt: timestamppb.New(t.CreatedAt),
+		UpdatedAt: timestamppb.New(t.UpdatedAt),
 	}
 
-	if teacher.Email != nil {
-		response.Email = *teacher.Email
+	if t.Email != nil {
+		response.Email = *t.Email
 	}
 
-	if teacher.AdditionalInfo != nil {
-		response.AdditionalInfo = *teacher.AdditionalInfo
+	if t.AdditionalInfo != nil {
+		response.AdditionalInfo = *t.AdditionalInfo
 	}
 
-	if teacher.DeletedAt != nil {
-		response.DeletedAt = timestamppb.New(*teacher.DeletedAt)
+	if t.DeletedAt != nil {
+		response.DeletedAt = timestamppb.New(*t.DeletedAt)
 	}
 
 	return response
 }
 
-func TeacherResponseToTeacher(resp *private_school_v1.TeacherResponse) *Teacher {
+func TeacherFromProto(resp *private_school_v1.TeacherResponse) (*Teacher, error) {
+	clientID, err := parseStringToUUID(resp.GetClientId())
+	if err != nil {
+		return nil, ErrInvalidClientID
+	}
+	teacherId, err := parseStringToUUID(resp.GetId())
+	if err != nil {
+		return nil, ErrInvalidTeacherID
+	}
+
 	teacher := &Teacher{
-		ID:        resp.Id,
+		ID:        teacherId,
+		ClientID:  clientID,
 		FullName:  resp.FullName,
 		Phone:     resp.Phone,
 		CreatedAt: resp.CreatedAt.AsTime(),
@@ -68,5 +81,5 @@ func TeacherResponseToTeacher(resp *private_school_v1.TeacherResponse) *Teacher 
 		teacher.DeletedAt = &deletedAt
 	}
 
-	return teacher
+	return teacher, nil
 }

@@ -29,7 +29,7 @@ func (p *UpdateSubjectParams) Validate() error {
 		return ErrInvalidSubjectID
 	}
 	if strings.TrimSpace(p.Name) == "" {
-		return ErrEmptyName
+		return ErrEmptySubjectName
 	}
 	return nil
 }
