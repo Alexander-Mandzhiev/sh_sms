@@ -13,7 +13,7 @@ func (s *serverAPI) RestorePermission(ctx context.Context, req *permissions.Rest
 	logger := s.logger.With(slog.String("op", op), slog.String("permission_id", req.GetId()), slog.Int("app_id", int(req.GetAppId())))
 	logger.Debug("starting restore operation")
 
-	id, err := utils.ValidateAndReturnUUID(req.GetId())
+	id, err := utils.ValidateStringAndReturnUUID(req.GetId())
 	if err != nil {
 		logger.Warn("validation failed: invalid UUID format", slog.Any("error", err), slog.String("input_id", req.GetId()))
 		return nil, s.convertError(ErrInvalidUUID)

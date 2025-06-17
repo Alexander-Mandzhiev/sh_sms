@@ -1,8 +1,8 @@
-package private_school_models
+package utils
 
 import "strings"
 
-func cleanPhone(phone string) string {
+func CleanPhone(phone string) string {
 	if phone == "" {
 		return ""
 	}

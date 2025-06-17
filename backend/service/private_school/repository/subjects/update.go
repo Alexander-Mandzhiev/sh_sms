@@ -1,7 +1,7 @@
 package subjects_repository
 
 import (
-	private_school_models "backend/pkg/models/private_school"
+	"backend/pkg/models/subject"
 	"context"
 	"errors"
 	"fmt"
@@ -9,7 +9,7 @@ import (
 	"log/slog"
 )
 
-func (r *Repository) UpdateSubject(ctx context.Context, subject *private_school_models.Subject) error {
+func (r *Repository) UpdateSubject(ctx context.Context, subject *subjects_models.Subject) error {
 	const op = "repository.PrivateSchool.Subjects.UpdateSubject"
 	logger := r.logger.With(slog.String("op", op))
 	query := `UPDATE subjects SET name = $1 WHERE id = $2`
@@ -19,7 +19,7 @@ func (r *Repository) UpdateSubject(ctx context.Context, subject *private_school_
 		logger.Error("failed to update subject", slog.String("error", err.Error()), slog.Int("id", int(subject.ID)), slog.String("name", subject.Name))
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) && pgErr.Code == "23505" {
-			return private_school_models.ErrDuplicateSubjectName
+			return subjects_models.ErrDuplicateSubjectName
 		}
 		return fmt.Errorf("failed to update subject: %w", err)
 	}
@@ -27,7 +27,7 @@ func (r *Repository) UpdateSubject(ctx context.Context, subject *private_school_
 	rowsAffected := result.RowsAffected()
 	if rowsAffected == 0 {
 		logger.Debug("subject not found for update", slog.Int("id", int(subject.ID)))
-		return private_school_models.ErrEmptySubjectName
+		return subjects_models.ErrEmptySubjectName
 	}
 
 	logger.Debug("subject updated in database", slog.Int("id", int(subject.ID)), slog.String("name", subject.Name), slog.Int64("rows_affected", rowsAffected))

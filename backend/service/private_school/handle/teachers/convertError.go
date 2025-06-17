@@ -1,7 +1,7 @@
 package teachers_handle
 
 import (
-	"backend/pkg/models/private_school"
+	"backend/pkg/models/teacher"
 	"context"
 	"errors"
 	"fmt"
@@ -13,25 +13,25 @@ import (
 
 func (s *serverAPI) convertError(err error) error {
 	switch {
-	case errors.Is(err, private_school_models.ErrEmptyFullName):
+	case errors.Is(err, teachers_models.ErrEmptyFullName):
 		return status.Error(codes.InvalidArgument, "full name cannot be empty")
-	case errors.Is(err, private_school_models.ErrInvalidPhone):
+	case errors.Is(err, teachers_models.ErrInvalidPhone):
 		return status.Error(codes.InvalidArgument, "invalid phone format")
-	case errors.Is(err, private_school_models.ErrInvalidEmail):
+	case errors.Is(err, teachers_models.ErrInvalidEmail):
 		return status.Error(codes.InvalidArgument, "invalid email format")
-	case errors.Is(err, private_school_models.ErrInvalidTeacherID):
+	case errors.Is(err, teachers_models.ErrInvalidTeacherID):
 		return status.Error(codes.InvalidArgument, "invalid teacher ID")
-	case errors.Is(err, private_school_models.ErrTeacherNotFound):
+	case errors.Is(err, teachers_models.ErrTeacherNotFound):
 		return status.Error(codes.NotFound, "teacher not found")
-	case errors.Is(err, private_school_models.ErrDuplicateTeacher):
+	case errors.Is(err, teachers_models.ErrDuplicateTeacher):
 		return status.Error(codes.AlreadyExists, "teacher already exists")
-	case errors.Is(err, private_school_models.ErrInvalidClient):
+	case errors.Is(err, teachers_models.ErrInvalidClient):
 		return status.Error(codes.InvalidArgument, "invalid client reference")
-	case errors.Is(err, private_school_models.ErrCreateFailed):
+	case errors.Is(err, teachers_models.ErrCreateFailed):
 		return status.Error(codes.Internal, "failed to create teacher")
-	case errors.Is(err, private_school_models.ErrDeleteTeacherConflict):
+	case errors.Is(err, teachers_models.ErrDeleteTeacherConflict):
 		return status.Error(codes.FailedPrecondition, "teacher has active references")
-	case errors.Is(err, private_school_models.ErrPermissionDenied):
+	case errors.Is(err, teachers_models.ErrPermissionDenied):
 		return status.Error(codes.PermissionDenied, "permission denied")
 	case errors.Is(err, context.Canceled):
 		return status.Error(codes.Canceled, "request canceled")

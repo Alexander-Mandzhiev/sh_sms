@@ -17,12 +17,12 @@ type TokenInfo struct {
 }
 
 func TokenInfoFromProto(pb *auth.TokenInfo) (*TokenInfo, error) {
-	clientID, err := utils.ValidateAndReturnUUID(pb.GetClientId())
+	clientID, err := utils.ValidateStringAndReturnUUID(pb.GetClientId())
 	if err != nil {
 		return nil, err
 	}
 
-	userID, err := utils.ValidateAndReturnUUID(pb.GetUserId())
+	userID, err := utils.ValidateStringAndReturnUUID(pb.GetUserId())
 	if err != nil {
 		return nil, err
 	}

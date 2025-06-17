@@ -14,7 +14,7 @@ type AuthResponse struct {
 }
 
 func AuthResponseFromProto(req *auth.AuthResponse) (*AuthResponse, error) {
-	clientID, err := utils.ValidateAndReturnUUID(req.Metadata.ClientId)
+	clientID, err := utils.ValidateStringAndReturnUUID(req.Metadata.ClientId)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse client_id: %w", err)
 	}

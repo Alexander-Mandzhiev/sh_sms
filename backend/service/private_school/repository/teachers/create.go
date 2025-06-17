@@ -1,7 +1,7 @@
 package teachers_repository
 
 import (
-	"backend/pkg/models/private_school"
+	"backend/pkg/models/teacher"
 	"context"
 	"errors"
 	"fmt"
@@ -11,14 +11,14 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
-func (r *Repository) CreateTeacher(ctx context.Context, teacher *private_school_models.CreateTeacher) (*private_school_models.Teacher, error) {
+func (r *Repository) CreateTeacher(ctx context.Context, teacher *teachers_models.CreateTeacher) (*teachers_models.Teacher, error) {
 	const op = "repository.PrivateSchool.Teachers.CreateTeacher"
 	logger := r.logger.With(slog.String("op", op))
 	logger.Debug("Creating teacher in repository")
 
 	query := `INSERT INTO teachers (id, client_id, full_name, phone, email, additional_info) VALUES ($1, $2, $3, $4, $5, $6)
 	RETURNING id, client_id, full_name, phone, email, additional_info, deleted_at, created_at, updated_at`
-	var t private_school_models.Teacher
+	var t teachers_models.Teacher
 	err := r.db.QueryRow(ctx, query, teacher.ID, teacher.ClientID, teacher.FullName, teacher.Phone, teacher.Email, teacher.AdditionalInfo).
 		Scan(&t.ID, &t.ClientID, &t.FullName, &t.Phone, &t.Email, &t.AdditionalInfo, &t.DeletedAt, &t.CreatedAt, &t.UpdatedAt)
 
@@ -27,16 +27,16 @@ func (r *Repository) CreateTeacher(ctx context.Context, teacher *private_school_
 		if errors.As(err, &pgErr) {
 			if pgErr.Code == "23505" {
 				logger.Warn("duplicate data detected", "detail", pgErr.Detail, "constraint", pgErr.ConstraintName)
-				return nil, private_school_models.ErrDuplicateTeacher
+				return nil, teachers_models.ErrDuplicateTeacher
 			}
 			if pgErr.Code == "23503" {
 				logger.Warn("invalid client reference", "detail", pgErr.Detail, "constraint", pgErr.ConstraintName)
-				return nil, private_school_models.ErrInvalidClient
+				return nil, teachers_models.ErrInvalidClient
 			}
 		}
 		if errors.Is(err, pgx.ErrNoRows) {
 			logger.Warn("no teacher created but no error returned")
-			return nil, private_school_models.ErrCreateFailed
+			return nil, teachers_models.ErrCreateFailed
 		}
 
 		logger.Error("failed to create teacher", "error", err)

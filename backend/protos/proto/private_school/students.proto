@@ -8,10 +8,14 @@ import "google/protobuf/empty.proto";
 
 service StudentService {
   rpc CreateStudent(CreateStudentRequest) returns (StudentResponse);
-  rpc GetStudent(GetStudentRequest) returns (StudentResponse);
   rpc UpdateStudent(UpdateStudentRequest) returns (StudentResponse);
-  rpc DeleteStudent(DeleteStudentRequest) returns (google.protobuf.Empty);
+
+  rpc GetStudent(StudentRequest) returns (StudentResponse);
   rpc ListStudents(ListStudentsRequest) returns (ListStudentsResponse);
+
+  rpc HardDeleteStudent(StudentRequest) returns (google.protobuf.Empty);
+  rpc SoftDeleteStudent(StudentRequest) returns (google.protobuf.Empty);
+  rpc RestoreStudent(StudentRequest) returns (google.protobuf.Empty);
 }
 
 message StudentResponse {
@@ -19,9 +23,9 @@ message StudentResponse {
   string client_id = 2;
   string full_name = 3;
   string contract_number = 4;
-  optional string phone = 5;
-  optional string email = 6;
-  optional string additional_info = 7;
+  string phone = 5;
+  string email = 6;
+  string additional_info = 7;
   google.protobuf.Timestamp created_at = 8;
   google.protobuf.Timestamp updated_at = 9;
   optional google.protobuf.Timestamp deleted_at = 10;
@@ -31,38 +35,41 @@ message CreateStudentRequest {
   string client_id = 1;
   string full_name = 2;
   string contract_number = 3;
-  optional string phone = 4;
-  optional string email = 5;
-  optional string additional_info = 6;
-}
-
-message GetStudentRequest {
-  string id = 1;
-  string client_id = 2;
-}
-
-message DeleteStudentRequest {
-  string id = 1;
-  string client_id = 2;
+  string phone = 4;
+  string email = 5;
+  string additional_info = 6;
 }
 
 message UpdateStudentRequest {
   string id = 1;
   string client_id = 2;
   optional string full_name = 3;
-  optional string phone = 4;
-  optional string email = 5;
-  optional string additional_info = 6;
+  optional string contract_number = 4;
+  optional string phone = 5;
+  optional string email = 6;
+  optional string additional_info = 7;
+}
+
+message StudentRequest {
+  string id = 1;
+  string client_id = 2;
+}
+
+message Filter {
+  optional string full_name = 1;
+  optional string contract_number = 2;
+  optional string phone = 3;
+  optional string email = 4;
 }
 
 message ListStudentsRequest {
   string client_id = 1;
   optional int32 count = 2;
-  optional int64 cursor = 3;
-  optional string filter = 4;
+  optional string cursor = 3;
+  optional Filter filter = 4;
 }
 
 message ListStudentsResponse {
   repeated StudentResponse students = 1;
-  optional int64 next_cursor = 2;
+  optional string next_cursor = 2;
 }

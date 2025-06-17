@@ -12,7 +12,7 @@ func (s *serverAPI) GetPermission(ctx context.Context, req *permissions.GetReque
 	logger := s.logger.With(slog.String("op", op), slog.String("id", req.GetId()), slog.Int("app_id", int(req.GetAppId())))
 	logger.Debug("attempting to get permission")
 
-	id, err := utils.ValidateAndReturnUUID(req.GetId())
+	id, err := utils.ValidateStringAndReturnUUID(req.GetId())
 	if err != nil {
 		logger.Warn("invalid UUID format", slog.Any("error", err))
 		return nil, s.convertError(ErrInvalidUUID)

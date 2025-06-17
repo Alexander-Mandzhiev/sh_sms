@@ -1,13 +1,13 @@
 package subjects_repository
 
 import (
-	private_school_models "backend/pkg/models/private_school"
+	subjects_models "backend/pkg/models/subject"
 	"context"
 	"fmt"
 	"log/slog"
 )
 
-func (r *Repository) ListSubjects(ctx context.Context) ([]*private_school_models.Subject, error) {
+func (r *Repository) ListSubjects(ctx context.Context) ([]*subjects_models.Subject, error) {
 	const op = "repository.PrivateSchool.Subjects.ListSubjects"
 	logger := r.logger.With(slog.String("op", op))
 
@@ -20,9 +20,9 @@ func (r *Repository) ListSubjects(ctx context.Context) ([]*private_school_models
 	}
 	defer rows.Close()
 
-	var subjects []*private_school_models.Subject
+	var subjects []*subjects_models.Subject
 	for rows.Next() {
-		var subject private_school_models.Subject
+		var subject subjects_models.Subject
 		if err = rows.Scan(&subject.ID, &subject.Name); err != nil {
 			logger.Error("failed to scan subject row", slog.String("error", err.Error()))
 			return nil, fmt.Errorf("failed to scan subject row: %w", err)

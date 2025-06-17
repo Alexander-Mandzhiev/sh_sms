@@ -2,7 +2,7 @@ package teachers_handle
 
 import (
 	sl "backend/pkg/logger"
-	"backend/pkg/models/private_school"
+	"backend/pkg/models/teacher"
 	"backend/protos/gen/go/private_school"
 	"context"
 	"log/slog"
@@ -13,7 +13,7 @@ func (s *serverAPI) CreateTeacher(ctx context.Context, req *private_school_v1.Cr
 	logger := s.logger.With(slog.String("op", op), slog.String("teacher_id", req.GetId()), slog.String("client_id", req.GetClientId()))
 	logger.Debug("Create teacher called")
 
-	createTeacher, err := private_school_models.CreateTeacherFromProto(req)
+	createTeacher, err := teachers_models.CreateTeacherFromProto(req)
 	if err != nil {
 		logger.Warn("Invalid create subject parameters", sl.Err(err, true))
 		return nil, s.convertError(err)

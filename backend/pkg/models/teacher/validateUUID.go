@@ -1,4 +1,4 @@
-package private_school_models
+package teachers_models
 
 import "github.com/google/uuid"
 

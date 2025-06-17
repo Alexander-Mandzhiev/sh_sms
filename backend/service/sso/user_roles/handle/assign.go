@@ -20,25 +20,25 @@ func (s *serverAPI) Assign(ctx context.Context, req *user_roles.AssignRequest) (
 		return nil, s.convertError(err)
 	}
 
-	userID, err := utils.ValidateAndReturnUUID(req.GetUserId())
+	userID, err := utils.ValidateStringAndReturnUUID(req.GetUserId())
 	if err != nil {
 		logger.Warn("invalid user_id format", slog.String("field", "user_id"), slog.String("value", req.GetUserId()), slog.Any("error", err))
 		return nil, s.convertError(fmt.Errorf("%w: user_id", ErrInvalidArgument))
 	}
 
-	roleID, err := utils.ValidateAndReturnUUID(req.GetRoleId())
+	roleID, err := utils.ValidateStringAndReturnUUID(req.GetRoleId())
 	if err != nil {
 		logger.Warn("invalid role_id format", slog.String("field", "role_id"), slog.String("value", req.GetRoleId()), slog.Any("error", err))
 		return nil, s.convertError(fmt.Errorf("%w: role_id", ErrInvalidArgument))
 	}
 
-	clientID, err := utils.ValidateAndReturnUUID(req.GetClientId())
+	clientID, err := utils.ValidateStringAndReturnUUID(req.GetClientId())
 	if err != nil {
 		logger.Warn("invalid client_id format", slog.String("field", "client_id"), slog.String("value", req.GetClientId()), slog.Any("error", err))
 		return nil, s.convertError(fmt.Errorf("%w: client_id", ErrInvalidArgument))
 	}
 
-	assignedBy, err := utils.ValidateAndReturnUUID(req.GetAssignedBy())
+	assignedBy, err := utils.ValidateStringAndReturnUUID(req.GetAssignedBy())
 	if err != nil {
 		logger.Warn("invalid assigned_by format", slog.String("field", "assigned_by"), slog.String("value", req.GetAssignedBy()), slog.Any("error", err))
 		return nil, s.convertError(fmt.Errorf("%w: assigned_by", ErrInvalidArgument))

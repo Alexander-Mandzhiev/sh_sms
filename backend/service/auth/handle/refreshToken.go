@@ -17,7 +17,7 @@ func (h *serverAPI) RefreshToken(ctx context.Context, req *auth.RefreshRequest) 
 	const op = "grpc.handler.RefreshToken"
 	logger := h.logger.With(slog.String("op", op), slog.String("client_id", req.ClientId), slog.Int("app_id", int(req.AppId)))
 
-	clientID, err := utils.ValidateAndReturnUUID(req.GetClientId())
+	clientID, err := utils.ValidateStringAndReturnUUID(req.GetClientId())
 	if err != nil {
 		logger.Warn("invalid client_id format", slog.Any("error", err))
 		return nil, status.Error(codes.InvalidArgument, "invalid client_id format")

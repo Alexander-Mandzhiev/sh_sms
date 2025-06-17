@@ -7,7 +7,7 @@ import (
 )
 
 func (s *serverAPI) convertListRequest(req *users.ListRequest) (*models.ListRequest, error) {
-	clientID, err := utils.ValidateAndReturnUUID(req.GetClientId())
+	clientID, err := utils.ValidateStringAndReturnUUID(req.GetClientId())
 	if err != nil {
 		return nil, s.convertError(err)
 	}

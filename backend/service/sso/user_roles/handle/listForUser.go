@@ -19,13 +19,13 @@ func (s *serverAPI) ListForUser(ctx context.Context, req *user_roles.UserRequest
 		return nil, s.convertError(err)
 	}
 
-	userID, err := utils2.ValidateAndReturnUUID(req.GetUserId())
+	userID, err := utils2.ValidateStringAndReturnUUID(req.GetUserId())
 	if err != nil {
 		logger.Warn("invalid user_id format", slog.String("field", "user_id"), slog.String("value", req.GetUserId()), slog.Any("error", err))
 		return nil, s.convertError(fmt.Errorf("%w: user_id", ErrInvalidArgument))
 	}
 
-	clientID, err := utils2.ValidateAndReturnUUID(req.GetClientId())
+	clientID, err := utils2.ValidateStringAndReturnUUID(req.GetClientId())
 	if err != nil {
 		logger.Warn("invalid client_id format", slog.String("field", "client_id"), slog.String("value", req.GetClientId()), slog.Any("error", err))
 		return nil, s.convertError(fmt.Errorf("%w: client_id", ErrInvalidArgument))

@@ -14,19 +14,19 @@ func (s *serverAPI) HasPermission(ctx context.Context, req *role_permissions.Has
 	const op = "grpc.role_permissions.HasPermission"
 	logger := s.logger.With(slog.String("op", op))
 
-	clientID, err := utils.ValidateAndReturnUUID(req.GetClientId())
+	clientID, err := utils.ValidateStringAndReturnUUID(req.GetClientId())
 	if err != nil {
 		logger.Warn("invalid client_id", slog.Any("error", err))
 		return nil, status.Error(codes.InvalidArgument, "invalid client_id")
 	}
 
-	roleID, err := utils.ValidateAndReturnUUID(req.GetRoleId())
+	roleID, err := utils.ValidateStringAndReturnUUID(req.GetRoleId())
 	if err != nil {
 		logger.Warn("invalid role_id", slog.Any("error", err))
 		return nil, status.Error(codes.InvalidArgument, "invalid role_id")
 	}
 
-	permissionID, err := utils.ValidateAndReturnUUID(req.GetPermissionId())
+	permissionID, err := utils.ValidateStringAndReturnUUID(req.GetPermissionId())
 	if err != nil {
 		logger.Warn("invalid permission_id", slog.Any("error", err))
 		return nil, status.Error(codes.InvalidArgument, "invalid permission_id")

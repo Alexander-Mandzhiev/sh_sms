@@ -14,7 +14,7 @@ func (h *serverAPI) CheckPermission(ctx context.Context, req *auth.PermissionChe
 	const op = "grpc.handler.CheckPermission"
 	logger := h.logger.With(slog.String("op", op), slog.String("client_id", req.GetClientId()), slog.Int("app_id", int(req.GetAppId())), slog.String("resource", req.GetResource()))
 
-	clientID, err := utils.ValidateAndReturnUUID(req.GetClientId())
+	clientID, err := utils.ValidateStringAndReturnUUID(req.GetClientId())
 	if err != nil {
 		logger.Warn("invalid client_id format", slog.Any("error", err))
 		return nil, status.Error(codes.InvalidArgument, "invalid client_id format")

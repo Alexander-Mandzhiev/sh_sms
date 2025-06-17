@@ -2,7 +2,7 @@ package subjects_handle
 
 import (
 	sl "backend/pkg/logger"
-	private_school_models "backend/pkg/models/private_school"
+	"backend/pkg/models/subject"
 	library "backend/protos/gen/go/library"
 	"context"
 	"log/slog"
@@ -13,7 +13,7 @@ func (s *serverAPI) UpdateSubject(ctx context.Context, req *library.UpdateSubjec
 	logger := s.logger.With(slog.String("op", op))
 	logger.Debug("Update subject called", slog.Int("id", int(req.GetId())), slog.String("name", req.GetName()))
 
-	params, err := private_school_models.UpdateSubjectParamsFromProto(req)
+	params, err := subjects_models.UpdateSubjectParamsFromProto(req)
 	if err != nil {
 		logger.Warn("Invalid update subject parameters", sl.Err(err, true), slog.Int("id", int(req.GetId())), slog.String("name", req.GetName()))
 		return nil, s.convertError(err)

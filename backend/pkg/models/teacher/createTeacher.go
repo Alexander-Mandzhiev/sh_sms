@@ -1,6 +1,7 @@
-package private_school_models
+package teachers_models
 
 import (
+	"backend/pkg/utils"
 	"backend/protos/gen/go/private_school"
 	"github.com/google/uuid"
 	"strings"
@@ -26,7 +27,7 @@ func CreateTeacherFromProto(req *private_school_v1.CreateTeacherRequest) (*Creat
 		return nil, ErrInvalidClientID
 	}
 
-	phone := cleanPhone(req.GetPhone())
+	phone := utils.CleanPhone(req.GetPhone())
 
 	teacher := &CreateTeacher{
 		ID:             teacherID,
@@ -63,9 +64,9 @@ func (t *CreateTeacher) Validate() error {
 		return ErrInvalidTeacherID
 	case t.ClientID == uuid.Nil:
 		return ErrInvalidClientID
-	case t.Phone != "" && !isValidPhone(t.Phone):
+	case t.Phone != "" && !utils.IsValidPhone(t.Phone):
 		return ErrInvalidPhone
-	case t.Email != nil && *t.Email != "" && !isValidEmail(*t.Email):
+	case t.Email != nil && *t.Email != "" && !utils.IsValidEmail(*t.Email):
 		return ErrInvalidEmail
 	}
 	return nil

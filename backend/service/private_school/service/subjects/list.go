@@ -1,12 +1,12 @@
 package subjects_service
 
 import (
-	private_school_models "backend/pkg/models/private_school"
+	subjects_models "backend/pkg/models/subject"
 	"context"
 	"log/slog"
 )
 
-func (s *Service) ListSubjects(ctx context.Context) ([]*private_school_models.Subject, error) {
+func (s *Service) ListSubjects(ctx context.Context) ([]*subjects_models.Subject, error) {
 	const op = "service.PrivateSchool.Subjects.ListSubjects"
 	logger := s.logger.With(slog.String("op", op))
 	logger.Debug("listing all subjects")

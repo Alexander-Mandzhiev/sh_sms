@@ -1,7 +1,7 @@
 package subjects_repository
 
 import (
-	private_school_models "backend/pkg/models/private_school"
+	"backend/pkg/models/subject"
 	"context"
 	"errors"
 	"fmt"
@@ -10,7 +10,7 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
-func (r *Repository) CreateSubject(ctx context.Context, subject *private_school_models.Subject) (int32, error) {
+func (r *Repository) CreateSubject(ctx context.Context, subject *subjects_models.Subject) (int32, error) {
 	const op = "repository.PrivateSchool.Subjects.CreateSubject"
 	logger := r.logger.With(slog.String("op", op))
 
@@ -22,7 +22,7 @@ func (r *Repository) CreateSubject(ctx context.Context, subject *private_school_
 		logger.Error("failed to create subject", slog.String("error", err.Error()), slog.String("name", subject.Name))
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) && pgErr.Code == "23505" {
-			return 0, private_school_models.ErrDuplicateSubjectName
+			return 0, subjects_models.ErrDuplicateSubjectName
 		}
 		return 0, fmt.Errorf("failed to create subject: %w", err)
 	}

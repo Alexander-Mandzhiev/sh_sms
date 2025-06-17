@@ -13,7 +13,7 @@ func (s *serverAPI) UpdatePermission(ctx context.Context, req *permissions.Updat
 	logger := s.logger.With(slog.String("op", op), slog.String("id", req.GetId()), slog.Int("app_id", int(req.GetAppId())))
 	logger.Debug("attempting to update permission")
 
-	id, err := utils.ValidateAndReturnUUID(req.GetId())
+	id, err := utils.ValidateStringAndReturnUUID(req.GetId())
 	if err != nil {
 		logger.Warn("invalid UUID format")
 		return nil, s.convertError(ErrInvalidUUID)

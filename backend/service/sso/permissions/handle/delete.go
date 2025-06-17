@@ -12,7 +12,7 @@ func (s *serverAPI) DeletePermission(ctx context.Context, req *permissions.Delet
 	logger := s.logger.With(slog.String("op", op), slog.String("id", req.GetId()), slog.Int("app_id", int(req.GetAppId())))
 	logger.Debug("attempting to delete permission")
 
-	id, err := utils.ValidateAndReturnUUID(req.GetId())
+	id, err := utils.ValidateStringAndReturnUUID(req.GetId())
 	if err != nil {
 		logger.Warn("invalid UUID format", slog.Any("error", err))
 		return nil, s.convertError(ErrInvalidUUID)

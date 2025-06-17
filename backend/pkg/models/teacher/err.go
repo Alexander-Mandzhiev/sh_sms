@@ -1,4 +1,4 @@
-package private_school_models
+package teachers_models
 
 import (
 	"errors"
@@ -6,13 +6,7 @@ import (
 )
 
 var (
-	ErrEmptySubjectName      = errors.New("subject name cannot be empty")
-	ErrInvalidSubjectID      = errors.New("invalid subject ID")
-	ErrNotFoundSubjectName   = errors.New("subject name not found")
-	ErrDuplicateSubjectName  = errors.New("subject name already exists")
-	ErrDeleteSubjectConflict = errors.New("subject cannot be deleted due to existing references")
 	ErrPermissionDenied      = errors.New("permission denied")
-
 	ErrEmptyFullName         = fmt.Errorf("full name is required")
 	ErrInvalidClientID       = fmt.Errorf("client_id is not a valid UUID")
 	ErrInvalidTeacherID      = fmt.Errorf("teacher_id is not a valid UUID")

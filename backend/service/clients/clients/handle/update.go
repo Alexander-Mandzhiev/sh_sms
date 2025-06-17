@@ -15,7 +15,7 @@ func (s *serverAPI) UpdateClient(ctx context.Context, req *clients.UpdateRequest
 	logger := s.logger.With(slog.String("op", op), slog.String("client_id", req.GetId()))
 	logger.Debug("processing client update")
 
-	id, err := utils.ValidateAndReturnUUID(req.GetId())
+	id, err := utils.ValidateStringAndReturnUUID(req.GetId())
 	if err != nil {
 		logger.Warn("invalid UUID format", slog.String("error", err.Error()))
 		return nil, s.convertError(fmt.Errorf("%w: id", ErrInvalidArgument))

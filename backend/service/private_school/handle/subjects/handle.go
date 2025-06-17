@@ -1,7 +1,7 @@
 package subjects_handle
 
 import (
-	private_school_models "backend/pkg/models/private_school"
+	"backend/pkg/models/subject"
 	library "backend/protos/gen/go/library"
 	"context"
 
@@ -10,11 +10,11 @@ import (
 )
 
 type SubjectsService interface {
-	CreateSubject(ctx context.Context, params *private_school_models.CreateSubjectParams) (*private_school_models.Subject, error)
-	GetSubject(ctx context.Context, id int32) (*private_school_models.Subject, error)
-	UpdateSubject(ctx context.Context, params *private_school_models.UpdateSubjectParams) (*private_school_models.Subject, error)
+	CreateSubject(ctx context.Context, params *subjects_models.CreateSubjectParams) (*subjects_models.Subject, error)
+	GetSubject(ctx context.Context, id int32) (*subjects_models.Subject, error)
+	UpdateSubject(ctx context.Context, params *subjects_models.UpdateSubjectParams) (*subjects_models.Subject, error)
 	DeleteSubject(ctx context.Context, id int32) error
-	ListSubjects(ctx context.Context) ([]*private_school_models.Subject, error)
+	ListSubjects(ctx context.Context) ([]*subjects_models.Subject, error)
 }
 
 type serverAPI struct {

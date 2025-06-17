@@ -14,7 +14,7 @@ func (s *serverAPI) BatchGetUsers(ctx context.Context, req *users.BatchGetReques
 	logger := s.logger.With(slog.String("op", op), slog.String("client_id", req.GetClientId()), slog.Int("user_count", len(req.GetUserIds())))
 	logger.Debug("processing batch users request")
 
-	clientID, err := utils.ValidateAndReturnUUID(req.GetClientId())
+	clientID, err := utils.ValidateStringAndReturnUUID(req.GetClientId())
 	if err != nil {
 		logger.Warn("invalid client_id", slog.Any("error", err))
 		return nil, s.convertError(ErrInvalidArgument)
@@ -24,7 +24,7 @@ func (s *serverAPI) BatchGetUsers(ctx context.Context, req *users.BatchGetReques
 	var invalidIDs []string
 	for _, idStr := range req.GetUserIds() {
 		var id uuid.UUID
-		id, err = utils.ValidateAndReturnUUID(idStr)
+		id, err = utils.ValidateStringAndReturnUUID(idStr)
 		if err != nil {
 			invalidIDs = append(invalidIDs, idStr)
 			continue

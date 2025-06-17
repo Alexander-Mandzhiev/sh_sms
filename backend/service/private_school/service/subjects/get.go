@@ -1,19 +1,19 @@
 package subjects_service
 
 import (
-	private_school_models "backend/pkg/models/private_school"
+	"backend/pkg/models/subject"
 	"context"
 	"log/slog"
 )
 
-func (s *Service) GetSubject(ctx context.Context, id int32) (*private_school_models.Subject, error) {
+func (s *Service) GetSubject(ctx context.Context, id int32) (*subjects_models.Subject, error) {
 	const op = "service.PrivateSchool.Subjects.GetSubject"
 	logger := s.logger.With(slog.String("op", op))
 	logger.Debug("retrieving subject", slog.Int("id", int(id)))
 
 	if id <= 0 {
 		logger.Warn("invalid subject ID")
-		return nil, private_school_models.ErrInvalidSubjectID
+		return nil, subjects_models.ErrInvalidSubjectID
 	}
 
 	subject, err := s.provider.GetSubjectByID(ctx, id)

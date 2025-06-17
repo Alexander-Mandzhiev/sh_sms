@@ -15,7 +15,7 @@ func (s *serverAPI) ListRoles(ctx context.Context, req *roles.ListRequest) (*rol
 	logger := s.logger.With(slog.String("op", op), slog.String("client_id", req.GetClientId()))
 	logger.Debug("attempting to list roles")
 
-	clientID, err := utils2.ValidateAndReturnUUID(req.GetClientId())
+	clientID, err := utils2.ValidateStringAndReturnUUID(req.GetClientId())
 	if err != nil {
 		logger.Warn("invalid client_id", slog.Any("error", err))
 		return nil, s.convertError(fmt.Errorf("%w: client_id", constants.ErrInvalidArgument))

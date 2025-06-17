@@ -1,7 +1,7 @@
 package subjects_repository
 
 import (
-	private_school_models "backend/pkg/models/private_school"
+	subjects_models "backend/pkg/models/subject"
 	"context"
 	"fmt"
 	"log/slog"
@@ -21,7 +21,7 @@ func (r *Repository) DeleteSubject(ctx context.Context, id int32) error {
 	rowsAffected := result.RowsAffected()
 	if rowsAffected == 0 {
 		logger.Debug("subject not found for deletion", slog.Int("id", int(id)))
-		return private_school_models.ErrNotFoundSubjectName
+		return subjects_models.ErrNotFoundSubjectName
 	}
 
 	logger.Debug("subject deleted from database", slog.Int("id", int(id)), slog.Int64("rows_affected", rowsAffected))

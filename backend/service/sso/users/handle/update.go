@@ -16,13 +16,13 @@ func (s *serverAPI) UpdateUser(ctx context.Context, req *users.UpdateRequest) (*
 	logger := s.logger.With(slog.String("op", op), slog.String("user_id", req.GetId()), slog.String("client_id", req.GetClientId()))
 	logger.Debug("attempting to update user")
 
-	clientID, err := utils.ValidateAndReturnUUID(req.GetClientId())
+	clientID, err := utils.ValidateStringAndReturnUUID(req.GetClientId())
 	if err != nil {
 		logger.Warn("invalid client_id", slog.Any("error", err))
 		return nil, s.convertError(err)
 	}
 
-	userID, err := utils.ValidateAndReturnUUID(req.GetId())
+	userID, err := utils.ValidateStringAndReturnUUID(req.GetId())
 	if err != nil {
 		logger.Warn("invalid user_id", slog.Any("error", err))
 		return nil, s.convertError(err)
@@ -50,7 +50,7 @@ func (s *serverAPI) UpdateUser(ctx context.Context, req *users.UpdateRequest) (*
 	}
 
 	if req.Phone != nil {
-		if err = utils.ValidatePhone(req.GetPhone()); err != nil {
+		if req.GetPhone() != "" && !utils.IsValidPhone(req.GetPhone()) {
 			logger.Warn("invalid phone format", slog.Any("error", err))
 			return nil, s.convertError(fmt.Errorf("%w: %v", ErrInvalidArgument, err))
 		}

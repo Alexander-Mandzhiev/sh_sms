@@ -1,7 +1,7 @@
 package teachers_service
 
 import (
-	private_school_models "backend/pkg/models/private_school"
+	"backend/pkg/models/teacher"
 	"context"
 	"errors"
 	"fmt"
@@ -15,11 +15,11 @@ func (s *Service) DeleteTeacher(ctx context.Context, id, clientID uuid.UUID) err
 	logger.Debug("deleting teacher")
 
 	if err := s.provider.DeleteTeacher(ctx, id, clientID); err != nil {
-		if errors.Is(err, private_school_models.ErrTeacherNotFound) {
+		if errors.Is(err, teachers_models.ErrTeacherNotFound) {
 			logger.Warn("teacher not found or already deleted", "error", err, "teacher_id", id, "client_id", clientID)
 			return err
 		}
-		if errors.Is(err, private_school_models.ErrDeleteTeacherConflict) {
+		if errors.Is(err, teachers_models.ErrDeleteTeacherConflict) {
 			logger.Warn("teacher has active references, cannot delete", "error", err, "teacher_id", id, "client_id", clientID)
 			return err
 		}

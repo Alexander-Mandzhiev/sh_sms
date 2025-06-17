@@ -1,17 +1,17 @@
 package subjects_service
 
 import (
-	"backend/pkg/models/private_school"
+	"backend/pkg/models/subject"
 	"context"
 	"log/slog"
 )
 
 type SubjectsProvider interface {
-	CreateSubject(ctx context.Context, subject *private_school_models.Subject) (int32, error)
-	GetSubjectByID(ctx context.Context, id int32) (*private_school_models.Subject, error)
-	UpdateSubject(ctx context.Context, subject *private_school_models.Subject) error
+	CreateSubject(ctx context.Context, subject *subjects_models.Subject) (int32, error)
+	GetSubjectByID(ctx context.Context, id int32) (*subjects_models.Subject, error)
+	UpdateSubject(ctx context.Context, subject *subjects_models.Subject) error
 	DeleteSubject(ctx context.Context, id int32) error
-	ListSubjects(ctx context.Context) ([]*private_school_models.Subject, error)
+	ListSubjects(ctx context.Context) ([]*subjects_models.Subject, error)
 }
 
 type Service struct {

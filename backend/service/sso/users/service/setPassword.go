@@ -15,7 +15,7 @@ func (s *Service) SetPassword(ctx context.Context, clientID, userID uuid.UUID, p
 	logger := s.logger.With(slog.String("op", op), slog.String("user_id", userID.String()), slog.String("client_id", clientID.String()))
 	logger.Debug("attempting to set password")
 
-	if err := utils.ValidatePasswordPolicy(password); err != nil {
+	if err := utils.ValidatePassword(password); err != nil {
 		logger.Warn("invalid password format", slog.Any("error", err))
 		return fmt.Errorf("%w: %v", ErrInvalidArgument, err)
 	}

@@ -13,13 +13,13 @@ func (s *serverAPI) RestoreRole(ctx context.Context, req *roles.RestoreRequest) 
 	logger := s.logger.With(slog.String("op", op), slog.String("role_id", req.GetId()), slog.String("client_id", req.GetClientId()))
 	logger.Debug("attempting to restore role")
 
-	clientID, err := utils.ValidateAndReturnUUID(req.GetClientId())
+	clientID, err := utils.ValidateStringAndReturnUUID(req.GetClientId())
 	if err != nil {
 		logger.Warn("invalid client_id", slog.Any("error", err))
 		return nil, s.convertError(fmt.Errorf("%w: client_id", ErrInvalidArgument))
 	}
 
-	roleID, err := utils.ValidateAndReturnUUID(req.GetId())
+	roleID, err := utils.ValidateStringAndReturnUUID(req.GetId())
 	if err != nil {
 		logger.Warn("invalid role_id", slog.Any("error", err))
 		return nil, s.convertError(fmt.Errorf("%w: role_id", ErrInvalidArgument))

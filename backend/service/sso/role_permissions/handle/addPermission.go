@@ -15,13 +15,13 @@ func (s *serverAPI) AddPermissionsToRole(ctx context.Context, req *role_permissi
 	logger := s.logger.With(slog.String("op", op), slog.String("role_id", req.GetRoleId()), slog.String("client_id", req.GetClientId()))
 	logger.Debug("processing request")
 
-	clientID, err := utils.ValidateAndReturnUUID(req.GetClientId())
+	clientID, err := utils.ValidateStringAndReturnUUID(req.GetClientId())
 	if err != nil {
 		logger.Warn("invalid client_id", slog.Any("error", err))
 		return nil, s.convertError(fmt.Errorf("%w: client_id", ErrInvalidArgument))
 	}
 
-	roleID, err := utils.ValidateAndReturnUUID(req.GetRoleId())
+	roleID, err := utils.ValidateStringAndReturnUUID(req.GetRoleId())
 	if err != nil {
 		logger.Warn("invalid role_id", slog.Any("error", err))
 		return nil, s.convertError(fmt.Errorf("%w: role_id", ErrInvalidArgument))
@@ -35,7 +35,7 @@ func (s *serverAPI) AddPermissionsToRole(ctx context.Context, req *role_permissi
 	permissionIDs := make([]uuid.UUID, 0, len(req.GetPermissionIds()))
 	for _, elem := range req.GetPermissionIds() {
 		var id uuid.UUID
-		id, err = utils.ValidateAndReturnUUID(elem)
+		id, err = utils.ValidateStringAndReturnUUID(elem)
 		if err != nil {
 			logger.Warn("invalid permission_id", err)
 			return nil, s.convertError(fmt.Errorf("%w: permission_id", ErrInvalidArgument))

@@ -17,7 +17,7 @@ func (s *AuthService) Login(ctx context.Context, req models.AuthRequest) (*model
 	const op = "auth.service.Login"
 	s.logger.Debug("Login attempt", "client_id", req.ClientID, "app_id", req.AppID, "login", req.Login)
 
-	clientID, err := utils.ValidateAndReturnUUID(req.ClientID)
+	clientID, err := utils.ValidateStringAndReturnUUID(req.ClientID)
 	if err != nil {
 		s.logger.Warn("invalid client_id", slog.Any("error", err))
 		return nil, "", "", err
@@ -49,7 +49,7 @@ func (s *AuthService) Login(ctx context.Context, req models.AuthRequest) (*model
 		return nil, "", "", err
 	}
 
-	userId, err := utils.ValidateAndReturnUUID(userResp.Id)
+	userId, err := utils.ValidateStringAndReturnUUID(userResp.Id)
 	if err != nil {
 		s.logger.Warn("Invalid user id", "client_id", req.ClientID, "app_id", int(appID.Id))
 		return nil, "", "", err

@@ -20,7 +20,7 @@ func (s *serverAPI) Revoke(ctx context.Context, req *user_roles.RevokeRequest) (
 		return nil, s.convertError(err)
 	}
 
-	userID, err := utils.ValidateAndReturnUUID(req.GetUserId())
+	userID, err := utils.ValidateStringAndReturnUUID(req.GetUserId())
 	if err != nil {
 		logger.Warn("invalid user_id format", slog.String("field", "user_id"), slog.String("value", req.GetUserId()), slog.Any("error", err))
 		return nil, s.convertError(fmt.Errorf("%w: user_id", ErrInvalidArgument))
@@ -31,13 +31,13 @@ func (s *serverAPI) Revoke(ctx context.Context, req *user_roles.RevokeRequest) (
 		return nil, fmt.Errorf("%w: app_id", ErrInvalidArgument)
 	}
 
-	roleID, err := utils.ValidateAndReturnUUID(req.GetRoleId())
+	roleID, err := utils.ValidateStringAndReturnUUID(req.GetRoleId())
 	if err != nil {
 		logger.Warn("invalid role_id format", slog.String("field", "role_id"), slog.String("value", req.GetRoleId()), slog.Any("error", err))
 		return nil, s.convertError(fmt.Errorf("%w: role_id", ErrInvalidArgument))
 	}
 
-	clientID, err := utils.ValidateAndReturnUUID(req.GetClientId())
+	clientID, err := utils.ValidateStringAndReturnUUID(req.GetClientId())
 	if err != nil {
 		logger.Warn("invalid client_id format", slog.String("field", "client_id"), slog.String("value", req.GetClientId()), slog.Any("error", err))
 		return nil, s.convertError(fmt.Errorf("%w: client_id", ErrInvalidArgument))

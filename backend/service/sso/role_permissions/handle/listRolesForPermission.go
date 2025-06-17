@@ -15,13 +15,13 @@ func (s *serverAPI) ListRolesForPermission(ctx context.Context, req *role_permis
 		slog.String("client_id", req.GetClientId()), slog.Int("app_id", int(req.GetAppId())))
 	logger.Debug("starting request processing")
 
-	clientID, err := utils.ValidateAndReturnUUID(req.GetClientId())
+	clientID, err := utils.ValidateStringAndReturnUUID(req.GetClientId())
 	if err != nil {
 		logger.Warn("invalid client_id format", slog.Any("error", err), slog.String("input", req.GetClientId()))
 		return nil, status.Error(codes.InvalidArgument, "invalid client_id format")
 	}
 
-	permissionID, err := utils.ValidateAndReturnUUID(req.GetPermissionId())
+	permissionID, err := utils.ValidateStringAndReturnUUID(req.GetPermissionId())
 	if err != nil {
 		logger.Warn("invalid permission_id format", slog.Any("error", err), slog.String("input", req.GetPermissionId()))
 		return nil, status.Error(codes.InvalidArgument, "invalid permission_id format")

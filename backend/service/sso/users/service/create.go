@@ -17,7 +17,7 @@ func (s *Service) Create(ctx context.Context, user *models.User, password string
 	logger := s.logger.With(slog.String("op", op), slog.String("client_id", user.ClientID.String()))
 	logger.Debug("attempting to create user")
 
-	if err := utils.ValidatePasswordPolicy(password); err != nil {
+	if err := utils.ValidatePassword(password); err != nil {
 		logger.Warn("password policy validation failed", slog.Any("error", err), slog.Int("password_length", len(password)))
 		return fmt.Errorf("%w: %v", ErrInvalidArgument, err)
 	}

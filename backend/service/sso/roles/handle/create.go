@@ -14,7 +14,7 @@ func (s *serverAPI) CreateRole(ctx context.Context, req *roles.CreateRequest) (*
 	const op = "grpc.role.Create"
 	logger := s.logger.With(slog.String("op", op), slog.String("client_id", req.GetClientId()), slog.Int("app_id", int(req.GetAppId())), slog.String("role_name", req.GetName()))
 	logger.Info("role creation initiated")
-	clientID, err := utils.ValidateAndReturnUUID(req.GetClientId())
+	clientID, err := utils.ValidateStringAndReturnUUID(req.GetClientId())
 	if err != nil {
 		logger.Warn("invalid client_id", slog.Any("error", err))
 		return nil, s.convertError(fmt.Errorf("%w: client_id", ErrInvalidArgument))
@@ -47,7 +47,7 @@ func (s *serverAPI) CreateRole(ctx context.Context, req *roles.CreateRequest) (*
 
 	if req.GetCreatedBy() != "" {
 		var createdBy uuid.UUID
-		createdBy, err = utils.ValidateAndReturnUUID(req.GetCreatedBy())
+		createdBy, err = utils.ValidateStringAndReturnUUID(req.GetCreatedBy())
 		if err != nil {
 			logger.Warn("invalid created_by", slog.Any("error", err))
 			return nil, s.convertError(fmt.Errorf("%w: created_by", ErrInvalidArgument))

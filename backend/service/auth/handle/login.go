@@ -16,7 +16,7 @@ func (h *serverAPI) Login(ctx context.Context, req *auth.LoginRequest) (*auth.Au
 	const op = "grpc.handler.Login"
 	logger := h.logger.With(slog.String("op", op), slog.String("client_id", req.ClientId), slog.Int("app_id", int(req.AppId)))
 
-	clientID, err := utils.ValidateAndReturnUUID(req.ClientId)
+	clientID, err := utils.ValidateStringAndReturnUUID(req.ClientId)
 	if err != nil {
 		logger.Warn("invalid client_id format", slog.Any("error", err))
 		return nil, status.Error(codes.InvalidArgument, "invalid client_id format")

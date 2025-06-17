@@ -13,13 +13,13 @@ func (s *serverAPI) GetUser(ctx context.Context, req *users.GetRequest) (*users.
 	logger := s.logger.With(slog.String("op", op), slog.String("user_id", req.GetId()), slog.String("client_id", req.GetClientId()))
 	logger.Debug("attempting to get user")
 
-	clientID, err := utils.ValidateAndReturnUUID(req.GetClientId())
+	clientID, err := utils.ValidateStringAndReturnUUID(req.GetClientId())
 	if err != nil {
 		logger.Warn("invalid client_id", slog.Any("error", err))
 		return nil, s.convertError(err)
 	}
 
-	userID, err := utils.ValidateAndReturnUUID(req.GetId())
+	userID, err := utils.ValidateStringAndReturnUUID(req.GetId())
 	if err != nil {
 		logger.Warn("invalid user_id", slog.Any("error", err))
 		return nil, s.convertError(err)

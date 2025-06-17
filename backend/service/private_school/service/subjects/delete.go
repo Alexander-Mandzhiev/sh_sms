@@ -1,7 +1,7 @@
 package subjects_service
 
 import (
-	private_school_models "backend/pkg/models/private_school"
+	subjects_models "backend/pkg/models/subject"
 	"context"
 	"log/slog"
 )
@@ -13,7 +13,7 @@ func (s *Service) DeleteSubject(ctx context.Context, id int32) error {
 
 	if id <= 0 {
 		logger.Warn("invalid subject ID")
-		return private_school_models.ErrInvalidSubjectID
+		return subjects_models.ErrInvalidSubjectID
 	}
 
 	err := s.provider.DeleteSubject(ctx, id)

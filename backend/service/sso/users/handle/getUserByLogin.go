@@ -15,7 +15,7 @@ func (s *serverAPI) GetUserByLogin(ctx context.Context, req *users.GetUserByLogi
 	logger := s.logger.With(slog.String("op", op), slog.String("email", req.Login))
 	logger.Debug("attempting to create user")
 
-	clientID, err := utils.ValidateAndReturnUUID(req.GetClientId())
+	clientID, err := utils.ValidateStringAndReturnUUID(req.GetClientId())
 	if err != nil {
 		logger.Warn("invalid client_id", slog.Any("error", err))
 		return nil, s.convertError(err)

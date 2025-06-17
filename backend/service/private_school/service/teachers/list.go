@@ -1,13 +1,13 @@
 package teachers_service
 
 import (
-	"backend/pkg/models/private_school"
+	"backend/pkg/models/teacher"
 	"context"
 	"fmt"
 	"log/slog"
 )
 
-func (s *Service) ListTeachers(ctx context.Context, filter *private_school_models.ListTeachersFilter) (*private_school_models.ListTeachersResponse, error) {
+func (s *Service) ListTeachers(ctx context.Context, filter *teachers_models.ListTeachersFilter) (*teachers_models.ListTeachersResponse, error) {
 	const op = "teachers_service.ListTeachers"
 	logger := s.logger.With(slog.String("op", op), slog.String("client_id", filter.ClientID.String()), slog.Int("limit", int(filter.Limit)))
 	logger.Debug("listing teachers")

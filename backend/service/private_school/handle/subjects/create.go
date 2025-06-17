@@ -2,7 +2,7 @@ package subjects_handle
 
 import (
 	sl "backend/pkg/logger"
-	private_school_models "backend/pkg/models/private_school"
+	"backend/pkg/models/subject"
 	library "backend/protos/gen/go/library"
 	"context"
 	"log/slog"
@@ -13,7 +13,7 @@ func (s *serverAPI) CreateSubject(ctx context.Context, req *library.CreateSubjec
 	logger := s.logger.With(slog.String("op", op))
 	logger.Debug("Create subject called", slog.String("name", req.GetName()))
 
-	params, err := private_school_models.CreateSubjectParamsFromProto(req)
+	params, err := subjects_models.CreateSubjectParamsFromProto(req)
 	if err != nil {
 		logger.Warn("Invalid create subject parameters", sl.Err(err, true), slog.String("name", req.GetName()))
 		return nil, s.convertError(err)

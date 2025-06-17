@@ -1,4 +1,4 @@
-package private_school_models
+package subjects_models
 
 import (
 	library "backend/protos/gen/go/library"

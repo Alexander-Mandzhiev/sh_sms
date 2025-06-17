@@ -1,6 +1,7 @@
-package private_school_models
+package teachers_models
 
 import (
+	"backend/pkg/utils"
 	"backend/protos/gen/go/private_school"
 	"github.com/google/uuid"
 	"strings"
@@ -37,7 +38,7 @@ func UpdateTeacherFromProto(req *private_school_v1.UpdateTeacherRequest) (*Updat
 	}
 
 	if req.Phone != nil {
-		val := cleanPhone(*req.Phone)
+		val := utils.FormatPhone(*req.Phone)
 		update.Phone = &val
 	}
 
@@ -82,13 +83,13 @@ func (t *UpdateTeacher) Validate() error {
 		}
 	}
 	if t.Phone != nil {
-		if *t.Phone != "" && !isValidPhone(*t.Phone) {
+		if *t.Phone != "" && !utils.IsValidPhone(*t.Phone) {
 			return ErrInvalidPhone
 		}
 	}
 
 	if t.Email != nil {
-		if *t.Email != "" && !isValidEmail(*t.Email) {
+		if *t.Email != "" && !utils.IsValidEmail(*t.Email) {
 			return ErrInvalidEmail
 		}
 	}
@@ -101,7 +102,7 @@ func (t *UpdateTeacher) Sanitize() {
 		t.FullName = &val
 	}
 	if t.Phone != nil {
-		val := cleanPhone(*t.Phone)
+		val := utils.FormatPhone(*t.Phone)
 		t.Phone = &val
 	}
 	if t.Email != nil {

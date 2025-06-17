@@ -1,7 +1,7 @@
 package teachers_repository
 
 import (
-	"backend/pkg/models/private_school"
+	teachers_models "backend/pkg/models/teacher"
 	"context"
 	"errors"
 	"fmt"
@@ -24,14 +24,14 @@ func (r *Repository) DeleteTeacher(ctx context.Context, id, clientID uuid.UUID) 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			logger.Warn("teacher not found or already deleted", "teacher_id", id, "client_id", clientID)
-			return private_school_models.ErrTeacherNotFound
+			return teachers_models.ErrTeacherNotFound
 		}
 
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) {
 			if pgErr.Code == "23503" {
 				logger.Warn("teacher has active references", "detail", pgErr.Detail, "constraint", pgErr.ConstraintName)
-				return private_school_models.ErrDeleteTeacherConflict
+				return teachers_models.ErrDeleteTeacherConflict
 			}
 		}
 		logger.Error("failed to delete teacher", "error", err)

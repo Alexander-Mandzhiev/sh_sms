@@ -56,7 +56,7 @@ func (s *AuthService) RefreshToken(ctx context.Context, refreshToken string, cli
 	}
 	logger.Debug("user validation passed", slog.String("user_email", user.Email))
 
-	userId, err := utils.ValidateAndReturnUUID(user.Id)
+	userId, err := utils.ValidateStringAndReturnUUID(user.Id)
 	if err != nil {
 		s.logger.Warn("Invalid user id", "client_id", clientID, "app_id", int(appID))
 		return nil, "", "", err

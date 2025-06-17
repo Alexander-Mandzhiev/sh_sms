@@ -66,11 +66,9 @@ func (s *Service) Update(ctx context.Context, updateData *models.User) (*models.
 	}
 
 	if updateData.Phone != existingUser.Phone {
-		if updateData.Phone != "" {
-			if err = utils.ValidatePhone(updateData.Phone); err != nil {
-				logger.Warn("invalid phone format", slog.Any("error", err))
-				return nil, fmt.Errorf("%w: %v", ErrInvalidArgument, err)
-			}
+		if updateData.Phone != "" && !utils.IsValidPhone(updateData.Phone) {
+			logger.Warn("invalid phone format", slog.Any("error", err))
+			return nil, fmt.Errorf("%w: %v", ErrInvalidArgument, err)
 		}
 		updatedUser.Phone = updateData.Phone
 		hasChanges = true

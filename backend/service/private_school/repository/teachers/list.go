@@ -1,13 +1,13 @@
 package teachers_repository
 
 import (
-	"backend/pkg/models/private_school"
+	"backend/pkg/models/teacher"
 	"context"
 	"fmt"
 	"log/slog"
 )
 
-func (r *Repository) ListTeachers(ctx context.Context, filter *private_school_models.ListTeachersFilter) (*private_school_models.ListTeachersResponse, error) {
+func (r *Repository) ListTeachers(ctx context.Context, filter *teachers_models.ListTeachersFilter) (*teachers_models.ListTeachersResponse, error) {
 	const op = "repository.PrivateSchool.Teachers.ListTeachers"
 	logger := r.logger.With(slog.String("op", op))
 	logger.Debug("Listing teachers in repository", "client_id", filter.ClientID, "limit", filter.Limit, "include_deleted", filter.IncludeDeleted)
@@ -38,9 +38,9 @@ func (r *Repository) ListTeachers(ctx context.Context, filter *private_school_mo
 	}
 	defer rows.Close()
 
-	teachers := make([]*private_school_models.Teacher, 0, filter.Limit)
+	teachers := make([]*teachers_models.Teacher, 0, filter.Limit)
 	for rows.Next() {
-		var t private_school_models.Teacher
+		var t teachers_models.Teacher
 		err = rows.Scan(&t.ID, &t.ClientID, &t.FullName, &t.Phone, &t.Email, &t.AdditionalInfo, &t.DeletedAt, &t.CreatedAt, &t.UpdatedAt)
 		if err != nil {
 			logger.Error("failed to scan teacher", "error", err)
@@ -54,19 +54,19 @@ func (r *Repository) ListTeachers(ctx context.Context, filter *private_school_mo
 		return nil, fmt.Errorf("rows iteration error: %w", err)
 	}
 
-	var nextCursor *private_school_models.Cursor
+	var nextCursor *teachers_models.Cursor
 	if len(teachers) > int(filter.Limit) {
 		last := teachers[len(teachers)-1]
 		teachers = teachers[:len(teachers)-1]
 
-		nextCursor = &private_school_models.Cursor{
+		nextCursor = &teachers_models.Cursor{
 			LastID:    last.ID.String(),
 			CreatedAt: last.CreatedAt,
 		}
 		logger.Debug("Next cursor prepared", "last_id", nextCursor.LastID, "created_at", nextCursor.CreatedAt)
 	}
 
-	response := &private_school_models.ListTeachersResponse{
+	response := &teachers_models.ListTeachersResponse{
 		Teachers:   teachers,
 		NextCursor: nextCursor,
 	}
