@@ -2,29 +2,37 @@ package students_handle
 
 import (
 	"backend/pkg/models/students"
+	"backend/pkg/utils"
 	"backend/protos/gen/go/private_school"
 	"context"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"log/slog"
 )
 
 func (s *serverAPI) CreateStudent(ctx context.Context, req *private_school_v1.CreateStudentRequest) (*private_school_v1.StudentResponse, error) {
 	const op = "grpc.StudentService.CreateStudent"
-	logger := s.logger.With(slog.String("op", op), slog.String("client_id", req.GetClientId()))
-	logger.Debug("CreateStudent called")
+	logger := s.logger.With(slog.String("op", op), slog.String("client_id", req.GetClientId()), slog.String("trace_id", utils.TraceIDFromContext(ctx)))
+	logger.Debug("request received")
+
+	if ctx.Err() != nil {
+		logger.Warn("request canceled before processing")
+		return nil, status.Error(codes.Canceled, "request canceled")
+	}
 
 	student, err := students_models.CreateStudentFromProto(req)
 	if err != nil {
-		logger.Warn("Invalid create student parameters", slog.String("error", err.Error()))
+		logger.Warn("invalid parameters", "error", err)
 		return nil, s.convertError(err)
 	}
 
 	createdStudent, err := s.service.CreateStudent(ctx, student)
 	if err != nil {
-		logger.Error("Failed to create student", slog.String("error", err.Error()))
+		logger.Error("creation failed", "error", err)
 		return nil, s.convertError(err)
 	}
 
 	response := createdStudent.StudentToProto()
-	logger.Info("Student created successfully", slog.String("student_id", createdStudent.ID.String()))
+	logger.Info("student created", "student_id", createdStudent.ID.String(), "contract", student.ContractNumber)
 	return response, nil
 }

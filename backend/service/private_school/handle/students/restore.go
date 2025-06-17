@@ -5,13 +5,14 @@ import (
 	"backend/pkg/utils"
 	"backend/protos/gen/go/private_school"
 	"context"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"log/slog"
 )
 
-func (s *serverAPI) GetStudent(ctx context.Context, req *private_school_v1.StudentRequest) (*private_school_v1.StudentResponse, error) {
-	const op = "grpc.PrivateSchool.StudentService.GetStudent"
+func (s *serverAPI) RestoreStudent(ctx context.Context, req *private_school_v1.StudentRequest) (*emptypb.Empty, error) {
+	const op = "grpc.StudentService.RestoreStudent"
 	logger := s.logger.With(slog.String("op", op), slog.String("student_id", req.GetId()), slog.String("client_id", req.GetClientId()))
-	logger.Debug("GetStudent called")
+	logger.Debug("RestoreStudent called")
 
 	studentID, err := utils.ValidateStringAndReturnUUID(req.GetId())
 	if err != nil {
@@ -25,18 +26,11 @@ func (s *serverAPI) GetStudent(ctx context.Context, req *private_school_v1.Stude
 		return nil, s.convertError(students_models.ErrInvalidClientID)
 	}
 
-	student, err := s.service.GetStudent(ctx, studentID, clientID)
-	if err != nil {
-		logger.Error("Failed to get student", slog.String("error", err.Error()))
+	if err = s.service.RestoreStudent(ctx, studentID, clientID); err != nil {
+		logger.Error("Failed to restore student", slog.String("error", err.Error()))
 		return nil, s.convertError(err)
 	}
 
-	if !student.IsActive() {
-		logger.Warn("Student is soft-deleted", slog.String("student_id", studentID.String()))
-		return nil, s.convertError(students_models.ErrStudentNotFound)
-	}
-
-	response := student.StudentToProto()
-	logger.Debug("Student retrieved successfully")
-	return response, nil
+	logger.Info("Student restored successfully")
+	return &emptypb.Empty{}, nil
 }

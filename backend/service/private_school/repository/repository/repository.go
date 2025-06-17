@@ -1,4 +1,4 @@
-package subjects_repository
+package students_repository
 
 import (
 	"fmt"
@@ -12,7 +12,7 @@ type Repository struct {
 }
 
 func New(db *pgxpool.Pool, logger *slog.Logger) (*Repository, error) {
-	op := "repository.New.PrivateSchool.Subjects"
+	op := "repository.New.PrivateSchool.StudentsRepository"
 	if db == nil {
 		logger.Error("Database connection is nil", slog.String("op", op))
 		return nil, fmt.Errorf("database connection is nil")

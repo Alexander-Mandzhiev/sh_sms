@@ -65,8 +65,13 @@ message Filter {
 message ListStudentsRequest {
   string client_id = 1;
   optional int32 count = 2;
-  optional string cursor = 3;
-  optional Filter filter = 4;
+  optional Cursor cursor = 3;
+  optional string filter = 4;
+}
+
+message Cursor {
+  string id = 1;
+  google.protobuf.Timestamp created_at = 2;
 }
 
 message ListStudentsResponse {

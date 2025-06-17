@@ -8,7 +8,7 @@ import (
 )
 
 func (s *serverAPI) UpdateStudent(ctx context.Context, req *private_school_v1.UpdateStudentRequest) (*private_school_v1.StudentResponse, error) {
-	const op = "grpc.StudentService.UpdateStudent"
+	const op = "grpc.PrivateSchool.StudentService.UpdateStudent"
 	logger := s.logger.With(slog.String("op", op), slog.String("student_id", req.GetId()), slog.String("client_id", req.GetClientId()))
 	logger.Debug("UpdateStudent called")
 

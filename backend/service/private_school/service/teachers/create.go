@@ -1,7 +1,7 @@
 package teachers_service
 
 import (
-	teachers_models "backend/pkg/models/teacher"
+	"backend/pkg/models/teacher"
 	"context"
 	"log/slog"
 )
