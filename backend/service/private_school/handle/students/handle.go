@@ -14,7 +14,7 @@ type StudentService interface {
 	UpdateStudent(ctx context.Context, updateData *students_models.UpdateStudent) (*students_models.Student, error)
 
 	GetStudent(ctx context.Context, id, clientID uuid.UUID) (*students_models.Student, error)
-	ListStudents(ctx context.Context, params *students_models.ListStudentsRequest) ([]*students_models.Student, string, error)
+	ListStudents(ctx context.Context, params *students_models.ListStudentsRequest) ([]*students_models.Student, *students_models.Cursor, error)
 
 	HardDeleteStudent(ctx context.Context, id, clientID uuid.UUID) error
 	SoftDeleteStudent(ctx context.Context, id, clientID uuid.UUID) error

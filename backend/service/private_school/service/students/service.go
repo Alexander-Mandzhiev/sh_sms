@@ -11,7 +11,11 @@ type StudentsProvider interface {
 	CreateStudent(ctx context.Context, student *students_models.CreateStudent) (*students_models.Student, error)
 	UpdateStudent(ctx context.Context, update *students_models.UpdateStudent) (*students_models.Student, error)
 	GetStudent(ctx context.Context, id, clientID uuid.UUID) (*students_models.Student, error)
-	ListStudents(ctx context.Context, params *students_models.ListStudentsRequest) ([]*students_models.Student, string, error)
+	ListStudents(ctx context.Context, params *students_models.ListStudentsRequest) ([]*students_models.Student, *students_models.Cursor, error)
+
+	HardDeleteStudent(ctx context.Context, id, clientID uuid.UUID) error
+	SoftDeleteStudent(ctx context.Context, id, clientID uuid.UUID) error
+	RestoreStudent(ctx context.Context, id, clientID uuid.UUID) error
 }
 
 type Service struct {

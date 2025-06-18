@@ -2,6 +2,7 @@ package students_handle
 
 import (
 	"backend/pkg/models/students"
+	"backend/pkg/utils"
 	"backend/protos/gen/go/private_school"
 	"context"
 	"log/slog"
@@ -9,8 +10,8 @@ import (
 
 func (s *serverAPI) UpdateStudent(ctx context.Context, req *private_school_v1.UpdateStudentRequest) (*private_school_v1.StudentResponse, error) {
 	const op = "grpc.PrivateSchool.StudentService.UpdateStudent"
-	logger := s.logger.With(slog.String("op", op), slog.String("student_id", req.GetId()), slog.String("client_id", req.GetClientId()))
-	logger.Debug("UpdateStudent called")
+	logger := s.logger.With(slog.String("op", op), slog.String("student_id", req.GetId()), slog.String("client_id", req.GetClientId()), slog.String("trace_id", utils.TraceIDFromContext(ctx)))
+	logger.Debug("Update student called")
 
 	updateData, err := students_models.UpdateStudentFromProto(req)
 	if err != nil {
@@ -25,6 +26,6 @@ func (s *serverAPI) UpdateStudent(ctx context.Context, req *private_school_v1.Up
 	}
 
 	response := updatedStudent.StudentToProto()
-	logger.Info("Student updated successfully")
+	logger.Info("Student updated successfully", "student_id", updateData.ID.String())
 	return response, nil
 }

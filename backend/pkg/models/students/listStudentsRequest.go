@@ -9,11 +9,11 @@ import (
 type ListStudentsRequest struct {
 	ClientID uuid.UUID
 	Count    int32
-	Cursor   string
-	Filter   *StudentFilter
+	Cursor   *Cursor
+	Filter   string
 }
 
-func ListStudentsParamsFromProto(req *private_school_v1.ListStudentsRequest) (*ListStudentsRequest, error) {
+func ListStudentsRequestFromProto(req *private_school_v1.ListStudentsRequest) (*ListStudentsRequest, error) {
 	clientID, err := utils.ValidateStringAndReturnUUID(req.GetClientId())
 	if err != nil {
 		return nil, ErrInvalidClientID
@@ -33,21 +33,19 @@ func ListStudentsParamsFromProto(req *private_school_v1.ListStudentsRequest) (*L
 	}
 
 	if req.Cursor != nil {
-		cursor := *req.Cursor
-		if cursor != "" {
-			if _, err := uuid.Parse(cursor); err != nil {
-				return nil, ErrInvalidCursor
-			}
+		var cursor *Cursor
+		cursor, err = CursorFromProto(req.Cursor)
+		if err != nil {
+			return nil, err
 		}
 		params.Cursor = cursor
 	}
 
 	if req.Filter != nil {
-		filter, err := StudentFilterFromProto(req.GetFilter())
-		if err != nil {
-			return nil, err
+		if len(params.Filter) > MaxFilterValueLength {
+			return nil, ErrFilterValueTooLong
 		}
-		params.Filter = filter
+		params.Filter = *req.Filter
 	}
 
 	return params, nil

@@ -11,8 +11,8 @@ import (
 
 func (s *serverAPI) RestoreStudent(ctx context.Context, req *private_school_v1.StudentRequest) (*emptypb.Empty, error) {
 	const op = "grpc.StudentService.RestoreStudent"
-	logger := s.logger.With(slog.String("op", op), slog.String("student_id", req.GetId()), slog.String("client_id", req.GetClientId()))
-	logger.Debug("RestoreStudent called")
+	logger := s.logger.With(slog.String("op", op), slog.String("student_id", req.GetId()), slog.String("client_id", req.GetClientId()), slog.String("trace_id", utils.TraceIDFromContext(ctx)))
+	logger.Debug("Restore student called")
 
 	studentID, err := utils.ValidateStringAndReturnUUID(req.GetId())
 	if err != nil {
@@ -31,6 +31,6 @@ func (s *serverAPI) RestoreStudent(ctx context.Context, req *private_school_v1.S
 		return nil, s.convertError(err)
 	}
 
-	logger.Info("Student restored successfully")
+	logger.Info("Student restored successfully", "student_id", studentID.String(), "client_id", clientID.String())
 	return &emptypb.Empty{}, nil
 }

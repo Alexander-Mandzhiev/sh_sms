@@ -23,13 +23,13 @@ func (r *Repository) UpdateStudent(ctx context.Context, updateData *students_mod
 	}
 
 	query := `UPDATE students SET
-			full_name = COALESCE(NULLIF($1, ''), full_name),
-			contract_number = COALESCE(NULLIF($2, ''), contract_number),
-			phone = COALESCE(NULLIF($3, ''), phone),
-			email = COALESCE(NULLIF($4, ''), email),
-			additional_info = COALESCE(NULLIF($5, ''), additional_info),
-			updated_at = CURRENT_TIMESTAMP
-		WHERE id = $6 AND client_id = $7 AND deleted_at IS NULL
+            full_name = COALESCE(NULLIF($1, ''), full_name),
+            contract_number = COALESCE(NULLIF($2, ''), contract_number),
+            phone = COALESCE(NULLIF($3, ''), phone),
+            email = COALESCE(NULLIF($4, ''), email),
+            additional_info = COALESCE(NULLIF($5, ''), additional_info),
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = $6 AND client_id = $7 AND deleted_at IS NULL
 		RETURNING id, client_id, full_name, contract_number, phone, email, additional_info, deleted_at, created_at, updated_at`
 
 	args := []interface{}{
@@ -43,18 +43,8 @@ func (r *Repository) UpdateStudent(ctx context.Context, updateData *students_mod
 	}
 
 	var student students_models.Student
-	err := r.db.QueryRow(ctx, query, args...).Scan(
-		&student.ID,
-		&student.ClientID,
-		&student.FullName,
-		&student.ContractNumber,
-		&student.Phone,
-		&student.Email,
-		&student.AdditionalInfo,
-		&student.DeletedAt,
-		&student.CreatedAt,
-		&student.UpdatedAt,
-	)
+	err := r.db.QueryRow(ctx, query, args...).Scan(&student.ID, &student.ClientID, &student.FullName, &student.ContractNumber,
+		&student.Phone, &student.Email, &student.AdditionalInfo, &student.DeletedAt, &student.CreatedAt, &student.UpdatedAt)
 
 	if err != nil {
 		return handleUpdateError(err, logger)
@@ -88,5 +78,5 @@ func handleUpdateError(err error, logger *slog.Logger) (*students_models.Student
 	}
 
 	logger.Error("database update error", "error", err)
-	return nil, fmt.Errorf("failed to update student: %w", err)
+	return nil, fmt.Errorf("%w: %v", students_models.ErrUpdateFailed, err)
 }

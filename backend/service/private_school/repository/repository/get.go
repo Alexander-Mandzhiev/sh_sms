@@ -22,19 +22,15 @@ func (r *Repository) GetStudent(ctx context.Context, id, clientID uuid.UUID) (*s
 		return nil, ctx.Err()
 	}
 
-	query := `SELECT id, client_id, full_name, contract_number, phone, email, additional_info, deleted_at, created_at, updated_at
-		FROM students WHERE id = $1 AND client_id = $2`
-
+	query := `SELECT id, client_id, full_name, contract_number, phone, email, additional_info, deleted_at, created_at, updated_at FROM students WHERE id = $1 AND client_id = $2`
 	var st students_models.Student
-	err := r.db.QueryRow(ctx, query, id, clientID).Scan(&st.ID, &st.ClientID, &st.FullName, &st.ContractNumber,
-		&st.Phone, &st.Email, &st.AdditionalInfo, &st.DeletedAt, &st.CreatedAt, &st.UpdatedAt)
+	err := r.db.QueryRow(ctx, query, id, clientID).Scan(&st.ID, &st.ClientID, &st.FullName, &st.ContractNumber, &st.Phone, &st.Email, &st.AdditionalInfo, &st.DeletedAt, &st.CreatedAt, &st.UpdatedAt)
 	if err != nil {
 		return nil, r.handleGetError(err, op, logger)
 	}
-
 	if st.DeletedAt != nil {
 		logger.Warn("student is soft-deleted", "deleted_at", st.DeletedAt)
-		return nil, students_models.ErrStudentNotFound
+		return nil, students_models.ErrStudentAlreadyDeleted
 	}
 
 	logger.Debug("student retrieved successfully")
@@ -53,5 +49,5 @@ func (r *Repository) handleGetError(err error, op string, logger *slog.Logger) e
 	}
 
 	logger.Error("database error", "error", err)
-	return fmt.Errorf("%s: %w", op, err)
+	return fmt.Errorf("%w: %v", students_models.ErrGetFailed, err)
 }

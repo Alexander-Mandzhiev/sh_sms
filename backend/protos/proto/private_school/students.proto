@@ -62,19 +62,19 @@ message Filter {
   optional string email = 4;
 }
 
-message ListStudentsRequest {
-  string client_id = 1;
-  optional int32 count = 2;
-  optional Cursor cursor = 3;
-  optional string filter = 4;
-}
-
-message Cursor {
+message StudentsCursor {
   string id = 1;
   google.protobuf.Timestamp created_at = 2;
 }
 
+message ListStudentsRequest {
+  string client_id = 1;
+  optional int32 count = 2;
+  optional StudentsCursor cursor = 3;
+  optional string filter = 4;
+}
+
 message ListStudentsResponse {
   repeated StudentResponse students = 1;
-  optional string next_cursor = 2;
+  optional StudentsCursor next_cursor = 2;
 }

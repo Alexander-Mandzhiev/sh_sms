@@ -47,25 +47,24 @@ func (r *Repository) handleCreateError(err error, op, query string, params []int
 
 	var pgErr *pgconn.PgError
 	if errors.As(err, &pgErr) {
-		switch {
-		case pgErr.Code == "23505" && pgErr.ConstraintName == "uniq_student_contract_active":
+		if pgErr.Code == "23505" && pgErr.ConstraintName == "uniq_student_contract_active" {
 			logger.Warn("duplicate contract detected", "detail", pgErr.Detail)
 			return fmt.Errorf("%w: %s", students_models.ErrDuplicateContract, pgErr.Detail)
-
-		case pgErr.Code == "23503" && pgErr.ConstraintName == "fk_client":
+		}
+		if pgErr.Code == "23503" && pgErr.ConstraintName == "fk_client" {
 			logger.Warn("invalid client reference", "detail", pgErr.Detail)
 			return students_models.ErrInvalidClientID
-
-		default:
-			logger.Warn("database constraint violation", "code", pgErr.Code, "constraint", pgErr.ConstraintName, "detail", pgErr.Detail)
-			return fmt.Errorf("database constraint violation: %w", err)
 		}
+		logger.Warn("database constraint violation", "code", pgErr.Code, "constraint", pgErr.ConstraintName, "detail", pgErr.Detail)
+		return fmt.Errorf("%w: %s", students_models.ErrCreateFailed, pgErr.Message)
+
 	}
 
 	if errors.Is(err, pgx.ErrNoRows) {
 		logger.Warn("no student created after insert")
 		return students_models.ErrCreateFailed
 	}
+
 	logger.Error("database operation failed", "error", err, "query", query, "params", params)
-	return fmt.Errorf("%s: %w", op, err)
+	return fmt.Errorf("%w: %v", students_models.ErrCreateFailed, err)
 }

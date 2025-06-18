@@ -14,6 +14,7 @@ var (
 	ErrPhoneTooLong          = errors.New("phone too long")
 	ErrPhoneTooShort         = errors.New("phone number too short")
 	ErrFilterValueTooLong    = errors.New("filter value too long, max 100 characters")
+	ErrGetFailed             = errors.New("failed to get student")
 
 	ErrInvalidClientID   = errors.New("invalid client id")
 	ErrInvalidPhone      = errors.New("invalid phone format")
@@ -25,10 +26,13 @@ var (
 	ErrStudentNotFound       = errors.New("student not found")
 	ErrStudentAlreadyDeleted = errors.New("student already deleted")
 	ErrStudentNotDeleted     = errors.New("student not deleted")
+	ErrDeleteFailed          = errors.New("delete operation failed")
+	ErrRestoreFailed         = errors.New("restore operation failed")
 
 	ErrDuplicateContract = errors.New("duplicate contract")
-	ErrRepositoryFailure = errors.New("repository operation failed")
-	ErrUnexpectedError   = errors.New("unexpected error occurred")
 	ErrCreateFailed      = errors.New("create student failed")
 	ErrUpdateFailed      = errors.New("update student failed")
+	ErrListFailed        = errors.New("failed to list students")
+	ErrFilterTooLong     = errors.New("filter too long")
+	ErrInternal          = errors.New("internal error")
 )

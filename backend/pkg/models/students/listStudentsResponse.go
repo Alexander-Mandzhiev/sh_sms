@@ -1,19 +1,25 @@
 package students_models
 
-import "backend/protos/gen/go/private_school"
+import (
+	"backend/protos/gen/go/private_school"
+)
 
 type ListStudentsResponse struct {
 	Students   []*Student
-	NextCursor string
+	NextCursor *Cursor
 }
 
 func ListStudentsResponseFromProto(protoResp *private_school_v1.ListStudentsResponse) (*ListStudentsResponse, error) {
 	resp := &ListStudentsResponse{
-		NextCursor: "",
+		Students: make([]*Student, 0, len(protoResp.Students)),
 	}
 
 	if protoResp.NextCursor != nil {
-		resp.NextCursor = *protoResp.NextCursor
+		cursor, err := CursorFromProto(protoResp.NextCursor)
+		if err != nil {
+			return nil, err
+		}
+		resp.NextCursor = cursor
 	}
 
 	for _, protoStudent := range protoResp.Students {
@@ -28,15 +34,17 @@ func ListStudentsResponseFromProto(protoResp *private_school_v1.ListStudentsResp
 }
 
 func (resp *ListStudentsResponse) ToProto() *private_school_v1.ListStudentsResponse {
-	protoStudents := make([]*private_school_v1.StudentResponse, 0, len(resp.Students))
-	for _, student := range resp.Students {
-		protoStudents = append(protoStudents, student.StudentToProto())
+	protoStudents := make([]*private_school_v1.StudentResponse, len(resp.Students))
+	for i, student := range resp.Students {
+		protoStudents[i] = student.StudentToProto()
 	}
 
-	protoResp := &private_school_v1.ListStudentsResponse{Students: protoStudents}
+	protoResp := &private_school_v1.ListStudentsResponse{
+		Students: protoStudents,
+	}
 
-	if resp.NextCursor != "" {
-		protoResp.NextCursor = &resp.NextCursor
+	if resp.NextCursor != nil {
+		protoResp.NextCursor = resp.NextCursor.ToProto()
 	}
 
 	return protoResp

@@ -10,7 +10,7 @@ import (
 
 func (s *serverAPI) GetStudent(ctx context.Context, req *private_school_v1.StudentRequest) (*private_school_v1.StudentResponse, error) {
 	const op = "grpc.PrivateSchool.StudentService.GetStudent"
-	logger := s.logger.With(slog.String("op", op), slog.String("student_id", req.GetId()), slog.String("client_id", req.GetClientId()))
+	logger := s.logger.With(slog.String("op", op), slog.String("student_id", req.GetId()), slog.String("client_id", req.GetClientId()), slog.String("trace_id", utils.TraceIDFromContext(ctx)))
 	logger.Debug("GetStudent called")
 
 	studentID, err := utils.ValidateStringAndReturnUUID(req.GetId())
@@ -29,11 +29,6 @@ func (s *serverAPI) GetStudent(ctx context.Context, req *private_school_v1.Stude
 	if err != nil {
 		logger.Error("Failed to get student", slog.String("error", err.Error()))
 		return nil, s.convertError(err)
-	}
-
-	if !student.IsActive() {
-		logger.Warn("Student is soft-deleted", slog.String("student_id", studentID.String()))
-		return nil, s.convertError(students_models.ErrStudentNotFound)
 	}
 
 	response := student.StudentToProto()

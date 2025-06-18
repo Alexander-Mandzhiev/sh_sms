@@ -5,8 +5,6 @@ import (
 	"backend/pkg/utils"
 	"backend/protos/gen/go/private_school"
 	"context"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"log/slog"
 )
 
@@ -17,7 +15,7 @@ func (s *serverAPI) CreateStudent(ctx context.Context, req *private_school_v1.Cr
 
 	if ctx.Err() != nil {
 		logger.Warn("request canceled before processing")
-		return nil, status.Error(codes.Canceled, "request canceled")
+		return nil, s.convertError(ctx.Err())
 	}
 
 	student, err := students_models.CreateStudentFromProto(req)
@@ -33,6 +31,6 @@ func (s *serverAPI) CreateStudent(ctx context.Context, req *private_school_v1.Cr
 	}
 
 	response := createdStudent.StudentToProto()
-	logger.Info("student created", "student_id", createdStudent.ID.String(), "contract", student.ContractNumber)
+	logger.Info("student created", "student_id", createdStudent.ID.String(), "contract", createdStudent.ContractNumber)
 	return response, nil
 }

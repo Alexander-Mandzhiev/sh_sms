@@ -2,6 +2,7 @@ package students_handle
 
 import (
 	"backend/pkg/models/students"
+	"context"
 	"errors"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -10,12 +11,20 @@ import (
 
 func (s *serverAPI) convertError(err error) error {
 	switch {
+	case errors.Is(err, context.Canceled):
+		return status.Error(codes.Canceled, "request canceled")
+	case errors.Is(err, context.DeadlineExceeded):
+		return status.Error(codes.DeadlineExceeded, "deadline exceeded")
 	case errors.Is(err, students_models.ErrEmptyFullName):
 		return status.Error(codes.InvalidArgument, "full name is required")
 	case errors.Is(err, students_models.ErrEmptyContractNumber):
 		return status.Error(codes.InvalidArgument, "contract number is required")
+	case errors.Is(err, students_models.ErrGetFailed):
+		return status.Error(codes.Internal, "failed to retrieve student")
 	case errors.Is(err, students_models.ErrEmptyPhone):
 		return status.Error(codes.InvalidArgument, "phone is required")
+	case errors.Is(err, students_models.ErrUpdateFailed):
+		return status.Error(codes.Internal, "failed to update student")
 	case errors.Is(err, students_models.ErrEmptyEmail):
 		return status.Error(codes.InvalidArgument, "email is required")
 	case errors.Is(err, students_models.ErrInvalidPhone):
@@ -46,8 +55,14 @@ func (s *serverAPI) convertError(err error) error {
 		return status.Error(codes.FailedPrecondition, "student is not deleted")
 	case errors.Is(err, students_models.ErrCreateFailed):
 		return status.Error(codes.Internal, "student creation failed")
+	case errors.Is(err, students_models.ErrListFailed):
+		return status.Error(codes.Internal, "failed to list students")
+	case errors.Is(err, students_models.ErrFilterTooLong):
+		return status.Error(codes.InvalidArgument, "filter too long")
 	case errors.Is(err, students_models.ErrInvalidCursor):
 		return status.Error(codes.InvalidArgument, "invalid cursor format")
+	case errors.Is(err, students_models.ErrInternal):
+		return status.Error(codes.Internal, "internal server error")
 	default:
 		s.logger.Error("Internal server error", slog.String("error", err.Error()))
 		return status.Error(codes.Internal, "internal server error")
