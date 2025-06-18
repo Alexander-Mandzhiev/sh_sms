@@ -8,9 +8,9 @@ import "google/protobuf/empty.proto";
 
 service GroupService {
   rpc CreateGroup(CreateGroupRequest) returns (GroupResponse);
-  rpc GetGroup(GetGroupRequest) returns (GroupResponse);
+  rpc GetGroup(GroupRequest) returns (GroupResponse);
   rpc UpdateGroup(UpdateGroupRequest) returns (GroupResponse);
-  rpc DeleteGroup(DeleteGroupRequest) returns (google.protobuf.Empty);
+  rpc DeleteGroup(GroupRequest) returns (google.protobuf.Empty);
   rpc ListGroups(ListGroupsRequest) returns (ListGroupsResponse);
 }
 
@@ -29,12 +29,8 @@ message CreateGroupRequest {
   optional string curator_id = 3;
 }
 
-message GetGroupRequest {
-  string id = 1;
-  string client_id = 2;
-}
 
-message DeleteGroupRequest {
+message GroupRequest {
   string id = 1;
   string client_id = 2;
 }
@@ -42,18 +38,18 @@ message DeleteGroupRequest {
 message UpdateGroupRequest {
   string id = 1;
   string client_id = 2;
-  optional string name = 3;
-  optional string curator_id = 4;
+  string name = 3;
+  string curator_id = 4;
 }
 
 message ListGroupsRequest {
   string client_id = 1;
-  optional int32 count = 2;
+  int32 page_size = 2;
   optional int64 cursor = 3;
-  optional string filter = 4;
+  optional string name_filter = 4;
 }
 
 message ListGroupsResponse {
   repeated GroupResponse groups = 1;
-  optional int64 next_cursor = 2;
+  int64 next_cursor = 2;
 }
