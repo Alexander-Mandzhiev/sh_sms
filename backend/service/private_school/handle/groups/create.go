@@ -8,9 +8,9 @@ import (
 	"log/slog"
 )
 
-func (s *serverAPI) CreateGroup(ctx context.Context, req *private_school_v1.CreateGroupRequest) (*private_school_v1.GroupResponse, error) {
+func (s *ServerAPI) CreateGroup(ctx context.Context, req *private_school_v1.CreateGroupRequest) (*private_school_v1.GroupResponse, error) {
 	const op = "grpc.GroupService.CreateGroup"
-	logger := s.logger.With(slog.String("op", op), slog.String("client_id", req.GetClientId()), slog.String("trace_id", utils.TraceIDFromContext(ctx)))
+	logger := s.Logger.With(slog.String("op", op), slog.String("client_id", req.GetClientId()), slog.String("trace_id", utils.TraceIDFromContext(ctx)))
 	if req.CuratorId != nil && *req.CuratorId != "" {
 		logger = logger.With(slog.String("curator_id", *req.CuratorId))
 	}
@@ -27,7 +27,7 @@ func (s *serverAPI) CreateGroup(ctx context.Context, req *private_school_v1.Crea
 		return nil, s.convertError(err)
 	}
 
-	group, err := s.service.CreateGroup(ctx, createGroup)
+	group, err := s.Service.CreateGroup(ctx, createGroup)
 	if err != nil {
 		logger.Error("group creation failed", "name", req.GetName(), "error", err)
 		return nil, s.convertError(err)

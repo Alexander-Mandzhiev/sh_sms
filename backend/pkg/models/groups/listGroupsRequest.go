@@ -33,9 +33,10 @@ func ListGroupsParamsFromProto(req *private_school_v1.ListGroupsRequest) (*ListG
 
 	if req.Cursor != nil {
 		cursorVal := req.GetCursor()
-		if cursorVal > 0 {
-			params.Cursor = &cursorVal
+		if cursorVal < 0 {
+			return nil, ErrInvalidCursor
 		}
+		params.Cursor = &cursorVal
 	}
 
 	if req.NameFilter != nil {

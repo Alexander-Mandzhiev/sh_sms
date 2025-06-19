@@ -1,7 +1,7 @@
 package groups_handle
 
 import (
-	groups_models "backend/pkg/models/groups"
+	"backend/pkg/models/groups"
 	"backend/protos/gen/go/private_school"
 	"context"
 	"github.com/google/uuid"
@@ -17,15 +17,22 @@ type GroupsService interface {
 	DeleteGroup(ctx context.Context, publicID, clientID uuid.UUID) error
 }
 
-type serverAPI struct {
+type ServerAPI struct {
 	private_school_v1.UnimplementedGroupServiceServer
-	service GroupsService
-	logger  *slog.Logger
+	Service GroupsService
+	Logger  *slog.Logger
 }
 
 func Register(gRPCServer *grpc.Server, service GroupsService, logger *slog.Logger) {
-	private_school_v1.RegisterGroupServiceServer(gRPCServer, &serverAPI{
-		service: service,
-		logger:  logger.With("module", "groups"),
+	private_school_v1.RegisterGroupServiceServer(gRPCServer, &ServerAPI{
+		Service: service,
+		Logger:  logger.With("module", "groups"),
 	})
+}
+
+func NewServerAPI(service GroupsService, logger *slog.Logger) *ServerAPI {
+	return &ServerAPI{
+		Service: service,
+		Logger:  logger,
+	}
 }

@@ -1,7 +1,7 @@
 package groups_service
 
 import (
-	groups_models "backend/pkg/models/groups"
+	"backend/pkg/models/groups"
 	"context"
 	"github.com/google/uuid"
 	"log/slog"

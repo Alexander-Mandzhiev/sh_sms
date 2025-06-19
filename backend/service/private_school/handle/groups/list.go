@@ -1,16 +1,16 @@
 package groups_handle
 
 import (
-	groups_models "backend/pkg/models/groups"
+	"backend/pkg/models/groups"
 	"backend/pkg/utils"
-	private_school_v1 "backend/protos/gen/go/private_school"
+	"backend/protos/gen/go/private_school"
 	"context"
 	"log/slog"
 )
 
-func (s *serverAPI) ListGroups(ctx context.Context, req *private_school_v1.ListGroupsRequest) (*private_school_v1.ListGroupsResponse, error) {
+func (s *ServerAPI) ListGroups(ctx context.Context, req *private_school_v1.ListGroupsRequest) (*private_school_v1.ListGroupsResponse, error) {
 	const op = "grpc.GroupService.ListGroups"
-	logger := s.logger.With(slog.String("op", op), slog.String("client_id", req.GetClientId()), slog.Int("page_size", int(req.GetPageSize())), slog.String("trace_id", utils.TraceIDFromContext(ctx)))
+	logger := s.Logger.With(slog.String("op", op), slog.String("client_id", req.GetClientId()), slog.Int("page_size", int(req.GetPageSize())), slog.String("trace_id", utils.TraceIDFromContext(ctx)))
 	if req.Cursor != nil {
 		logger = logger.With(slog.Int64("cursor", req.GetCursor()))
 	}
@@ -30,7 +30,7 @@ func (s *serverAPI) ListGroups(ctx context.Context, req *private_school_v1.ListG
 		return nil, s.convertError(err)
 	}
 
-	response, err := s.service.ListGroups(ctx, listParams)
+	response, err := s.Service.ListGroups(ctx, listParams)
 	if err != nil {
 		logger.Error("failed to list groups", "error", err, "client_id", req.GetClientId())
 		return nil, s.convertError(err)

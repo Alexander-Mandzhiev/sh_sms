@@ -1,7 +1,7 @@
 package groups_handle
 
 import (
-	groups_models "backend/pkg/models/groups"
+	"backend/pkg/models/groups"
 	"context"
 	"errors"
 	"google.golang.org/grpc/codes"
@@ -9,7 +9,7 @@ import (
 	"log/slog"
 )
 
-func (s *serverAPI) convertError(err error) error {
+func (s *ServerAPI) convertError(err error) error {
 	switch {
 	case errors.Is(err, context.Canceled):
 		return status.Error(codes.Canceled, "request canceled")
@@ -47,8 +47,10 @@ func (s *serverAPI) convertError(err error) error {
 		return status.Error(codes.Internal, "failed to update group")
 	case errors.Is(err, groups_models.ErrDeleteFailed):
 		return status.Error(codes.Internal, "failed to delete group")
+	case errors.Is(err, groups_models.ErrDependentRecordsExist):
+		return status.Error(codes.FailedPrecondition, "cannot perform operation due to existing dependencies")
 	default:
-		s.logger.Error("Internal server error", slog.String("error", err.Error()), slog.Any("type", "unhandled_error"))
+		s.Logger.Error("Internal server error", slog.String("error", err.Error()), slog.Any("type", "unhandled_error"))
 		return status.Error(codes.Internal, "internal server error")
 	}
 }

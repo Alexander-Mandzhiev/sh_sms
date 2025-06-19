@@ -9,9 +9,9 @@ import (
 	"log/slog"
 )
 
-func (s *serverAPI) DeleteGroup(ctx context.Context, req *private_school_v1.GroupRequest) (*emptypb.Empty, error) {
+func (s *ServerAPI) DeleteGroup(ctx context.Context, req *private_school_v1.GroupRequest) (*emptypb.Empty, error) {
 	const op = "grpc.GroupService.DeleteGroup"
-	logger := s.logger.With(slog.String("op", op), slog.String("group_id", req.GetId()), slog.String("client_id", req.GetClientId()), slog.String("trace_id", utils.TraceIDFromContext(ctx)))
+	logger := s.Logger.With(slog.String("op", op), slog.String("group_id", req.GetId()), slog.String("client_id", req.GetClientId()), slog.String("trace_id", utils.TraceIDFromContext(ctx)))
 	logger.Debug("delete group request received")
 
 	groupID, err := utils.ValidateStringAndReturnUUID(req.GetId())
@@ -31,7 +31,7 @@ func (s *serverAPI) DeleteGroup(ctx context.Context, req *private_school_v1.Grou
 		return nil, s.convertError(ctx.Err())
 	}
 
-	err = s.service.DeleteGroup(ctx, groupID, clientID)
+	err = s.Service.DeleteGroup(ctx, groupID, clientID)
 	if err != nil {
 		logger.Error("failed to delete group", "group_id", req.GetId(), "error", err)
 		return nil, s.convertError(err)

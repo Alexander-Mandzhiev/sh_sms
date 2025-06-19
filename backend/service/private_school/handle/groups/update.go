@@ -8,9 +8,9 @@ import (
 	"log/slog"
 )
 
-func (s *serverAPI) UpdateGroup(ctx context.Context, req *private_school_v1.UpdateGroupRequest) (*private_school_v1.GroupResponse, error) {
+func (s *ServerAPI) UpdateGroup(ctx context.Context, req *private_school_v1.UpdateGroupRequest) (*private_school_v1.GroupResponse, error) {
 	const op = "grpc.GroupService.UpdateGroup"
-	logger := s.logger.With(slog.String("op", op), slog.String("group_id", req.GetId()), slog.String("client_id", req.GetClientId()), slog.String("trace_id", utils.TraceIDFromContext(ctx)))
+	logger := s.Logger.With(slog.String("op", op), slog.String("group_id", req.GetId()), slog.String("client_id", req.GetClientId()), slog.String("trace_id", utils.TraceIDFromContext(ctx)))
 	logger.Debug("update group request received", "name", req.GetName(), "curator_id", req.GetCuratorId())
 
 	if ctx.Err() != nil {
@@ -24,7 +24,7 @@ func (s *serverAPI) UpdateGroup(ctx context.Context, req *private_school_v1.Upda
 		return nil, s.convertError(err)
 	}
 
-	group, err := s.service.UpdateGroup(ctx, updateGroup)
+	group, err := s.Service.UpdateGroup(ctx, updateGroup)
 	if err != nil {
 		logger.Error("group update failed", "group_id", req.GetId(), "error", err)
 		return nil, s.convertError(err)

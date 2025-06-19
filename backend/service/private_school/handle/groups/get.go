@@ -1,16 +1,16 @@
 package groups_handle
 
 import (
-	groups_models "backend/pkg/models/groups"
+	"backend/pkg/models/groups"
 	"backend/pkg/utils"
-	private_school_v1 "backend/protos/gen/go/private_school"
+	"backend/protos/gen/go/private_school"
 	"context"
 	"log/slog"
 )
 
-func (s *serverAPI) GetGroup(ctx context.Context, req *private_school_v1.GroupRequest) (*private_school_v1.GroupResponse, error) {
+func (s *ServerAPI) GetGroup(ctx context.Context, req *private_school_v1.GroupRequest) (*private_school_v1.GroupResponse, error) {
 	const op = "grpc.GroupService.GetGroup"
-	logger := s.logger.With(slog.String("op", op), slog.String("group_id", req.GetId()), slog.String("client_id", req.GetClientId()), slog.String("trace_id", utils.TraceIDFromContext(ctx)))
+	logger := s.Logger.With(slog.String("op", op), slog.String("group_id", req.GetId()), slog.String("client_id", req.GetClientId()), slog.String("trace_id", utils.TraceIDFromContext(ctx)))
 	logger.Debug("get group request received")
 
 	groupID, err := utils.ValidateStringAndReturnUUID(req.GetId())
@@ -30,7 +30,7 @@ func (s *serverAPI) GetGroup(ctx context.Context, req *private_school_v1.GroupRe
 		return nil, s.convertError(ctx.Err())
 	}
 
-	group, err := s.service.GetGroup(ctx, groupID, clientID)
+	group, err := s.Service.GetGroup(ctx, groupID, clientID)
 	if err != nil {
 		logger.Error("failed to get group", "group_id", req.GetId(), "error", err)
 		return nil, s.convertError(err)
