@@ -1,7 +1,7 @@
 package groups_repository
 
 import (
-	groups_models "backend/pkg/models/groups"
+	"backend/pkg/models/groups"
 	"backend/pkg/utils"
 	"context"
 	"errors"

@@ -19,4 +19,5 @@ var (
 	ErrForeignKeyViolation   = errors.New("foreign key violation")
 	ErrDeleteFailed          = errors.New("failed to delete group")
 	ErrListFailed            = errors.New("failed to list group")
+	ErrInvalidCursor         = errors.New("invalid cursor value")
 )
